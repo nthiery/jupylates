@@ -1,0 +1,60 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .md
+      format_name: myst
+kernelspec:
+  display_name: C++17
+  language: C++17
+  name: xcpp17
+---
+
+### Objectif Pédagogique : opération "and".
+
+```{code-cell} c++
+---
+editable: false
+tags: [hide-cell]
+nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solution: false}
+---
+
+#include <iostream>
+#include "../randomization.h"
+using namespace std;
+
+CONST I1 = RANDOM_INT(3, 9);
+
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-output]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+
+int x = I1;
+string r;
+if ( x >= 0 and x <= 2 ) {
+    r = "oui";
+} else {
+    r = "non";
+}
+
+/// Assigner la valeur attendue de r à la variable result
+string result;
+cin >> result;
+```
+
++++
+
+```{code-cell} c++
+---
+editable: false
+tags: [hide-cell]
+nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: false}
+---
+CHECK( result == r );
+```
