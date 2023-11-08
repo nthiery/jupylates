@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : division entière.
+### Objectif Pédagigique : comprendre une factorielle avec une boucle for
 
 ```{code-cell} c++
 ---
@@ -18,40 +18,33 @@ editable: false
 tags: [hide-cell]
 nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solution: false}
 ---
-
 #include <iostream>
-#include "randomization.h"
+#include "../randomization.h"
 using namespace std;
 
-CONST I1 = RANDOM_CHOICE(3, 5, 7);
-CONST I3 = RANDOM_CHOICE(1, 2, 4, 8, 11, 13, 16, 17, 19, 22);
-
+CONST N0 = RANDOM_INT(3, 5);
+// Ne pas randomiser le nom de variable pour l'indice k, sinon risque qu'on tombe sur n, qui existe déjà dans ce code.
+// (Ou alors remplacer n par m, puis randomiser le nom de variable de l'indice k ?)
 ```
 
 +++
 
 ```{code-cell} c++
 ---
+tags: [hide-output]
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
+int n, r;
+n = N0;
+r = 1;
 
-int r;
-r = I3 / I1;
-/// Assigner la valeur attendue de r à la variable output
-int output;
-```
+for ( int k = 1; k <= n; k++ ) {
+    r = r * k;
+}
 
-+++
-
-```{code-cell} c++
----
-editable: false
-tags: [hide-cell]
-nbgrader: {grade: false, grade_id: solution, schema_version: 3, locked: true, solution: true}
----
-/// BEGIN SOLUTION
-output = I3 / I1;
-/// END SOLUTION
+/// Assigner la valeur attendue de r à la variable result
+int result;
+cin >> result
 ```
 
 +++
@@ -62,5 +55,5 @@ editable: false
 tags: [hide-cell]
 nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: false}
 ---
-CHECK( output == r );
+CHECK( result == r );
 ```

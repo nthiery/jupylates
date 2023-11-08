@@ -17,7 +17,7 @@ tags: [hide-cell]
 nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solution: false}
 ---
 #include<iostream>
-#include "randomization.h"
+#include "../randomization.h"
 using namespace std;
 
 CONST C1 = RANDOM_INT(-2, 2);
@@ -33,5 +33,3 @@ nbgrader: {grade: false, grade_id: output, schema_version: 3,locked: false, solu
 int X = C1;
 cout << X << endl;
 ```
-
-

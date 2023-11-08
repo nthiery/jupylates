@@ -18,7 +18,7 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 ---
 // Objective: test programs with two input zones
 #include <iostream>
-#include "randomization.h"
+#include "../randomization.h"
 using namespace std;
 ```
 
