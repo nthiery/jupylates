@@ -20,7 +20,8 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 ---
 
 #include <iostream>
-#include "randomization.h"
+#include "../randomization.h"
+
 using namespace std;
 
 CONST NAMEstr = RANDOM_CHOICE("Bob", "Barbara", "Pierre", "Paul", "Jeanne", "Camille");

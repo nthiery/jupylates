@@ -21,7 +21,7 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 
 #include <iostream>
 using namespace std;
-#include "randomization.h"
+#include "../randomization.h"
 
 CONST I1 = RANDOM_INT(0, 7);
 CONST I2 = RANDOM_INT(8, 15);
