@@ -1,0 +1,27 @@
+# See docs at: https://mystmd.org/guide/frontmatter
+# https://mystmd.org/guide/integrating-jupyter
+version: 1
+project:
+  title: jupyter-plato
+  # description:
+  keywords: []
+  authors: []
+  # github:
+  # bibliography: []
+  jupyter:
+    lite: false
+    binder: false
+    server:
+      url: http://localhost:8888/
+      token: test-secret
+    kernelName: xcpp17
+    # disableSessionSaving:
+site:
+  template: book-theme
+  title:  jupyter-plato
+  # logo:
+  nav: []
+  actions:
+    - title: Learn More
+      url: https://mystmd.org/guide
+  domains: []
