@@ -1,4 +1,6 @@
 *.ipynb_checkpoints
 *.ipynb
+__pycache__
 # website rendering
 _build
+
