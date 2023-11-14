@@ -6,9 +6,7 @@
 /** Infrastructure minimale de test **/
 #define ASSERT(test) if (!(test)) std::cout << "Test failed in file " << __FILE__ \
 				            << " line " << __LINE__ << ": " #test << std::endl
-#define CHECK(test)  if (!(test)) std::cout << "Test failed in file " << __FILE__ \
-				            << " line " << __LINE__ << ": " #test << std::endl
-
+#define CHECK(C) if ( !(C) ) { throw std::runtime_error("\\x1b[48;5;224mTest failed: "#C); }
 // TODO: how to initialize the seed?
 
 // TODO: randomize ???
