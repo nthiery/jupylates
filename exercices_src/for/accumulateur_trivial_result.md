@@ -22,8 +22,6 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 #include "randomization.h"
 using namespace std;
 
-#define CHECK(C) if ( !(C) ) { throw std::runtime_error(\"\\x1b[48;5;224mTest failed: \"#C); }
-
 CONST RINIT = RANDOM_INT(1, 7);
 CONST IMAX = RANDOM_INT(2, 4);
 

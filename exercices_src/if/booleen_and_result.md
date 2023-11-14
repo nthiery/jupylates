@@ -23,8 +23,6 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 #include "randomization.h"
 using namespace std;
 
-#define CHECK(C) if ( !(C) ) { throw std::runtime_error(\"\\x1b[48;5;224mTest failed: \"#C); }
-
 CONST I1 = RANDOM_INT(3, 9);
 
 ```

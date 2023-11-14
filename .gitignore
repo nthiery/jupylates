@@ -1,5 +1,5 @@
 *.ipynb_checkpoints
-*.ipynb
+exercices_src/*/*.ipynb
 __pycache__
 # website rendering
 _build

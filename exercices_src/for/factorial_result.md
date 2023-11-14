@@ -22,8 +22,6 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 #include "randomization.h"
 using namespace std;
 
-#define CHECK(C) if ( !(C) ) { throw std::runtime_error(\"\\x1b[48;5;224mTest failed: \"#C); }
-
 CONST N0 = RANDOM_INT(3, 5);
 // Ne pas randomiser le nom de variable pour l'indice k, sinon risque qu'on tombe sur n, qui existe déjà dans ce code.
 // (Ou alors remplacer n par m, puis randomiser le nom de variable de l'indice k ?)
