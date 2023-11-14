@@ -19,8 +19,10 @@ tags: [hide-cell]
 nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solution: false}
 ---
 #include <iostream>
-#include "../randomization.h"
+#include "randomization.h"
 using namespace std;
+
+#define CHECK(C) if ( !(C) ) { throw std::runtime_error(\"\\x1b[48;5;224mTest failed: \"#C); }
 
 CONST N0 = RANDOM_INT(3, 5);
 // Ne pas randomiser le nom de variable pour l'indice k, sinon risque qu'on tombe sur n, qui existe déjà dans ce code.
@@ -41,9 +43,28 @@ r = 1;
 for ( int k = 1; k <= n; k++ ) {
     r = r * k;
 }
+```
 
-/// Assigner la valeur attendue de r à la variable result
++++
+
+Assigner la valeur attendue de r à la variable result
+```{code-cell} c++
+---
+editable: true
+tags: [answer]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
 int result;
+```
+
++++
+
+```{code-cell} c++
+---
+editable: true
+tags: [answer]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
 cin >> result
 ```
 
@@ -53,7 +74,7 @@ cin >> result
 ---
 editable: false
 tags: [hide-cell]
-nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: false}
+nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: true}
 ---
 CHECK( result == r );
 ```

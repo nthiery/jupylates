@@ -20,7 +20,9 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 ---
 
 #include <iostream>
-#include "../randomization.h"
+#include "randomization.h"
+
+#define CHECK(C) if ( !(C) ) { throw std::runtime_error(\"\\x1b[48;5;224mTest failed: \"#C); }
 
 using namespace std;
 
@@ -38,8 +40,28 @@ nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, soluti
 
 string NAME = NAMEstr;
 string r = NAME;
-/// Assigner la valeur attendue de r à la variable result
+```
+
++++
+
+Assigner la valeur attendue de r à la variable result
+```{code-cell} c++
+---
+editable: true
+tags: [answer]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
 string result;
+```
+
++++
+
+```{code-cell} c++
+---
+editable: true
+tags: [answer]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
 cin >> result;
 ```
 
@@ -49,8 +71,7 @@ cin >> result;
 ---
 editable: false
 tags: [hide-cell]
-nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: false}
+nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: true}
 ---
 CHECK( result == r );
 ```
-
