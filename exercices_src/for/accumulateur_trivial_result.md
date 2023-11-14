@@ -46,7 +46,6 @@ Assigner la valeur attendue de r à la variable result
 ```{code-cell} c++
 ---
 editable: true
-tags: [answer]
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 int result;

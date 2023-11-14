@@ -36,11 +36,11 @@ nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, soluti
 ---
 
 int x = I1;
-string r;
+bool r;
 if ( x < 0 or x > 2 ) {
-    r = "oui";
+    r = true;
 } else {
-    r = "non";
+    r = false;
 }
 ```
 
@@ -50,10 +50,9 @@ Assigner la valeur attendue de r à la variable result
 ```{code-cell} c++
 ---
 editable: true
-tags: [answer]
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
-string result;
+bool result;
 ```
 
 +++
