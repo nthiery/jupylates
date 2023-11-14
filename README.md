@@ -16,6 +16,11 @@ once converted they can be validated via
 nbgrader validate <name_of_the_notebook>.ipynb
 ```
 
+### Build an exerciser notebookes
+
+The markdown notebooks should be converted in ipynb (see previous section) then `exercizer.ipynb` est
+ouvert dans jupyter lab.
+
 ### Build an exerciser website
 
 The repository can be built as an interactive website using
