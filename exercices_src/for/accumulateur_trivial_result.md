@@ -21,17 +21,35 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 #include <iostream>
 #include "randomization.h"
 using namespace std;
-
-CONST RINIT = RANDOM_INT(1, 7);
-CONST IMAX = RANDOM_INT(2, 4);
-
 ```
 
 +++
 
 ```{code-cell} c++
 ---
-tags: [hide-output]
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST RINIT = RANDOM_INT(1, 7);
+RINIT
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST IMAX = RANDOM_INT(2, 4);
+IMAX
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-output, substitution]
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 int r = RINIT;

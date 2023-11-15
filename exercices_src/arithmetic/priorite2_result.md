@@ -21,18 +21,46 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 #include <iostream>
 #include "randomization.h"
 using namespace std;
-
-CONST I1 = RANDOM_INT(1, 5);
-CONST I2 = RANDOM_INT(1, 3);
-CONST I3 = RANDOM_INT(1, 7);
-
 ```
 
 +++
 
 ```{code-cell} c++
 ---
-tags: [hide-output]
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST I1 = RANDOM_INT(1, 5);
+I1
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST I2 = RANDOM_INT(1, 3);
+I2
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST I3 = RANDOM_INT(1, 7);
+I3
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-output,substitution]
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 

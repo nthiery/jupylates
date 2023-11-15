@@ -23,16 +23,24 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 #include "randomization.h"
 
 using namespace std;
-
-CONST NAMEstr = RANDOM_CHOICE("Bob", "Barbara", "Pierre", "Paul", "Jeanne", "Camille");
-
 ```
 
 +++
 
 ```{code-cell} c++
 ---
-tags: [hide-output]
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST NAMEstr = RANDOM_CHOICE("Bob", "Barbara", "Pierre", "Paul", "Jeanne", "Camille");
+NAMEstr
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-output, substitution]
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 

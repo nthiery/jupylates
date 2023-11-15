@@ -22,16 +22,24 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 #include <iostream>
 #include "randomization.h"
 using namespace std;
-
-CONST I1 = RANDOM_INT(-1, 4);
-
 ```
 
 +++
 
 ```{code-cell} c++
 ---
-tags: [hide-output]
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST I1 = RANDOM_INT(-1, 4);
+I1
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-output, substitution]
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 

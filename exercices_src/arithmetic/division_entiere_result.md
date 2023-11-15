@@ -22,16 +22,35 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 #include <iostream>
 #include "randomization.h"
 using namespace std;
-
-CONST I1 = RANDOM_CHOICE(3, 5, 7);
-CONST I3 = RANDOM_CHOICE(1, 2, 4, 8, 11, 13, 16, 17, 19, 22);
 ```
 
 +++
 
 ```{code-cell} c++
 ---
-tags: [hide-output]
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST I1 = RANDOM_CHOICE(3, 5, 7);
+I1
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST I3 = RANDOM_CHOICE(1, 2, 4, 8, 11, 13, 16, 17, 19, 22);
+I3
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-output, substitution]
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 

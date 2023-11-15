@@ -21,17 +21,26 @@ nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solu
 #include <iostream>
 #include "randomization.h"
 using namespace std;
-
-CONST N0 = RANDOM_INT(3, 5);
-// Ne pas randomiser le nom de variable pour l'indice k, sinon risque qu'on tombe sur n, qui existe déjà dans ce code.
-// (Ou alors remplacer n par m, puis randomiser le nom de variable de l'indice k ?)
 ```
 
 +++
 
 ```{code-cell} c++
 ---
-tags: [hide-output]
+tags: [hide-cell, variable]
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+---
+CONST N0 = RANDOM_INT(3, 5);
+// Ne pas randomiser le nom de variable pour l'indice k, sinon risque qu'on tombe sur n, qui existe déjà dans ce code.
+// (Ou alors remplacer n par m, puis randomiser le nom de variable de l'indice k ?)
+N0
+```
+
++++
+
+```{code-cell} c++
+---
+tags: [hide-output, substitution]
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 int n, r;

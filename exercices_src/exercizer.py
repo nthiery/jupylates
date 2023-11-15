@@ -1,4 +1,4 @@
-import copy
+import copy, random
 import nbformat
 import IPython  # type: ignore
 from IPython.core.display_functions import display  # type: ignore
@@ -51,6 +51,7 @@ class Exercizer(ipywidgets.VBox):
         ep = ExecutePreprocessor(timeout=600, allow_errors=True)
         result = ep.preprocess(notebook)
         variables = {}
+        variables['PLUSOUMOINS'] = str(random.choice(['+', '-']))
         for i in range(len(notebook.cells)):
             cell = result[0]["cells"][i]
             if "tags" in cell["metadata"] and "variable" in cell["metadata"]["tags"]:
