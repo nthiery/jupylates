@@ -10,7 +10,7 @@ answer_code = {
     "C++11": "auto result = {answer};",
     "C++14": "auto result = {answer};",
     "C++17": "auto result = {answer};",
-    "python": "result = {answer}",
+    "python": "{answer}",
 }
 
 class Exercizer(ipywidgets.VBox):
