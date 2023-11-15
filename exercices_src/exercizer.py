@@ -42,8 +42,27 @@ class Exercizer(ipywidgets.VBox):
         self.current_notebook = nbformat.read(
             self.exercizes[self.current_exercize_number], as_version=4
         )
+        self.randomize_notebook(self.current_notebook)
         self.display_exercize(self.current_notebook)
         self.result_label.value = ""
+
+    def randomize_notebook(self, notebook):
+        notebook = copy.deepcopy(notebook)
+        ep = ExecutePreprocessor(timeout=600, allow_errors=True)
+        result = ep.preprocess(notebook)
+        variables = {}
+        for i in range(len(notebook.cells)):
+            cell = result[0]["cells"][i]
+            if "tags" in cell["metadata"] and "variable" in cell["metadata"]["tags"]:
+                var_name = cell["source"].split("\n")[-1]
+                var_value = cell["outputs"][0]['data']['text/plain']
+                variables[var_name] = var_value
+            if "tags" in cell["metadata"] and "substitution" in cell["metadata"]["tags"]:
+                for key in variables.keys():
+                    if key in cell['source']:
+                        cell = nbformat.v4.new_code_cell(cell['source'].replace(key, variables[key]))
+                notebook.cells[i] = cell
+        self.current_notebook = notebook
 
     def run_exercize(self):
         success = self.run_notebook(self.current_notebook, self.answer_zone.value)
@@ -68,14 +87,20 @@ class Exercizer(ipywidgets.VBox):
             if "tags" in notebook.cells[i]["metadata"] and "answer" in notebook.cells[i]["metadata"]["tags"]:
                 language = notebook.metadata["kernelspec"]["language"]
                 code = answer_code[language].format(answer=answer)
-                notebook.cells[i] = nbformat.v4.new_code_cell(code)
+                notebook.cells[i] = nbformat.v4.new_code_cell(code, metadata={"tags": ["answer"]})
 
         ep = ExecutePreprocessor(timeout=600, allow_errors=True)
         result = ep.preprocess(notebook)
-        return not any(
-            cell["cell_type"] == "code"
-            and cell["metadata"].get("nbgrader", {}).get("solution", False)
-            and cell["outputs"]
-            and cell["outputs"][0]["output_type"] == "error"
-            for cell in result[0]["cells"]
-        )
+        runtime_error = any(cell["cell_type"] == "code" and cell["outputs"] and len(cell["outputs"])>0 and cell["outputs"][-1]["output_type"] == "error" for cell in result[0]["cells"])
+        if runtime_error:
+            return not runtime_error
+        else:
+            return not any(
+                cell["cell_type"] == "code"
+                and cell["metadata"].get("nbgrader", {}).get("solution", False)
+                and cell["outputs"]
+                and cell["outputs"][0]["output_type"] == "error"
+                for cell in result[0]["cells"]
+            )
+
+
