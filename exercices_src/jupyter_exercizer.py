@@ -19,10 +19,6 @@ Notebook = Any
 class ExecutionError(RuntimeError):
     pass
 
-
-answer_regexp = re.compile(r"INPUT\(.*\)")
-
-
 class Exercizer(ipywidgets.VBox):
     def __init__(self, exercizes: List[str]):
         self.exercizes = sorted(exercizes)
@@ -141,7 +137,7 @@ class Exercizer(ipywidgets.VBox):
                 elif cell["cell_type"] == "markdown":
                     display(IPython.display.Markdown(cell["source"]))
                 else:
-                    if "hidden" not in cell["metadata"].get("tags", []):
+                    if "hide-cell" not in cell["metadata"].get("tags", []):
                         display(IPython.display.Code(cell["source"]))
 
     def randomize_notebook(self, notebook: Notebook) -> Notebook:
@@ -156,14 +152,21 @@ class Exercizer(ipywidgets.VBox):
 
     def run_notebook(self, notebook: Notebook, answer: str, dir: str) -> bool:
         notebook = copy.deepcopy(notebook)
+        kernel_name = notebook["metadata"]["kernelspec"]["name"]
         for i, cell in enumerate(notebook.cells):
             # If Autograded code cell
             if cell["cell_type"] == "code" and cell["metadata"].get("nbgrader", {}).get(
                 "solution", False
             ):
-                code = re.sub(answer_regexp, answer, cell["source"])
+                if "tags" in cell["metadata"] and "output" in cell["metadata"]["tags"]:
+                    if "python" in kernel_name:
+                        code = "answer = " + answer
+                    else:
+                        code = "auto answer = " + answer + ";"
+                else:
+                    code = answer
                 notebook.cells[i] = nbformat.v4.new_code_cell(code)
-        ep = ExecutePreprocessor(timeout=600, allow_errors=True)
+        ep = ExecutePreprocessor(timeout=600, kernel_name=kernel_name, allow_errors=True)
 
         owd = os.getcwd()
         try:

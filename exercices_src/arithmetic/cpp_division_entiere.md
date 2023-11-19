@@ -6,39 +6,49 @@ jupytext:
     format_version: 0.13
     jupytext_version: 1.15.2
 kernelspec:
-  display_name: Python 3 (ipykernel)
-  language: python
-  name: python3
+  display_name: C++17
+  language: C++17
+  name: xcpp17
 ---
 
 ### Objectif Pédagogique : division entière.
 
-```{code-cell} ipython3
+```{code-cell}
 :editable: false
 :tags: [hide-cell]
 
-from jupyter_exercizer_helpers import RANDOM_CHOICE, CONST
+#include <iostream>
+#include "jupyter_exercizer_helpers.hpp"
+using namespace std;
 ```
 
-```{code-cell} ipython3
++++
+
+```{code-cell}
 :tags: [hide-cell, variable]
 
-I1: CONST = RANDOM_CHOICE(3, 5, 7)
+CONST I1 = RANDOM_CHOICE(3, 5, 7);
 I1
 ```
 
-```{code-cell} ipython3
++++
+
+```{code-cell}
 :tags: [hide-cell, variable]
 
-I3: CONST = RANDOM_CHOICE(1, 2, 4, 8, 11, 13, 16, 17, 19, 22)
+CONST I3 = RANDOM_CHOICE(1, 2, 4, 8, 11, 13, 16, 17, 19, 22);
 I3
 ```
 
-```{code-cell} ipython3
++++
+
+```{code-cell}
 :tags: [hide-output, substitution]
 
-r = int(I3 / I1)
+int r;
+r = I3 / I1;
 ```
++++
 
 :::{admonition} Consigne
 
@@ -46,7 +56,15 @@ Assigner la valeur attendue de r à la variable result
 
 :::
 
-```{code-cell} ipython3
+```{code-cell}
+:editable: true
+
+int result;
+```
+
++++
+
+```{code-cell}
 ---
 editable: true
 nbgrader:
@@ -56,13 +74,15 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-## BEGIN SOLUTION
-## Votre solution ici
-result = I3 / I1
-## END SOLUTION
+// BEGIN SOLUTION
+// Votre solution ici
+result = I3 / I1;
+// END SOLUTION
 ```
 
-```{code-cell} ipython3
++++
+
+```{code-cell}
 ---
 editable: false
 nbgrader:
@@ -74,5 +94,5 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
-assert result == r
+CHECK( result == r );
 ```

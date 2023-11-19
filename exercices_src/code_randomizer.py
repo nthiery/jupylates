@@ -2,6 +2,8 @@ import random
 import re
 from typing import Dict, Tuple
 
+from jupyter_exercizer_helpers import RANDOM_INT, RANDOM_CHOICE
+
 STRING_QUOTE = '"'
 VECTOR_OPEN = "{"
 VECTOR_CLOSE = "}"
@@ -40,32 +42,6 @@ def to_language(value):
         return VECTOR_OPEN + ", ".join(to_language(v) for v in value) + VECTOR_CLOSE
     else:
         return str(value)
-
-
-def RANDOM_INT(min, max):
-    r"""
-    Return a random integer between `min` and `max` included.
-
-        >>> RANDOM_INT(3,5)     # doctest: +SKIP
-        4
-
-        >>> RANDOM_INT(3,3)
-        3
-    """
-    return random.randint(min, max)
-
-
-def RANDOM_CHOICE(*args):
-    r"""
-    Return a random element of `args`
-
-        >>> RANDOM_CHOICE("alice", "bob", "charlie")  # doctest: +SKIP
-        'charlie'
-
-        >>> RANDOM_CHOICE("alice")
-        'alice'
-    """
-    return random.choice(args)
 
 
 def RANDOM_VECTOR(n, generator, *args):

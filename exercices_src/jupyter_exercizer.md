@@ -19,10 +19,6 @@ slideshow:
 ---
 import glob
 from jupyter_exercizer import Exercizer
-exercizer = Exercizer(glob.glob("exercizes/*.md"))
+exercizer = Exercizer(glob.glob("*/*.md"))
 exercizer
-```
-
-```{code-cell} ipython3
-
 ```

@@ -16,9 +16,8 @@ kernelspec:
 ---
 editable: false
 tags: [hide-cell]
-nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solution: false}
 ---
-from randomization import RANDOM_INT
+from jupyter_exercizer_helpers import RANDOM_INT, CONST
 ```
 
 +++
@@ -26,9 +25,8 @@ from randomization import RANDOM_INT
 ```{code-cell} python
 ---
 tags: [hide-cell, variable]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
-I1 = RANDOM_INT(1, 5)
+I1: CONST = RANDOM_INT(1, 5)
 I1
 ```
 
@@ -37,9 +35,8 @@ I1
 ```{code-cell} python
 ---
 tags: [hide-cell, variable]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
-I2 = RANDOM_INT(1, 3)
+I2: CONST = RANDOM_INT(1, 3)
 I2
 ```
 
@@ -48,9 +45,8 @@ I2
 ```{code-cell} python
 ---
 tags: [hide-cell, variable]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
-I3 = RANDOM_INT(1, 7)
+I3: CONST = RANDOM_INT(1, 7)
 I3
 ```
 
@@ -59,7 +55,6 @@ I3
 ```{code-cell} python
 ---
 tags: [hide-output,substitution]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 
 r = (I2 PLUSOUMOINS I1) * I3
@@ -68,15 +63,21 @@ r = (I2 PLUSOUMOINS I1) * I3
 
 +++
 
+:::{admonition} Consigne
+
 Assigner la valeur attendue de r à la variable result
+
+:::
 
 ```{code-cell} python
 ---
 editable: true
-tags: [answer]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: true}
 ---
+## BEGIN SOLUTION
 ## Votre solution ici
+result = (I2 PLUSOUMOINS I1) * I3
+## END SOLUTION
 ```
 
 +++
@@ -85,7 +86,7 @@ nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, soluti
 ---
 editable: false
 tags: [hide-cell]
-nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: true}
+nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: false}
 ---
 assert result == r
 ```

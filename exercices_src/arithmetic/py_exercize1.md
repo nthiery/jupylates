@@ -16,29 +16,46 @@ kernelspec:
 editable: true
 slideshow:
   slide_type: ''
-tags: [hidden]
+tags: [hide-cell]
 ---
 from jupyter_exercizer_helpers import *
-D: CONST = RANDOM_INT(1,10)
+A: CONST = RANDOM_INT(1,10)
+B: CONST = RANDOM_INT(1,10)
 ```
 
-+++ {"slideshow": {"slide_type": ""}, "editable": true}
++++ {"slideshow": {"slide_type": ""}}
 
-# Exercice : incrémentation
+# Exercise : incrémentation
 
 :::{admonition} Consigne
 
-Quelle valeur doit avoir `R` avant l'exécution de ce code pour qu'il vaille 42 à la fin?
+Quelle est la valeur de `R` après exécution du code suivant?
 
 :::
 
 ```{code-cell} ipython3
 ---
-answer: output
+slideshow:
+  slide_type: ''
+---
+R = A;
+```
+
+```{code-cell} ipython3
+---
+slideshow:
+  slide_type: ''
+---
+R = R + B;
+```
+
+```{code-cell} ipython3
+---
+tags: [output]
 editable: true
 nbgrader:
   grade: false
-  grade_id: cell-b2b14bef0a5da1ca
+  grade_id: cell-a690d81bc0582465
   locked: false
   schema_version: 3
   solution: true
@@ -46,16 +63,7 @@ nbgrader:
 slideshow:
   slide_type: ''
 ---
-R = INPUT(42-D)
-```
-
-```{code-cell} ipython3
----
-editable: true
-slideshow:
-  slide_type: ''
----
-R = R + D;
+answer = (A + B)
 ```
 
 ```{code-cell} ipython3
@@ -71,7 +79,7 @@ nbgrader:
   task: false
 slideshow:
   slide_type: ''
-tags: [hidden]
+tags: [hide-cell]
 ---
-assert R == 42
+assert R == answer
 ```

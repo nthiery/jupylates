@@ -1,69 +1,72 @@
 ---
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: myst
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.15.2
 kernelspec:
-   display_name: Python 3 (ipykernel)
-   language: python
-   name: python3
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 ### Objectif Pédagogique : comprendre la difference entre valeur et nom d'une variable de type string.
 
-```{code-cell} python
----
-editable: false
-tags: [hide-cell]
-nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solution: false}
----
-from randomization import RANDOM_CHOICE
+```{code-cell} ipython3
+:editable: false
+:tags: [hide-cell]
+
+from jupyter_exercizer_helpers import RANDOM_CHOICE, CONST
 ```
 
-+++
+```{code-cell} ipython3
+:tags: [hide-cell, variable]
 
-```{code-cell} python
----
-tags: [hide-cell, variable]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
----
-NAMEstr = RANDOM_CHOICE("Bob", "Barbara", "Pierre", "Paul", "Jeanne", "Camille")
+NAMEstr: CONST = RANDOM_CHOICE("Bob", "Barbara", "Pierre", "Paul", "Jeanne", "Camille")
 NAMEstr
 ```
 
-+++
-
-```{code-cell} python
----
-tags: [hide-output, substitution]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
----
+```{code-cell} ipython3
+:tags: [hide-output, substitution]
 
 NAME = NAMEstr
 r = NAME
 ```
 
-+++
+:::{admonition} Consigne
 
 Assigner la valeur attendue de r à la variable result
 
-```{code-cell} python
+:::
+
+```{code-cell} ipython3
 ---
 editable: true
-tags: [answer]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+nbgrader:
+  grade: false
+  grade_id: init
+  locked: false
+  schema_version: 3
+  solution: true
 ---
+## BEGIN SOLUTION
 ## Votre solution ici
+result = NAMEstr
+## END SOLUTION
 ```
 
-+++
-
-```{code-cell} python
+```{code-cell} ipython3
 ---
 editable: false
+nbgrader:
+  grade: true
+  grade_id: check
+  locked: true
+  points: 1
+  schema_version: 3
+  solution: false
 tags: [hide-cell]
-nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: true}
 ---
 assert result == r
 ```

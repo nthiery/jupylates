@@ -16,11 +16,10 @@ kernelspec:
 ---
 editable: false
 tags: [hide-cell]
-nbgrader: {grade: false, grade_id: header, schema_version: 3, locked: true, solution: false}
 ---
 
 #include <iostream>
-#include "randomization.h"
+#include "jupyter_exercizer_helpers.hpp"
 
 using namespace std;
 ```
@@ -30,7 +29,6 @@ using namespace std;
 ```{code-cell} c++
 ---
 tags: [hide-cell, variable]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 CONST NAMEstr = RANDOM_CHOICE("Bob", "Barbara", "Pierre", "Paul", "Jeanne", "Camille");
 NAMEstr
@@ -41,7 +39,6 @@ NAMEstr
 ```{code-cell} c++
 ---
 tags: [hide-output, substitution]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 
 string NAME = NAMEstr;
@@ -50,33 +47,50 @@ string r = NAME;
 
 +++
 
+:::{admonition} Consigne
+
 Assigner la valeur attendue de r à la variable result
+
+:::
+
 ```{code-cell} c++
 ---
 editable: true
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
 ---
 string result;
 ```
 
 +++
 
-```{code-cell} c++
+```{code-cell}
 ---
 editable: true
-tags: [answer]
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: false}
+nbgrader:
+  grade: false
+  grade_id: init
+  locked: false
+  schema_version: 3
+  solution: true
 ---
-cin >> result;
+// BEGIN SOLUTION
+// Votre solution ici
+result = NAMEstr;
+// END SOLUTION
 ```
 
 +++
 
-```{code-cell} c++
+```{code-cell}
 ---
 editable: false
+nbgrader:
+  grade: true
+  grade_id: check
+  locked: true
+  points: 1
+  schema_version: 3
+  solution: false
 tags: [hide-cell]
-nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: true}
 ---
 CHECK( result == r );
 ```
