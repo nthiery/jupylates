@@ -26,7 +26,7 @@ class Exercizer(ipywidgets.VBox):
         # View
         border_layout = ipywidgets.Layout(border="solid", padding="1ex")
         self.exercize_zone = ipywidgets.Output(layout=border_layout)
-        self.answer_zone = ipywidgets.Text()
+        self.answer_zone = ipywidgets.Textarea()
         self.run_button = ipywidgets.Button(
             description="Valider", button_style="primary", icon="check"
         )

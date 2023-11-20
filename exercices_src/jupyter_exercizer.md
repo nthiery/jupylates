@@ -22,3 +22,11 @@ from jupyter_exercizer import Exercizer
 exercizer = Exercizer(glob.glob("*/*.md"))
 exercizer
 ```
+
+```{code-cell} ipython3
+
+```
+
+```{code-cell} ipython3
+
+```
