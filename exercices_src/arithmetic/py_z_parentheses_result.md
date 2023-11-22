@@ -49,7 +49,7 @@ r = K == N
 
 :::{admonition} Consigne
 
-Assigner la valeur attendue de r à la variable result
+Quelle est la valeur attendue de r?
 
 :::
 
@@ -63,10 +63,7 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-## BEGIN SOLUTION
-## Votre solution ici
-result = r;
-## END SOLUTION
+result = INPUT(r);
 ```
 
 +++

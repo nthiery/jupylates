@@ -10,7 +10,7 @@ kernelspec:
    name: python3
 ---
 
-### Objectif Pédagogique : opération "and".
+### Objectif Pédagogique : accumulateur avec boucle for
 
 ```{code-cell} python
 ---
@@ -22,27 +22,34 @@ from jupyter_exercizer_helpers import RANDOM_INT, CONST
 
 +++
 
-```{code-cell} python
+```{code-cell} c++
 ---
 tags: [hide-cell, variable]
 ---
-I1: CONST = RANDOM_INT(3, 9)
-I1
+RINIT: CONST = RANDOM_INT(1, 7)
+RINIT
 ```
 
 +++
 
-```{code-cell} python
+```{code-cell} c++
+---
+tags: [hide-cell, variable]
+---
+IMAX: CONST = RANDOM_INT(2, 4) + 1
+IMAX
+```
+
++++
+
+```{code-cell} c++
 ---
 tags: [hide-output, substitution]
 ---
-
-x = I1
-if x >= 0 and x <= 2 :
-    r = True
-else:
-    r = False
-
+r = RINIT
+a = 2
+for I in range(1, IMAX):
+    r = r + a * I
 ```
 
 +++

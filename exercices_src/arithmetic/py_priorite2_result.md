@@ -65,7 +65,7 @@ r = (I2 PLUSOUMOINS I1) * I3
 
 :::{admonition} Consigne
 
-Assigner la valeur attendue de r à la variable result
+Quelle est la valeur attendue de r?
 
 :::
 
@@ -74,10 +74,7 @@ Assigner la valeur attendue de r à la variable result
 editable: true
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: true}
 ---
-## BEGIN SOLUTION
-## Votre solution ici
-result = (I2 PLUSOUMOINS I1) * I3
-## END SOLUTION
+result = INPUT((I2 PLUSOUMOINS I1) * I3)
 ```
 
 +++

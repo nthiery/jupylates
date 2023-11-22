@@ -36,7 +36,7 @@ r = NAME
 
 :::{admonition} Consigne
 
-Assigner la valeur attendue de r à la variable result
+Quelle est la valeur attendue de r?
 
 :::
 
@@ -50,10 +50,7 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-## BEGIN SOLUTION
-## Votre solution ici
-result = NAMEstr
-## END SOLUTION
+result = INPUT(NAMEstr)
 ```
 
 ```{code-cell} ipython3

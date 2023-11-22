@@ -48,7 +48,7 @@ else:
 
 :::{admonition} Consigne
 
-Assigner la valeur attendue de r à la variable result
+Quelle est la valeur attendue de r?
 
 :::
 
@@ -57,10 +57,7 @@ Assigner la valeur attendue de r à la variable result
 editable: true
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: true}
 ---
-## BEGIN SOLUTION
-## Votre solution ici
-result = r
-## END SOLUTION
+result = INPUT(r)
 ```
 
 +++

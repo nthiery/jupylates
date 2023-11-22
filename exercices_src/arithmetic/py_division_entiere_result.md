@@ -42,7 +42,7 @@ r = int(I3 / I1)
 
 :::{admonition} Consigne
 
-Assigner la valeur attendue de r à la variable result
+Quelle est la valeur attendue de r?
 
 :::
 
@@ -56,10 +56,8 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-## BEGIN SOLUTION
-## Votre solution ici
-result = I3 / I1
-## END SOLUTION
+
+result = INPUT(I3 / I1)
 ```
 
 ```{code-cell} ipython3
