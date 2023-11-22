@@ -19,6 +19,10 @@ Notebook = Any
 class ExecutionError(RuntimeError):
     pass
 
+
+answer_regexp = re.compile(r"INPUT\(.*\)")
+
+
 class Exercizer(ipywidgets.VBox):
     def __init__(self, exercizes: List[str]):
         self.exercizes = sorted(exercizes)
@@ -158,11 +162,10 @@ class Exercizer(ipywidgets.VBox):
             if cell["cell_type"] == "code" and cell["metadata"].get("nbgrader", {}).get(
                 "solution", False
             ):
-                if "tags" in cell["metadata"] and "output" in cell["metadata"]["tags"]:
-                    if "python" in kernel_name:
-                        code = "answer = " + answer
-                    else:
-                        code = "auto answer = " + answer + ";"
+                code = cell["source"]
+                print(code, re.search(answer_regexp, code))
+                if re.search(answer_regexp, code):
+                    code = re.sub(answer_regexp, answer, code)
                 else:
                     code = answer
                 notebook.cells[i] = nbformat.v4.new_code_cell(code)
