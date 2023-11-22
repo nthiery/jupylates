@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : division entière.
+### Objectif Pédagigique : boucle for avec accumulateur.
 
 ```{code-cell}
 :editable: false
@@ -22,39 +22,25 @@ kernelspec:
 using namespace std;
 ```
 
-+++
-
 ```{code-cell}
 :tags: [hide-cell, variable]
 
-CONST I1 = RANDOM_CHOICE(3, 5, 7);
-I1
+CONST I1 = RANDOM_INT(1, 6);
+CONST I2 = I1 + RANDOM_INT(10,12);
 ```
-
-+++
-
-```{code-cell}
-:tags: [hide-cell, variable]
-
-CONST I3 = RANDOM_CHOICE(1, 2, 4, 8, 11, 13, 16, 17, 19, 22);
-I3
-```
-
-+++
-
-```{code-cell}
-:tags: [hide-output, substitution]
-
-int r;
-r = I3 / I1;
-```
-+++
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Écrire le code permettant de mettre dans la variable p
+le produit des entiers compris entre I1 et I2 inclus.
 
 :::
+
+```{code-cell}
+:editable: true
+
+long int p;
+```
 
 ```{code-cell}
 ---
@@ -66,10 +52,12 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-int result = INPUT(I3 / I1);
+// BEGIN SOLUTION
+p = 1;
+for (int i = I1; i <= I2; i++)
+    p = p * i;
+// END SOLUTION
 ```
-
-+++
 
 ```{code-cell}
 ---
@@ -83,5 +71,8 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
-CHECK( result == r );
+long int result = 1;
+for (int i = I1; i <= I2; i++)
+    result = result * i;
+CHECK( result == p );
 ```

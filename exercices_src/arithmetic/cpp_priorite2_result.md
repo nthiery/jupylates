@@ -68,18 +68,9 @@ r = (I2 PLUSOUMOINS I1) * I3;
 
 :::{admonition} Consigne
 
-Assigner la valeur attendue de r à la variable result
+Quelle est la valeur attendue de r?
 
 :::
-
-```{code-cell} c++
----
-editable: true
----
-int result;
-```
-
-+++
 
 ```{code-cell}
 ---
@@ -91,10 +82,7 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-// BEGIN SOLUTION
-// Votre solution ici
-result = (I2 PLUSOUMOINS I1) * I3;
-// END SOLUTION
+int result = INPUT((I2 PLUSOUMOINS I1) * I3);
 ```
 
 +++

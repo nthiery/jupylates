@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : priorité des opérations.
+### Objectif Pédagigique : comprendre une boucle for et faire un calcul simple.
 
 ```{code-cell} c++
 ---
@@ -28,8 +28,8 @@ using namespace std;
 ---
 tags: [hide-cell, variable]
 ---
-CONST I1 = RANDOM_INT(1, 7);
-I1
+CONST RINIT = RANDOM_INT(1, 7);
+RINIT
 ```
 
 +++
@@ -38,30 +38,21 @@ I1
 ---
 tags: [hide-cell, variable]
 ---
-CONST I2 = RANDOM_INT(5, 12);
-I2
+CONST IMAX = RANDOM_INT(2, 4);
+IMAX
 ```
 
 +++
 
 ```{code-cell} c++
 ---
-tags: [hide-cell, variable]
+tags: [hide-output, substitution]
 ---
-CONST I3 = RANDOM_INT(1, 7);
-I3
-```
-
-+++
-
-```{code-cell} c++
----
-tags: [hide-output,substitution]
----
-
-int r;
-r = I2 + I1 * I3;
-
+int r = RINIT;
+int a = 2;
+for ( int I = 1; I <= IMAX ; I = I + 1 ) {
+    r = r + a * I;
+}
 ```
 
 +++
@@ -82,7 +73,7 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-int result = INPUT(I2 + I1 * I3);
+int result = INPUT(r);
 ```
 
 +++

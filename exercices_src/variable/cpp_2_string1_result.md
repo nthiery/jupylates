@@ -49,18 +49,9 @@ string r = NAME;
 
 :::{admonition} Consigne
 
-Assigner la valeur attendue de r à la variable result
+Quelle est la valeur attendue de r?
 
 :::
-
-```{code-cell} c++
----
-editable: true
----
-string result;
-```
-
-+++
 
 ```{code-cell}
 ---
@@ -72,10 +63,7 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-// BEGIN SOLUTION
-// Votre solution ici
-result = NAMEstr;
-// END SOLUTION
+string result = INPUT(NAMEstr);
 ```
 
 +++
