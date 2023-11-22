@@ -68,7 +68,11 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-bool result = INPUT(r);
+bool result = INPUT(
+   /// BEGIN SOLUTION
+   r
+   /// END SOLUTION
+);
 ```
 
 +++

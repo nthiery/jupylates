@@ -74,7 +74,11 @@ Quelle est la valeur attendue de r?
 editable: true
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: true}
 ---
-result = INPUT((I2 PLUSOUMOINS I1) * I3)
+result = INPUT(
+    ### BEGIN SOLUTION
+    (I2 PLUSOUMOINS I1) * I3
+    ### END SOLUTION
+)
 ```
 
 +++

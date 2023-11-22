@@ -63,7 +63,11 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-string result = INPUT(NAMEstr);
+string result = INPUT(
+    /// BEGIN SOLUTION
+    NAMEstr
+    /// END SOLUTION
+);
 ```
 
 +++

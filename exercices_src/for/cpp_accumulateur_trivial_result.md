@@ -72,7 +72,11 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-int result = INPUT(r);
+int result = INPUT(
+   /// BEGIN SOLUTION
+   r
+   /// END SOLUTION
+);
 ```
 
 +++

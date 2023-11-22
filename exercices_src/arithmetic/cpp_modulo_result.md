@@ -66,7 +66,11 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-int result = INPUT(I3 % I1);
+int result = INPUT(
+    /// BEGIN SOLUTION
+    I3 % I1
+    /// END SOLUTION
+);
 ```
 
 +++

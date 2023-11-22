@@ -46,10 +46,9 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-## BEGIN SOLUTION
-## Votre solution ici
+### BEGIN SOLUTION
 r = I1
-## END SOLUTION
+### END SOLUTION
 ```
 
 +++

@@ -20,7 +20,7 @@ class ExecutionError(RuntimeError):
     pass
 
 
-answer_regexp = re.compile(r"INPUT\(.*\)")
+answer_regexp = re.compile(r"INPUT\(.*\)", re.DOTALL)
 
 
 class Exercizer(ipywidgets.VBox):

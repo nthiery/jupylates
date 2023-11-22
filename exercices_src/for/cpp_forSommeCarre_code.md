@@ -52,11 +52,11 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-// BEGIN SOLUTION
+/// BEGIN SOLUTION
 s = 0;
 for (int i = I1; i <= I2; i++)
     s = s + i*i;
-// END SOLUTION
+/// END SOLUTION
 ```
 
 ```{code-cell}

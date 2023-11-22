@@ -48,10 +48,9 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-// BEGIN SOLUTION
-// Votre solution ici
+/// BEGIN SOLUTION
 int r = I1;
-// END SOLUTION
+/// END SOLUTION
 ```
 
 +++

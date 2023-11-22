@@ -57,7 +57,11 @@ nbgrader:
   solution: true
 ---
 
-result = INPUT(I3 / I1)
+result = INPUT(
+    ### BEGIN SOLUTION
+    I3 / I1
+    ### END SOLUTION
+)
 ```
 
 ```{code-cell} ipython3

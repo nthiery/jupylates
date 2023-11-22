@@ -44,12 +44,11 @@ le produit des entiers compris entre I1 et I2 inclus.
 editable: true
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: true}
 ---
-## BEGIN SOLUTION
-## Votre solution ici
+### BEGIN SOLUTION
 p = 1;
 for i in range(I1, I2+1):
     p = p * i
-## END SOLUTION
+### END SOLUTION
 ```
 
 +++

@@ -82,7 +82,11 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-int result = INPUT((I2 PLUSOUMOINS I1) * I3);
+int result = INPUT(
+    /// BEGIN SOLUTION
+    (I2 PLUSOUMOINS I1) * I3
+    /// END SOLUTION
+);
 ```
 
 +++

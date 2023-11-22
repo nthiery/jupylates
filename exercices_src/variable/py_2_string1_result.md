@@ -50,7 +50,11 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-result = INPUT(NAMEstr)
+result = INPUT(
+    ### BEGIN SOLUTION
+    nameSTR
+    ### END SOLUTION
+)
 ```
 
 ```{code-cell} ipython3

@@ -69,7 +69,11 @@ Quelle est la valeur attendue de r?
 editable: true
 nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: true}
 ---
-result = INPUT(Y)
+result = INPUT(
+    ### BEGIN SOLUTION
+    y
+    ### END SOLUTION
+)
 ```
 
 +++
