@@ -66,6 +66,8 @@ def split_cells(code):
     begin = re.compile(r'\s*' + PL_COMMENT + ' (BEGIN) (\w+)')
 
     items = []
+    items.append(nbf.v4.new_markdown_cell(source="### Objectif Pédagogique :", metadata={}))
+    items.append(nbf.v4.new_markdown_cell(source=":::{admonition} Consigne\n\nConsigne generique\n\n:::"))
     item = {'source': '', 'metadata': {}}
 
     for (line_nb, line) in enumerate(code.splitlines()):
