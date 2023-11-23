@@ -99,8 +99,9 @@ def split_cells(code):
     return items
 
 
-for filename in glob.glob("/home/cmarmo/software/cpp-info111/exercices_src/pointeurs/*.cpp"):
-    outfile = "pointeurs/cpp_" + filename.split("/")[-1].replace(".cpp", ".md")
+for filename in glob.glob("/home/cmarmo/software/cpp-info111/exercices_src/while/*.cpp"):
+    dir_name = filename.split("/")[-2]
+    outfile = dir_name + "/cpp_" + filename.split("/")[-1].replace(".cpp", ".md")
     f = open(filename, "r")
     code = f.read()
 
