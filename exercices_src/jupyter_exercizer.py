@@ -30,7 +30,7 @@ class Exercizer(ipywidgets.VBox):
         # View
         border_layout = ipywidgets.Layout(border="solid", padding="1ex")
         self.exercize_zone = ipywidgets.Output(layout=border_layout)
-        self.answer_zone = ipywidgets.Textarea()
+        self.answer_zone = [ipywidgets.Textarea()]
         self.run_button = ipywidgets.Button(
             description="Valider", button_style="primary", icon="check"
         )
@@ -118,7 +118,7 @@ class Exercizer(ipywidgets.VBox):
         try:
             success = self.run_notebook(
                 self.notebook,
-                answer=self.answer_zone.value,
+                answer=[answer_zone.value for answer_zone in self.answer_zone],
                 dir=os.path.dirname(self.exercize_name),
             )
             self.result_label.value = (
@@ -134,10 +134,14 @@ class Exercizer(ipywidgets.VBox):
     def display_exercize(self, notebook):
         with self.exercize_zone:
             self.exercize_zone.clear_output(wait=True)
+            i_answer = 0
             for cell in notebook.cells:
                 if cell["metadata"].get("nbgrader", {}).get("solution", False):
-                    self.answer_zone.value = ""
-                    display(self.answer_zone)
+                    if i_answer > 0:
+                        self.answer_zone.append(ipywidgets.Textarea())
+                    self.answer_zone[i_answer].value = ""
+                    display(self.answer_zone[i_answer])
+                    i_answer = i_answer + 1
                 elif cell["cell_type"] == "markdown":
                     display(IPython.display.Markdown(cell["source"]))
                 else:
@@ -154,9 +158,10 @@ class Exercizer(ipywidgets.VBox):
             )
         return notebook
 
-    def run_notebook(self, notebook: Notebook, answer: str, dir: str) -> bool:
+    def run_notebook(self, notebook: Notebook, answer: list[str], dir: str) -> bool:
         notebook = copy.deepcopy(notebook)
         kernel_name = notebook["metadata"]["kernelspec"]["name"]
+        i_answer = 0
         for i, cell in enumerate(notebook.cells):
             # If Autograded code cell
             if cell["cell_type"] == "code" and cell["metadata"].get("nbgrader", {}).get(
@@ -165,10 +170,11 @@ class Exercizer(ipywidgets.VBox):
                 code = cell["source"]
                 print(code, re.search(answer_regexp, code))
                 if re.search(answer_regexp, code):
-                    code = re.sub(answer_regexp, answer, code)
+                    code = re.sub(answer_regexp, answer[i_answer], code)
                 else:
                     code = answer
                 notebook.cells[i] = nbformat.v4.new_code_cell(code)
+                i_answer = i_answer + 1
         ep = ExecutePreprocessor(timeout=600, kernel_name=kernel_name, allow_errors=True)
 
         owd = os.getcwd()
