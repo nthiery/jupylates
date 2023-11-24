@@ -1,4 +1,4 @@
-import copy, random, re, glob
+import os, copy, random, re, glob
 import nbformat as nbf
 import jupytext    # type: ignore
 
@@ -62,12 +62,21 @@ def write_nb(cells, language, outfile):
     notebook = nbf.v4.new_notebook(metadata=meta, cells=cells)
     jupytext.write(notebook, outfile, fmt="md:myst")
 
+
+def find_objectif(code):
+    for (line_nb, line) in enumerate(code.splitlines()):
+        if 'Objectif Pédagogique' in line or 'Objectif pédagogique' in line:
+            return line
+    return None
+
+
 def split_cells(code):
     begin = re.compile(r'\s*' + PL_COMMENT + ' (BEGIN) (\w+)')
 
     items = []
-    items.append(nbf.v4.new_markdown_cell(source="### Objectif Pédagogique :", metadata={}))
-    items.append(nbf.v4.new_markdown_cell(source=":::{admonition} Consigne\n\nConsigne generique\n\n:::"))
+    objectif = find_objectif(code)
+    if objectif is not None:
+        items.append(nbf.v4.new_markdown_cell(source=objectif.replace('///', '###'), metadata={}))
     item = {'source': '', 'metadata': {}}
 
     for (line_nb, line) in enumerate(code.splitlines()):
@@ -76,34 +85,37 @@ def split_cells(code):
         if 'randomization.h' in line:
             line = line.replace('randomization.h', 'jupyter_exercizer_helpers.hpp')
 
-        if line == "int main() {":
+        if match or "main()" in line:
+            items.append(nbf.v4.new_code_cell(source=item['source'], metadata=item['metadata']))
+            item = {'source': '', 'metadata': {}}
+        if "main()" in line:
             continue
-        if line == "    return 0;":
-            continue
-        if line == "}":
-            continue
-
-        if 'HIDDEN' in line:
+        if 'BEGIN HIDDEN' in line:
             item['metadata'].update(HIDDEN_METADATA)
-        if 'SOLUTION' in line:
+        if 'BEGIN SOLUTION' in line:
             item['metadata'].update(SOLUTION_METADATA)
         if 'CHECK' in line:
             item['metadata'].update(CHECK_METADATA)
-        if line == "" or match:
+        item['source'] += f'{line}\n'
+        if 'END HIDDEN' in line:
             items.append(nbf.v4.new_code_cell(source=item['source'], metadata=item['metadata']))
             item = {'source': '', 'metadata': {}}
-        item['source'] += f'{line}\n'
 
     items.append(nbf.v4.new_code_cell(source=item['source'], metadata=item['metadata']))
+    items.append(nbf.v4.new_markdown_cell(
+        source=":::{admonition} Consigne\n\nQuelle est la valeur attendue de r?\n\n:::"))
 
     return items
 
 
-for filename in glob.glob("/home/cmarmo/software/cpp-info111/exercices_src/while/*.cpp"):
+for filename in glob.glob("/home/cmarmo/software/cpp-info111/exercices_src/*/*.cpp"):
     dir_name = filename.split("/")[-2]
     outfile = dir_name + "/cpp_" + filename.split("/")[-1].replace(".cpp", ".md")
-    f = open(filename, "r")
-    code = f.read()
+    if os.path.isfile(filename) and os.path.isdir(dir_name):
+        f = open(filename, "r")
+        code = f.read()
+    else:
+        continue
 
     items = split_cells(code)
     write_nb(items, "cpp", outfile)
