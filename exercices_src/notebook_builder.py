@@ -106,16 +106,3 @@ def split_cells(code):
         source=":::{admonition} Consigne\n\nQuelle est la valeur attendue de r?\n\n:::"))
 
     return items
-
-
-for filename in glob.glob("/home/cmarmo/software/cpp-info111/exercices_src/*/*.cpp"):
-    dir_name = filename.split("/")[-2]
-    outfile = dir_name + "/cpp_" + filename.split("/")[-1].replace(".cpp", ".md")
-    if os.path.isfile(filename) and os.path.isdir(dir_name):
-        f = open(filename, "r")
-        code = f.read()
-    else:
-        continue
-
-    items = split_cells(code)
-    write_nb(items, "cpp", outfile)
