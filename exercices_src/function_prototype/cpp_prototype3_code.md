@@ -18,7 +18,10 @@ kernelspec:
 :tags: [hide-cell]
 
 #include <iostream>
+#include <typeinfo>
+#include <string>
 #include "jupyter_exercizer_helpers.hpp"
+
 using namespace std;
 ```
 
@@ -77,6 +80,7 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
+CHECK( string(typeid(nbCaracteres).name()).find(string("FiNSt")) != string::npos )
 CHECK( nbCaracteres("bonjour") == 7 );
 CHECK( nbCaracteres("aujourd'hui") == 11 );
 ```

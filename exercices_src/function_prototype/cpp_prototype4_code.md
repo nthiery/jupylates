@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif pédagogique: Ecriture d'en-tête
+### Objectif Pédagogique : écriture d'en-tête de fonction avec des types autres que int.
 
 ```{code-cell}
 :editable: 'false'
@@ -31,13 +31,12 @@ Ecrire ci-dessous l'en-tête de la fonction
 en n'oubliant pas de finir par `{`.
 Regarder les appels dans les cellules suivantes pour
 voir le nom de la fonction et son utilisation.
-
 :::
 
 ```{code-cell}
-/** Teste si a divise b
- * @param un entier a et un entier b
- * @return true si a divise b, false sinon
+
+/** Affiche le contenu d'un tableau d'entiers
+ * @param tab un tableau d'entiers
  **/
 ```
 
@@ -52,19 +51,24 @@ nbgrader:
   solution: 'true'
 ---
 /// BEGIN SOLUTION
-bool estDiviseur(int a, int b) {
+void affiche(vector<int> tab) {
 /// END SOLUTION
-    return b % a == 0;
+    for (int i=0; i<tab.size(); i++) {
+        cout << tab[i]<<endl;
+    }
 }
+
 ```
 
 ```{code-cell}
-estDiviseur(2,8)
+affiche( {3,2,5} )
 ```
 
 ```{code-cell}
-estDiviseur(3,8)
+affiche( {7,4} )
 ```
+
++++
 
 ```{code-cell}
 ---
@@ -78,7 +82,5 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
-CHECK( typeid(estDiviseur).name() == string("FbiiE") );
-CHECK( estDiviseur(2,8) );
-CHECK( !estDiviseur(3,8) );
+CHECK( string(typeid(affiche).name()).find(string("FvSt6vectorI")) != string::npos )
 ```

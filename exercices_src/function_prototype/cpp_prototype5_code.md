@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif pédagogique: Ecriture d'en-tête
+### Objectif Pédagogique : écriture d'en-tête de fonction avec des types autres que int.
 
 ```{code-cell}
 :editable: 'false'
@@ -35,9 +35,9 @@ voir le nom de la fonction et son utilisation.
 :::
 
 ```{code-cell}
-/** Teste si a divise b
- * @param un entier a et un entier b
- * @return true si a divise b, false sinon
+
+/** Affiche un compte à rebours commençant par l'entier pris en paramètre
+ * @param n un entier
  **/
 ```
 
@@ -52,19 +52,20 @@ nbgrader:
   solution: 'true'
 ---
 /// BEGIN SOLUTION
-bool estDiviseur(int a, int b) {
+void afficheCompteARebours(int n) {
 /// END SOLUTION
-    return b % a == 0;
+    for (int i=n; i>=0; i--) {
+        cout << i << endl;
+    }
 }
+
 ```
 
 ```{code-cell}
-estDiviseur(2,8)
+afficheCompteARebours(5)
 ```
 
-```{code-cell}
-estDiviseur(3,8)
-```
++++
 
 ```{code-cell}
 ---
@@ -78,7 +79,5 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
-CHECK( typeid(estDiviseur).name() == string("FbiiE") );
-CHECK( estDiviseur(2,8) );
-CHECK( !estDiviseur(3,8) );
+CHECK( typeid(afficheCompteARebours).name() == string("FviE") );
 ```

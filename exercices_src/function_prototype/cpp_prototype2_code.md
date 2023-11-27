@@ -18,6 +18,8 @@ kernelspec:
 :tags: [hide-cell]
 
 #include <iostream>
+#include <typeinfo>
+#include <string>
 #include "jupyter_exercizer_helpers.hpp"
 
 using namespace std;
@@ -54,7 +56,6 @@ float produit(int a, float b) {
 /// END SOLUTION
     return a * b;
 }
-
 ```
 
 ```{code-cell}
@@ -64,8 +65,6 @@ produit(3, 2.5)
 ```{code-cell}
 produit(2, 5.4)
 ```
-
-+++
 
 ```{code-cell}
 ---
@@ -79,6 +78,7 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
+CHECK( typeid(produit).name() == string("FfifE") or typeid(produit).name() == string("FdidE" ))
 CHECK( produit(3, 2.5) == 7.5f );
 CHECK( produit(2, 5.4) == 10.8f );
 ```
