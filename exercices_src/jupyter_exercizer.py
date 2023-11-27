@@ -139,7 +139,12 @@ class Exercizer(ipywidgets.VBox):
                 if cell["metadata"].get("nbgrader", {}).get("solution", False):
                     if i_answer > 0:
                         self.answer_zone.append(ipywidgets.Textarea())
-                    self.answer_zone[i_answer].value = ""
+                    code = cell["source"]
+                    if re.search(answer_regexp, code):
+                        self.answer_zone[i_answer].value = ""
+                    else:
+                        self.answer_zone[i_answer].value = code.split("/// END SOLUTION")[-1]
+                        self.answer_zone[i_answer].rows = 3
                     display(self.answer_zone[i_answer])
                     i_answer = i_answer + 1
                 elif cell["cell_type"] == "markdown":
@@ -168,11 +173,10 @@ class Exercizer(ipywidgets.VBox):
                 "solution", False
             ):
                 code = cell["source"]
-                print(code, re.search(answer_regexp, code))
                 if re.search(answer_regexp, code):
                     code = re.sub(answer_regexp, answer[i_answer], code)
                 else:
-                    code = answer
+                    code = answer[i_answer]
                 notebook.cells[i] = nbformat.v4.new_code_cell(code)
                 i_answer = i_answer + 1
         ep = ExecutePreprocessor(timeout=600, kernel_name=kernel_name, allow_errors=True)
