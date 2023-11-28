@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagigique : comprendre une boucle for et faire un calcul simple.
+### Objectif pédagogique : comprendre une boucle for et faire un calcul simple
 
 ```{code-cell} c++
 ---
@@ -59,7 +59,7 @@ for ( int I = 1; I <= IMAX ; I = I + 1 ) {
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 

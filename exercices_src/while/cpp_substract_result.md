@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif pédagogique: boucle while (ici calcul du reste).
+### Objectif pédagogique : boucle while (ici calcul du reste)
 
 ```{code-cell}
 :editable: 'false'
@@ -34,7 +34,7 @@ while (r > I2) {
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 

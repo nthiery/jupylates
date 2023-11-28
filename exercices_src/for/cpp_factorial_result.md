@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagigique : comprendre une factorielle avec une boucle for
+### Objectif pédagogique : comprendre une factorielle avec une boucle for
 
 ```{code-cell} c++
 ---
@@ -53,7 +53,7 @@ for ( int k = 1; k <= n; k++ ) {
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 

@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif pédagogique: opération "or"
+### Objectif pédagogique : opération "and"
 
 ```{code-cell} c++
 ---
@@ -29,7 +29,7 @@ using namespace std;
 ---
 tags: [hide-cell, variable]
 ---
-CONST I1 = RANDOM_INT(-1, 4);
+CONST I1 = RANDOM_INT(3, 9);
 I1
 ```
 
@@ -41,19 +41,14 @@ tags: [hide-output, substitution]
 ---
 
 int x = I1;
-bool r;
-if ( x < 0 or x > 2 ) {
-    r = true;
-} else {
-    r = false;
-}
+bool r = x >= 0 and x <= 2;
 ```
 
 +++
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 
@@ -68,9 +63,9 @@ nbgrader:
   solution: true
 ---
 bool result = INPUT(
-    /// BEGIN SOLUTION
-    r
-    /// END SOLUTION
+   /// BEGIN SOLUTION
+   r
+   /// END SOLUTION
 );
 ```
 

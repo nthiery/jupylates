@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagigique : reste de la division entière.
+### Objectif pédagogique : reste de la division entière
 
 ```{code-cell}
 :editable: false
@@ -52,7 +52,7 @@ r = I3 % I1;
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 

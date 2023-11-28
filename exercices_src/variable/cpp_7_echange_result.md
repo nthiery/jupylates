@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : échange de variable correct.
+### Objectif pédagogique : échange de variable correct
 
 ```{code-cell} c++
 ---
@@ -64,7 +64,7 @@ int r = Y;
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 

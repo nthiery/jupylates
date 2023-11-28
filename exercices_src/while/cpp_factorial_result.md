@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif pédagogique: boucle while (ici calcul de factorielle).
+### Objectif pédagogique : boucle while (ici calcul de factorielle)
 
 ```{code-cell}
 :editable: 'false'
@@ -39,7 +39,7 @@ while (N > 0) {
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 

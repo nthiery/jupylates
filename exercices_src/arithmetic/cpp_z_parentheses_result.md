@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif pédagogique : altérnative aux parenthèses.
+### Objectif pédagogique : alternative aux parenthèses
 
 ```{code-cell}
 :editable: false
@@ -49,7 +49,7 @@ CONST I3 = RANDOM_INT(1, 5);
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 

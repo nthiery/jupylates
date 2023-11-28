@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : accumulateur avec boucle for
+### Objectif pédagogique : accumulateur avec boucle for
 
 ```{code-cell} c++
 ---
@@ -58,7 +58,7 @@ for ( int I = 1; I <= IMAX ; I = I + 1 ) {
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 
