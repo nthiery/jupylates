@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : comprendre la difference entre valeur et nom d'une variable de type string.
+### Objectif pédagogique : comprendre la difference entre valeur et nom d'une variable de type string
 
 ```{code-cell} c++
 ---
@@ -49,7 +49,7 @@ string r = NAME;
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 

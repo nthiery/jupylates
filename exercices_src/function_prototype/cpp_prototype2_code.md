@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : écriture d'en-tête de fonction avec des types autres que int.
+### Objectif pédagogique : écriture d'entête de fonction
 
 ```{code-cell}
 :editable: 'false'
@@ -27,7 +27,7 @@ using namespace std;
 
 :::{admonition} Consigne
 
-Ecrire ci-dessous l'en-tête de la fonction
+Écrivez ci-dessous l'entête de la fonction
 en n'oubliant pas de finir par `{`.
 Regarder les appels dans les cellules suivantes pour
 voir le nom de la fonction et son utilisation.

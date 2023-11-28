@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : différence entre accumulateur et simple affectation.
+### Objectif pédagogique : différence entre accumulateur et simple affectation
 
 ```{code-cell}
 :editable: false

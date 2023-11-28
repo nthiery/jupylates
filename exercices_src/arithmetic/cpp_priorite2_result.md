@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : priorité des opérations.
+### Objectif pédagogique : priorité des opérations
 
 ```{code-cell} c++
 ---
@@ -68,7 +68,7 @@ r = (I2 PLUSOUMOINS I1) * I3;
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `r`?
 
 :::
 

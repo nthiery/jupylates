@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : boucle while avec compteur (ici calcul du quotient).
+### Objectif pédagogique : boucle while avec compteur (ici calcul du quotient)
 
 ```{code-cell}
 :editable: 'false'

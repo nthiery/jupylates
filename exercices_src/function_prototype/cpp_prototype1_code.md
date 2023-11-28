@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif pédagogique: Ecriture d'en-tête
+### Objectif pédagogique : écriture d'entête de fonction
 
 ```{code-cell}
 :editable: 'false'
@@ -27,10 +27,9 @@ using namespace std;
 
 :::{admonition} Consigne
 
-Ecrire ci-dessous l'en-tête de la fonction
-en n'oubliant pas de finir par `{`.
-Regarder les appels dans les cellules suivantes pour
-voir le nom de la fonction et son utilisation.
+Écrivez ci-dessous l'entête de la fonction en n'oubliant pas de finir
+par `{`. Regardez les appels dans les cellules suivantes pour voir le
+nom de la fonction et son utilisation.
 
 :::
 

@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagigique : boucle for avec accumulateur.
+### Objectif pédagogique : boucle for avec accumulateur
 
 ```{code-cell}
 :editable: false
@@ -31,7 +31,7 @@ CONST I2 = I1 + RANDOM_INT(10,12);
 
 :::{admonition} Consigne
 
-Écrire le code permettant de mettre dans la variable p
+Écrivez le code permettant de mettre dans la variable p
 le produit des entiers compris entre I1 et I2 inclus.
 
 :::

@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagigique : boucle for avec accumulateur.
+### Objectif pédagogique : boucle for avec accumulateur
 
 ```{code-cell}
 :editable: false
@@ -31,7 +31,7 @@ CONST I2 = RANDOM_INT(18, 26);
 
 :::{admonition} Consigne
 
-Ecrire ici le code permettant de mettre dans la variable s
+Écrivez ici le code permettant de mettre dans la variable `s`
 la somme des carrés des entiers compris entre I1 et I2 inclus.
 
 :::
