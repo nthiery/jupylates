@@ -79,6 +79,12 @@ nbgrader:
 tags: [hide-cell]
 ---
 CHECK( typeid(produit).name() == string("FfifE") or typeid(produit).name() == string("FdidE" ))
-CHECK( produit(3, 2.5) == 7.5f );
-CHECK( produit(2, 5.4) == 10.8f );
+if (typeid(produit).name() == string("FfifE")) {
+    CHECK( produit(3, 2.5) == 7.5f );
+    CHECK( produit(2, 5.4) == 10.8f );
+}
+if (typeid(produit).name() == string("FdidE" )) {
+    CHECK( produit(3, 2.5) == 7.5 );
+    CHECK( produit(2, 5.4) == 10.8 );
+}
 ```
