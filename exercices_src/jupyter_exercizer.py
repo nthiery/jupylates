@@ -142,11 +142,14 @@ class Exercizer(ipywidgets.VBox):
                     code = cell["source"]
                     if re.search(answer_regexp, code):
                         self.answer_zone[i_answer].value = ""
+                        self.answer_zone[i_answer].rows = 2
                     else:
                         begin = code.split("/// BEGIN SOLUTION")[0]
+                        nblines = begin.count('\n')
                         end = code.split("/// END SOLUTION")[-1]
+                        nelines = end.count('\n')
                         self.answer_zone[i_answer].value = begin + "\n\n" + end
-                        self.answer_zone[i_answer].rows = 5
+                        self.answer_zone[i_answer].rows = nblines + 5 + nelines
                     display(self.answer_zone[i_answer])
                     i_answer = i_answer + 1
                 elif cell["cell_type"] == "markdown":
