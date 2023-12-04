@@ -1,12 +1,10 @@
-import copy
+import copy, getpass, json, os, random, re, requests
+from datetime import datetime
 import IPython  # type: ignore
 from IPython.core.display_functions import display  # type: ignore
 import ipywidgets  # type: ignore
 import nbformat
 import jupytext    # type: ignore
-import os
-import random
-import re
 from typing import Any, List
 from nbconvert.preprocessors import ExecutePreprocessor  # type: ignore
 
@@ -25,7 +23,19 @@ answer_regexp = re.compile(r"INPUT\(.*\)", re.DOTALL)
 
 class Exercizer(ipywidgets.VBox):
     def __init__(self, exercizes: List[str]):
+        # learner owner of the session
+        learner = os.getenv('JUPYTERHUB_USER')
+        if learner:
+            self.learner = learner
+        else:
+            self.learner = getpass.getuser()
+
+        self.start_time = datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')
+
         self.exercizes = sorted(exercizes)
+
+        #self.lrs_url = "file://" + os.getcwd() + "/.learning_record.json"
+        self.lrs_url = ".learning_record.json"
 
         # View
         border_layout = ipywidgets.Layout(border="solid", padding="1ex")
@@ -125,11 +135,24 @@ class Exercizer(ipywidgets.VBox):
                 "✅ Bonne réponse" if success else "❌ Mauvaise réponse"
             )
             # self.result_label.style.background = "green" if success else "red"
+            learning_record = { "student": self.learner,
+                               "exercise": self.exercize_name,
+                               "success": success,
+                               "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')}
+
         except ExecutionError:
             self.result_label.value = "❌ Erreur à l'exécution"
             # self.result_label.style.background = "red"
+            learning_record = { "student": self.learner,
+                               "exercise": self.exercize_name,
+                               "success": False,
+                               "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')}
+
         finally:
             self.run_button.disabled = False
+
+        with open(self.lrs_url, 'a', encoding="utf-8") as f:
+            f.write(str(json.dumps(learning_record)) + "\n")
 
     def display_exercize(self, notebook):
         with self.exercize_zone:
