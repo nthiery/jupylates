@@ -1,4 +1,4 @@
-import copy, getpass, json, os, random, re, requests
+import copy, getpass, json, os, random, re
 from datetime import datetime
 import IPython  # type: ignore
 from IPython.core.display_functions import display  # type: ignore
