@@ -21,7 +21,7 @@ class ExecutionError(RuntimeError):
 answer_regexp = re.compile(r"INPUT\(.*\)", re.DOTALL)
 
 
-class Exercizer(ipywidgets.VBox):
+class Exercizer(ipywidgets.AppLayout):
     def __init__(self, exercizes: List[str]):
         # learner owner of the session
         learner = os.getenv('JUPYTERHUB_USER')
@@ -37,6 +37,18 @@ class Exercizer(ipywidgets.VBox):
         #self.lrs_url = "file://" + os.getcwd() + "/.learning_record.json"
         self.lrs_url = ".learning_record.json"
 
+        item_layout = ipywidgets.Layout(width='auto', height='auto')
+        items = [ipywidgets.Button(layout=item_layout,
+                                   description=self.exercizes[i].split("/")[-1])
+                 for i in range(len(self.exercizes))]
+            
+        box_layout = ipywidgets.Layout(border='',
+                            height='',
+                            width='',
+                            flex_flow='column',
+                            display='flex')
+        carousel = ipywidgets.VBox(children=items, layout=box_layout)
+        self.progress_zone = carousel
         # View
         border_layout = ipywidgets.Layout(border="solid", padding="1ex")
         self.exercize_zone = ipywidgets.Output(layout=border_layout)
@@ -44,7 +56,6 @@ class Exercizer(ipywidgets.VBox):
         self.run_button = ipywidgets.Button(
             description="Valider", button_style="primary", icon="check"
         )
-        self.name_label = ipywidgets.Label()
         self.result_label = ipywidgets.Label()
         self.randomize_button = ipywidgets.Button(
             icon="dice",
@@ -72,17 +83,17 @@ class Exercizer(ipywidgets.VBox):
             button_style="primary",
             layout={"width": "fit-content"},
         )
+
         self.controler_zone = ipywidgets.VBox(
             [
-                ipywidgets.HBox(
+                ipywidgets.VBox(
                     [
                         self.randomize_button,
                         self.run_button,
-                        self.name_label,
                         self.result_label,
                     ]
                 ),
-                ipywidgets.HBox(
+                ipywidgets.VBox(
                     [self.previous_button, self.random_button, self.next_button]
                 ),
             ]
@@ -95,9 +106,19 @@ class Exercizer(ipywidgets.VBox):
         self.randomize_button.on_click(lambda event: self.randomize_exercize())
         self.run_button.on_click(lambda event: self.run_exercize())
 
+        def make_button_callback(k):
+            def callback(button):
+                self.set_exercize(k)
+            return callback
+
+        for k in range(len(items)):            
+            items[k].on_click(make_button_callback(k))
+
         self.set_exercize(0)
         super().__init__(
-            [self.exercize_zone, self.controler_zone], layout=border_layout
+             left_sidebar=self.progress_zone,
+             center=self.exercize_zone,
+             right_sidebar=self.controler_zone
         )
 
     def set_exercize(self, i: int):
@@ -106,8 +127,8 @@ class Exercizer(ipywidgets.VBox):
         self.notebook = self.randomize_notebook(jupytext.read(self.exercize_name))
         self.display_exercize(self.notebook)
         language = self.notebook.metadata["kernelspec"]["language"]
-        self.name_label.value = f'{self.exercize_name} ({language})'
         self.result_label.value = ""
+        self.progress_zone.children[self.exercize_number].style.button_color = "yellow"
 
     def next_exercize(self):
         self.set_exercize((self.exercize_number + 1) % len(self.exercizes))
@@ -123,7 +144,6 @@ class Exercizer(ipywidgets.VBox):
 
     def run_exercize(self):
         self.result_label.value = "🟡 Exécution en cours"
-        # self.result_label.style.background = "orange"
         self.run_button.disabled = True
         try:
             success = self.run_notebook(
@@ -134,7 +154,6 @@ class Exercizer(ipywidgets.VBox):
             self.result_label.value = (
                 "✅ Bonne réponse" if success else "❌ Mauvaise réponse"
             )
-            # self.result_label.style.background = "green" if success else "red"
             learning_record = { "student": self.learner,
                                "exercise": self.exercize_name,
                                "success": success,
@@ -142,7 +161,6 @@ class Exercizer(ipywidgets.VBox):
 
         except ExecutionError:
             self.result_label.value = "❌ Erreur à l'exécution"
-            # self.result_label.style.background = "red"
             learning_record = { "student": self.learner,
                                "exercise": self.exercize_name,
                                "success": False,
@@ -150,6 +168,8 @@ class Exercizer(ipywidgets.VBox):
 
         finally:
             self.run_button.disabled = False
+            self.progress_zone.children[self.exercize_number].style.button_color = (
+                "green" if success else "red")
 
         with open(self.lrs_url, 'a', encoding="utf-8") as f:
             f.write(str(json.dumps(learning_record)) + "\n")
