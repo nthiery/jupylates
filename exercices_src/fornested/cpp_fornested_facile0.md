@@ -38,10 +38,11 @@ CONST J2 = J1 + LongueurJ;
 +++
 
 ```{code-cell}
+int r1, r2;
 for ( int I = I1; I <= I2; I++ ) {
     for ( int J = J1; J <= J2; J++) {
-        int r1 = I;
-        int r2 = J;
+        r1 = I;
+        r2 = J;
     }
 }
 ```
@@ -65,7 +66,7 @@ nbgrader:
 ---
 int result1 = INPUT(
    /// BEGIN SOLUTION
-   I
+   r1
    /// END SOLUTION
 );
 ```
@@ -82,7 +83,7 @@ nbgrader:
 ---
 int result2 = INPUT(
    /// BEGIN SOLUTION
-   J
+   r2
    /// END SOLUTION
 );
 ```
