@@ -129,6 +129,12 @@ class Exercizer(ipywidgets.AppLayout):
         language = self.notebook.metadata["kernelspec"]["language"]
         self.result_label.value = ""
         self.progress_zone.children[self.exercize_number].style.button_color = "yellow"
+        learning_record = { "student": self.learner,
+                            "exercise": self.exercize_name,
+                            "action": "view",
+                            "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')}
+        with open(self.lrs_url, 'a', encoding="utf-8") as f:
+            f.write(str(json.dumps(learning_record)) + "\n")
 
     def next_exercize(self):
         self.set_exercize((self.exercize_number + 1) % len(self.exercizes))
@@ -156,6 +162,7 @@ class Exercizer(ipywidgets.AppLayout):
             )
             learning_record = { "student": self.learner,
                                "exercise": self.exercize_name,
+                               "action": "execute",
                                "success": success,
                                "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')}
 
@@ -163,6 +170,7 @@ class Exercizer(ipywidgets.AppLayout):
             self.result_label.value = "❌ Erreur à l'exécution"
             learning_record = { "student": self.learner,
                                "exercise": self.exercize_name,
+                               "action": "execute",
                                "success": False,
                                "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')}
 
