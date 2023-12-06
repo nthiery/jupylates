@@ -5,7 +5,7 @@ from IPython.core.display_functions import display  # type: ignore
 import ipywidgets  # type: ignore
 import nbformat
 import jupytext    # type: ignore
-from typing import Any, List
+from typing import Any, Dict, List, Optional
 from nbconvert.preprocessors import ExecutePreprocessor  # type: ignore
 
 from code_randomizer import Randomizer
@@ -20,71 +20,118 @@ class ExecutionError(RuntimeError):
 
 answer_regexp = re.compile(r"INPUT\(.*\)", re.DOTALL)
 
+
 class ExercizeState():
     def __init__(self, exercise):
         self.exercize = exercise
         self.viewed = False
         self.executed = False
-        self.success = False
         self.n_success = 0
         self.n_failure = 0
 
+    def view(self) -> None:
+        self.viewed = True
 
-def initialize_exercize_states(exercizes, lrs_url):
-    exercize_states = [ExercizeState(exercize) for exercize in exercizes]
-    with open(lrs_url, 'r', encoding="utf-8") as f:
-        records = f.readlines()
-            
-    if records is not []:
-        json_records = [json.loads(record) for record in records]
-        for json_record in json_records:
-            states = [exercize_state for exercize_state in exercize_states
-                      if exercize_state.exercize == json_record["exercise"]]
-            state = states[0]
-            state.viewed = True
+    def execute(self, success: bool) -> None:
+        self.executed = True
+        if success:
+            self.n_success += 1
+        else:
+            self.n_failure += 1
 
-            if json_record["action"] == "execute":
-                state.executed = True
-                if json_record["success"] == True:
-                    state.success = True
-                    state.n_success += 1
-                else:
-                    state.success = False
-                    state.n_failure += 1
+    def status(self) -> Optional[str]:
+        if self.executed:
+            if self.n_success > 0:
+                return "success"
+            else:
+                return "failure"
+        else:
+            if self.viewed:
+                return "viewed"
+            else:
+                return None
 
-    return exercize_states
+
+state_styles = {
+    "viewed": "info",
+    "success": "success",
+    "failure": "danger",
+    None: ''
+}
+
+
+class LocalLRS:
+    def __init__(self, file: str, learner: str):
+        self.learner = learner
+        self.file = file
+
+    def write_event(self, action: str, **args) -> None:
+        event = {
+            "student": self.learner,
+            "action": action,
+            **args,
+            "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')
+        }
+        with open(self.file, 'a', encoding="utf-8") as f:
+            f.write(str(json.dumps(event)) + "\n")
+
+    def view(self, exercize: str):
+        self.write_event(action='view',
+                         exercise=exercize)
+
+    def execute(self, exercize: str, success: bool):
+        self.write_event(action='execute',
+                         exercise=exercize,
+                         success=success)
+
+
+def initialize_exercize_states(exercizes: List[str], lrs_url: str):
+    states = {
+        exercize: ExercizeState(exercize)
+        for exercize in exercizes
+    }
+    try:
+        with open(lrs_url, 'r', encoding="utf-8") as f:
+            for line in f.readlines():
+                json_record = json.loads(line)
+                state = states.get(json_record["exercise"], None)
+                if state is None:
+                    continue
+
+                if json_record["action"] == "view":
+                    state.view()
+                if json_record["action"] == "execute":
+                    state.execute(success=json_record["success"])
+    except FileNotFoundError:
+        pass
+
+    return [states[exercize]
+            for exercize in exercizes]
+
 
 class Exercizer(ipywidgets.AppLayout):
-    def __init__(self, exercizes: List[str]):
+    def __init__(self,
+                 exercizes: List[str],
+                 lrs_url: str = ".learning_record.json"):
         # learner owner of the session
         learner = os.getenv('JUPYTERHUB_USER')
-        if learner:
-            self.learner = learner
-        else:
-            self.learner = getpass.getuser()
+        if not learner:
+            learner = getpass.getuser()
+        self.learner: str = learner
 
         self.start_time = datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')
 
         self.exercizes = sorted(exercizes)
 
-        #self.lrs_url = "file://" + os.getcwd() + "/.learning_record.json"
-        self.lrs_url = ".learning_record.json"
+        self.exercize_states = initialize_exercize_states(self.exercizes, lrs_url)
 
-        self.exercize_states = initialize_exercize_states(self.exercizes, self.lrs_url)
+        self.lrs = LocalLRS(file=lrs_url,
+                            learner=learner)
 
         item_layout = ipywidgets.Layout(width='auto', height='auto')
         items = [ipywidgets.Button(layout=item_layout,
                                    description=self.exercizes[i].split("/")[-1])
                  for i in range(len(self.exercizes))]
-        
-        for i in range(len(items)):
-            if self.exercize_states[i].viewed:
-                items[i].style.button_color = "yellow"
-            if self.exercize_states[i].executed:
-                if self.exercize_states[i].success:
-                    items[i].style.button_color = "green"
-                else:
-                    items[i].style.button_color = "red"
 
         box_layout = ipywidgets.Layout(border='',
                             height='',
@@ -93,6 +140,7 @@ class Exercizer(ipywidgets.AppLayout):
                             display='flex')
         carousel = ipywidgets.VBox(children=items, layout=box_layout)
         self.progress_zone = carousel
+
         # View
         border_layout = ipywidgets.Layout(border="solid", padding="1ex")
         self.exercize_zone = ipywidgets.Output(layout=border_layout)
@@ -155,33 +203,36 @@ class Exercizer(ipywidgets.AppLayout):
                 self.set_exercize(k)
             return callback
 
-        for k in range(len(items)):            
+        for k in range(len(items)):
             items[k].on_click(make_button_callback(k))
 
+        # Initialize
         self.set_exercize(0)
+        self.update_progress_zone()
+
         super().__init__(
              left_sidebar=self.progress_zone,
              center=self.exercize_zone,
              right_sidebar=self.controler_zone
         )
 
+    def update_progress_zone(self):
+        buttons = self.progress_zone.children
+        for state, button in zip(self.exercize_states,
+                                 buttons):
+            button.button_style = state_styles[state.status()]
+            button.icon = "play" if state.exercize == self.exercize_name else ""
+
     def set_exercize(self, i: int):
         self.exercize_number = i
         self.exercize_name = self.exercizes[self.exercize_number]
         self.notebook = self.randomize_notebook(jupytext.read(self.exercize_name))
         self.display_exercize(self.notebook)
-        language = self.notebook.metadata["kernelspec"]["language"]
         self.result_label.value = ""
 
-        if not self.exercize_states[self.exercize_number].viewed:
-            self.progress_zone.children[self.exercize_number].style.button_color = "yellow"
-
-        learning_record = { "student": self.learner,
-                            "exercise": self.exercize_name,
-                            "action": "view",
-                            "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')}
-        with open(self.lrs_url, 'a', encoding="utf-8") as f:
-            f.write(str(json.dumps(learning_record)) + "\n")
+        self.exercize_states[self.exercize_number].view()
+        self.update_progress_zone()
+        self.lrs.view(self.exercize_name)
 
     def next_exercize(self):
         self.set_exercize((self.exercize_number + 1) % len(self.exercizes))
@@ -207,36 +258,15 @@ class Exercizer(ipywidgets.AppLayout):
             self.result_label.value = (
                 "✅ Bonne réponse" if success else "❌ Mauvaise réponse"
             )
-            if success:
-                self.exercize_states[self.exercize_number].success = True
-                self.exercize_states[self.exercize_number].n_success += 1
-            else:
-                self.exercize_states[self.exercize_number].success = False
-                self.exercize_states[self.exercize_number].n_failure += 1
-
-            learning_record = {"student": self.learner,
-                               "exercise": self.exercize_name,
-                               "action": "execute",
-                               "success": success,
-                               "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')}
-
         except ExecutionError:
             self.result_label.value = "❌ Erreur à l'exécution"
-            self.exercize_states[self.exercize_number].success = False
-            self.exercize_states[self.exercize_number].n_failure += 1
-            learning_record = {"student": self.learner,
-                               "exercise": self.exercize_name,
-                               "action": "execute",
-                               "success": False,
-                               "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')}
-
         finally:
             self.run_button.disabled = False
-            self.progress_zone.children[self.exercize_number].style.button_color = (
-                "green" if success else "red")
 
-        with open(self.lrs_url, 'a', encoding="utf-8") as f:
-            f.write(str(json.dumps(learning_record)) + "\n")
+        state = self.exercize_states[self.exercize_number]
+        state.execute(success=success)
+        self.update_progress_zone()
+        self.lrs.execute(exercize=self.exercize_name,success=success)
 
     def display_exercize(self, notebook):
         with self.exercize_zone:
