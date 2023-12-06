@@ -20,6 +20,39 @@ class ExecutionError(RuntimeError):
 
 answer_regexp = re.compile(r"INPUT\(.*\)", re.DOTALL)
 
+class ExercizeState():
+    def __init__(self, exercise):
+        self.exercize = exercise
+        self.viewed = False
+        self.executed = False
+        self.success = False
+        self.n_success = 0
+        self.n_failure = 0
+
+
+def initialize_exercize_states(exercizes, lrs_url):
+    exercize_states = [ExercizeState(exercize) for exercize in exercizes]
+    with open(lrs_url, 'r', encoding="utf-8") as f:
+        records = f.readlines()
+            
+    if records is not []:
+        json_records = [json.loads(record) for record in records]
+        for json_record in json_records:
+            states = [exercize_state for exercize_state in exercize_states
+                      if exercize_state.exercize == json_record["exercise"]]
+            state = states[0]
+            state.viewed = True
+
+            if json_record["action"] == "execute":
+                state.executed = True
+                if json_record["success"] == True:
+                    state.success = True
+                    state.n_success += 1
+                else:
+                    state.success = False
+                    state.n_failure += 1
+
+    return exercize_states
 
 class Exercizer(ipywidgets.AppLayout):
     def __init__(self, exercizes: List[str]):
@@ -37,11 +70,22 @@ class Exercizer(ipywidgets.AppLayout):
         #self.lrs_url = "file://" + os.getcwd() + "/.learning_record.json"
         self.lrs_url = ".learning_record.json"
 
+        self.exercize_states = initialize_exercize_states(self.exercizes, self.lrs_url)
+
         item_layout = ipywidgets.Layout(width='auto', height='auto')
         items = [ipywidgets.Button(layout=item_layout,
                                    description=self.exercizes[i].split("/")[-1])
                  for i in range(len(self.exercizes))]
-            
+        
+        for i in range(len(items)):
+            if self.exercize_states[i].viewed:
+                items[i].style.button_color = "yellow"
+            if self.exercize_states[i].executed:
+                if self.exercize_states[i].success:
+                    items[i].style.button_color = "green"
+                else:
+                    items[i].style.button_color = "red"
+
         box_layout = ipywidgets.Layout(border='',
                             height='',
                             width='',
@@ -128,7 +172,10 @@ class Exercizer(ipywidgets.AppLayout):
         self.display_exercize(self.notebook)
         language = self.notebook.metadata["kernelspec"]["language"]
         self.result_label.value = ""
-        self.progress_zone.children[self.exercize_number].style.button_color = "yellow"
+
+        if not self.exercize_states[self.exercize_number].viewed:
+            self.progress_zone.children[self.exercize_number].style.button_color = "yellow"
+
         learning_record = { "student": self.learner,
                             "exercise": self.exercize_name,
                             "action": "view",
@@ -160,7 +207,14 @@ class Exercizer(ipywidgets.AppLayout):
             self.result_label.value = (
                 "✅ Bonne réponse" if success else "❌ Mauvaise réponse"
             )
-            learning_record = { "student": self.learner,
+            if success:
+                self.exercize_states[self.exercize_number].success = True
+                self.exercize_states[self.exercize_number].n_success += 1
+            else:
+                self.exercize_states[self.exercize_number].success = False
+                self.exercize_states[self.exercize_number].n_failure += 1
+
+            learning_record = {"student": self.learner,
                                "exercise": self.exercize_name,
                                "action": "execute",
                                "success": success,
@@ -168,7 +222,9 @@ class Exercizer(ipywidgets.AppLayout):
 
         except ExecutionError:
             self.result_label.value = "❌ Erreur à l'exécution"
-            learning_record = { "student": self.learner,
+            self.exercize_states[self.exercize_number].success = False
+            self.exercize_states[self.exercize_number].n_failure += 1
+            learning_record = {"student": self.learner,
                                "exercise": self.exercize_name,
                                "action": "execute",
                                "success": False,
