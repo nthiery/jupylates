@@ -109,7 +109,7 @@ def initialize_exercize_states(exercizes: List[str], lrs_url: str):
             for exercize in exercizes]
 
 
-class Exercizer(ipywidgets.AppLayout):
+class Exercizer(ipywidgets.HBox):
     def __init__(self,
                  exercizes: List[str],
                  lrs_url: str = ".learning_record.json"):
@@ -178,14 +178,14 @@ class Exercizer(ipywidgets.AppLayout):
 
         self.controler_zone = ipywidgets.VBox(
             [
-                ipywidgets.VBox(
+                ipywidgets.HBox(
                     [
                         self.randomize_button,
                         self.run_button,
                         self.result_label,
                     ]
                 ),
-                ipywidgets.VBox(
+                ipywidgets.HBox(
                     [self.previous_button, self.random_button, self.next_button]
                 ),
             ]
@@ -210,11 +210,11 @@ class Exercizer(ipywidgets.AppLayout):
         self.set_exercize(0)
         self.update_progress_zone()
 
-        super().__init__(
-             left_sidebar=self.progress_zone,
-             center=self.exercize_zone,
-             right_sidebar=self.controler_zone
-        )
+        super().__init__([
+            self.progress_zone,
+            ipywidgets.VBox([
+                self.exercize_zone,
+                self.controler_zone])])
 
     def update_progress_zone(self):
         buttons = self.progress_zone.children
