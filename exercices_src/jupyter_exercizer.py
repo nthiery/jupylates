@@ -5,7 +5,7 @@ from IPython.core.display_functions import display  # type: ignore
 import ipywidgets  # type: ignore
 import nbformat
 import jupytext    # type: ignore
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 from nbconvert.preprocessors import ExecutePreprocessor  # type: ignore
 
 from code_randomizer import Randomizer
@@ -305,7 +305,7 @@ class Exercizer(ipywidgets.AppLayout):
             )
         return notebook
 
-    def run_notebook(self, notebook: Notebook, answer: list[str], dir: str) -> bool:
+    def run_notebook(self, notebook: Notebook, answer: List[str], dir: str) -> bool:
         notebook = copy.deepcopy(notebook)
         kernel_name = notebook["metadata"]["kernelspec"]["name"]
         i_answer = 0
