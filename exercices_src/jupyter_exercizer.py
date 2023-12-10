@@ -1,17 +1,20 @@
+from abc import abstractmethod
 import copy, getpass, json, os, random, re
 from datetime import datetime
-import IPython  # type: ignore
-from IPython.core.display_functions import display  # type: ignore
+# Why can't this be imported from IPython.display?
+#from IPython.core.display_functions import display
+from IPython.display import Code, Markdown, display
 import ipywidgets  # type: ignore
-import nbformat
+import nbformat.v4
 import jupytext    # type: ignore
-from typing import Any, List, Optional
-from nbconvert.preprocessors import ExecutePreprocessor  # type: ignore
+from typing import Any, Callable, Dict, Type, Iterator, List, Optional, Union
+from nbconvert.preprocessors import ExecutePreprocessor
 
 from code_randomizer import Randomizer
 
 
 Notebook = Any
+Activity = str
 
 
 class ExecutionError(RuntimeError):
@@ -268,9 +271,9 @@ class Exercizer(ipywidgets.HBox):
         self.update_progress_zone()
         self.lrs.execute(exercize=self.exercize_name,success=success)
 
-    def display_exercize(self, notebook):
-        with self.exercize_zone:
-            self.exercize_zone.clear_output(wait=True)
+    def display_exercise(self, notebook: Notebook) -> None:
+        with self.exercise_zone:
+            self.exercise_zone.clear_output(wait=True)
             i_answer = 0
             for cell in notebook.cells:
                 if cell["metadata"].get("nbgrader", {}).get("solution", False):
@@ -290,10 +293,10 @@ class Exercizer(ipywidgets.HBox):
                     display(self.answer_zone[i_answer])
                     i_answer = i_answer + 1
                 elif cell["cell_type"] == "markdown":
-                    display(IPython.display.Markdown(cell["source"]))
+                    display(Markdown(cell["source"]))
                 else:
                     if "hide-cell" not in cell["metadata"].get("tags", []):
-                        display(IPython.display.Code(cell["source"]))
+                        display(Code(cell["source"]))
 
     def randomize_notebook(self, notebook: Notebook) -> Notebook:
         notebook = copy.deepcopy(notebook)

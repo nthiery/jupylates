@@ -9,11 +9,11 @@ def INPUT(default: Any) -> Any:
     return default
 
 
-def RANDOM_INT(min: int, max: int):
+def RANDOM_INT(min: int, max: int) -> int:
     return randint(min, max+1)
-    
 
-def RANDOM_CHOICE(*args):
+
+def RANDOM_CHOICE(*args: Any) -> Any:
     r"""
     Return a random element of `args`
 
