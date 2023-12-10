@@ -10,7 +10,7 @@ kernelspec:
    name: python3
 ---
 
-### Objectif Pédagigique : boucle for avec accumulateur.
+### Objectif pédagogique : boucle for avec accumulateur.
 
 ```{code-cell} python
 ---

@@ -10,7 +10,7 @@ kernelspec:
    name: python3
 ---
 
-### Objectif Pédagogique : opération "and".
+### Objectif pédagogique : opération "and".
 
 ```{code-cell} python
 ---

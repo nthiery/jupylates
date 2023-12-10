@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-### Objectif Pédagogique : comprendre la difference entre valeur et nom d'une variable de type string.
+### Objectif pédagogique : comprendre la différence entre valeur et nom d'une variable de type string.
 
 ```{code-cell} ipython3
 :editable: false

@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif pédagogique : comprendre la difference entre valeur et nom d'une variable de type string
+### Objectif pédagogique : comprendre la différence entre valeur et nom d'une variable de type string
 
 ```{code-cell} c++
 ---

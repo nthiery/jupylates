@@ -10,7 +10,7 @@ kernelspec:
    name: python3
 ---
 
-### Objectif Pédagigique : comprendre une factorielle avec une boucle for
+### Objectif pédagogique : comprendre une factorielle avec une boucle for
 
 ```{code-cell} python
 ---
