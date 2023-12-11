@@ -28,6 +28,10 @@ format_comment = {
     "python": "###"
 }
 
+lexer = {
+    "C++17": "c++",
+    "python": "python"
+}
 begin_end_regexp = re.compile(r"{format_comment} (BEGIN|END) SOLUTION")
 
 class ActivityLearningRecordConsumer:
@@ -683,25 +687,26 @@ class Exerciser(ipywidgets.HBox):
                     if re.search(answer_regexp, code):
                         self.answer_zone[i_answer].value = ""
                         self.answer_zone[i_answer].rows = 2
+                        display(self.answer_zone[i_answer])
                     else:
-                        self.answer_zone[i_answer].value = ""
                         for begin in code.split(format_comment[language] + " BEGIN SOLUTION"):
                             end = begin.split(format_comment[language] + " END SOLUTION")
                             if len(end) > 1:
-                                self.answer_zone[i_answer].value += (
+                                self.answer_zone[i_answer].value = (
                                     f"\n{format_comment[language]} COMPLETEZ LA SOLUTION ICI {format_comment[language]}\n"
                                 )
-                                self.answer_zone[i_answer].value += end[1]
+                                self.answer_zone[i_answer].rows = 3
+                                display(self.answer_zone[i_answer])
+                                i_answer = i_answer + 1
+                                self.answer_zone.append(ipywidgets.Textarea())
+                                display(Code(end[1], language=lexer[language]))
                             else:
-                                self.answer_zone[i_answer].value += end[0]
-                            self.answer_zone[i_answer].rows += 2
-                    display(self.answer_zone[i_answer])
-                    i_answer = i_answer + 1
+                                display(Code(end[0], language=lexer[language]))
                 elif cell["cell_type"] == "markdown":
                     display(Markdown(cell["source"]))
                 else:
                     if "hide-cell" not in cell["metadata"].get("tags", []):
-                        display(Code(cell["source"]))
+                        display(Code(cell["source"], language=lexer[language]))
 
     def randomize_notebook(self, notebook: Notebook) -> Notebook:
         notebook = copy.deepcopy(notebook)
@@ -716,6 +721,7 @@ class Exerciser(ipywidgets.HBox):
     def run_notebook(self, notebook: Notebook, answer: List[str], dir: str) -> bool:
         notebook = copy.deepcopy(notebook)
         kernel_name = notebook["metadata"]["kernelspec"]["name"]
+        language = notebook.metadata["kernelspec"]["language"]
         i_answer = 0
         for i, cell in enumerate(notebook.cells):
             # If Autograded code cell
@@ -726,7 +732,17 @@ class Exerciser(ipywidgets.HBox):
                 if re.search(answer_regexp, code):
                     code = re.sub(answer_regexp, answer[i_answer], code)
                 else:
-                    code = answer[i_answer]
+                    solution_code = ""
+                    for begin in code.split(format_comment[language] + " BEGIN SOLUTION"):
+                        end = begin.split(format_comment[language] + " END SOLUTION")
+                        if len(end) > 1:
+                            solution_code += answer[i_answer]
+                            i_answer = i_answer + 1
+                            solution_code += end[1]
+                        else:
+                            solution_code += end[0]
+                    
+                    code = solution_code
                 notebook.cells[i] = nbformat.v4.new_code_cell(code)
                 i_answer = i_answer + 1
         ep = ExecutePreprocessor(timeout=600, kernel_name=kernel_name, allow_errors=True)
