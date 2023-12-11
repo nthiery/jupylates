@@ -23,6 +23,10 @@ class ExecutionError(RuntimeError):
 
 answer_regexp = re.compile(r"INPUT\(.*\)", re.DOTALL)
 
+format_comment = {
+    "C++17": "///",
+    "python": "###"
+}
 
 class ActivityLearningRecordConsumer:
     """
@@ -665,6 +669,7 @@ class Exerciser(ipywidgets.HBox):
         self.lrs.execute(activity=self.exercise_name, success=success)
 
     def display_exercise(self, notebook: Notebook) -> None:
+        language = notebook.metadata["kernelspec"]["language"]
         with self.exercise_zone:
             self.exercise_zone.clear_output(wait=True)
             i_answer = 0
@@ -677,9 +682,9 @@ class Exerciser(ipywidgets.HBox):
                         self.answer_zone[i_answer].value = ""
                         self.answer_zone[i_answer].rows = 2
                     else:
-                        begin = code.split("/// BEGIN SOLUTION")[0]
+                        begin = code.split(format_comment[language] + " BEGIN SOLUTION")[0]
                         nblines = begin.count('\n')
-                        end = code.split("/// END SOLUTION")[-1]
+                        end = code.split(format_comment[language] + " END SOLUTION")[-1]
                         nelines = end.count('\n')
                         self.answer_zone[i_answer].value = begin + "\n\n" + end
                         self.answer_zone[i_answer].rows = nblines + 5 + nelines
