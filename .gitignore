@@ -1,6 +1,8 @@
 *.ipynb_checkpoints
-exercices_src/*/*.ipynb
+jupyter-plato/*/*.ipynb
 __pycache__
 # website rendering
 _build
+# packaging
+dist
 
