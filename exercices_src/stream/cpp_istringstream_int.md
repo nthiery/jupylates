@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-# Objectif Pédagogique : lire depuis une chaîne de caractères avec un flux
+# Objectif pédagogique : lire depuis une chaîne de caractères avec un flux
 
 ```{code-cell}
 :tags: [hide-cell]

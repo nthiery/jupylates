@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : comprendre les boucles for imbriquées
+### Objectif pédagogique : comprendre les boucles for imbriquées
 
 ```{code-cell}
 :editable: 'false'

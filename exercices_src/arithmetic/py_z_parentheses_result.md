@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-### Objectif pédagogique : altérnative aux parenthèses.
+### Objectif pédagogique : altérnative aux parenthèses.
 
 ```{code-cell}
 :editable: false

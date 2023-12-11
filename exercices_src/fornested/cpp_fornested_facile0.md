@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagogique : comprendre les boucles for imbriquées
+### Objectif pédagogique : comprendre les boucles for imbriquées
 
 ```{code-cell}
 :editable: 'false'
@@ -24,6 +24,7 @@ using namespace std;
 
 ```{code-cell}
 :tags: [hide-cell, variable]
+
 CONST I1 = RANDOM_INT(0, 5);
 CONST LongueurI = RANDOM_INT(1, 3);
 CONST I2 = I1 + LongueurI;
@@ -32,10 +33,7 @@ CONST J1 = RANDOM_INT(0, 5);
 // pour qu'ils ne soient pas tous les deux grands, sinon l'exo est interminable:
 CONST LongueurJ = 4 - LongueurI;
 CONST J2 = J1 + LongueurJ;
-
 ```
-
-+++
 
 ```{code-cell}
 int r1, r2;
@@ -52,7 +50,6 @@ for ( int I = I1; I <= I2; I++ ) {
 Quelle est la valeur attendue de `r1` et `r2`?
 
 :::
-
 
 ```{code-cell}
 ---
@@ -87,8 +84,6 @@ int result2 = INPUT(
    /// END SOLUTION
 );
 ```
-
-+++
 
 ```{code-cell}
 ---

@@ -11,7 +11,7 @@ kernelspec:
   name: xcpp17
 ---
 
-### Objectif Pédagigique : savoit déclarer une variable.
+### Objectif pédagogique : savoit déclarer une variable.
 
 ```{code-cell}
 :editable: false

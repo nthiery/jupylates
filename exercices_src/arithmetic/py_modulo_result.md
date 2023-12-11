@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-### Objectif Pédagigique : reste de la division entière.
+### Objectif pédagogique : reste de la division entière.
 
 ```{code-cell} ipython3
 :editable: false

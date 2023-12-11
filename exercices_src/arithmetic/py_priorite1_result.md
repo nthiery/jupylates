@@ -10,7 +10,7 @@ kernelspec:
    name: python3
 ---
 
-### Objectif Pédagogique : priorité des opérations.
+### Objectif pédagogique : priorité des opérations.
 
 ```{code-cell} python
 ---

@@ -1,17 +1,20 @@
+from abc import abstractmethod
 import copy, getpass, json, os, random, re
 from datetime import datetime
-import IPython  # type: ignore
-from IPython.core.display_functions import display  # type: ignore
+# Why can't this be imported from IPython.display?
+#from IPython.core.display_functions import display
+from IPython.display import Code, Markdown, display
 import ipywidgets  # type: ignore
-import nbformat
+import nbformat.v4
 import jupytext    # type: ignore
-from typing import Any, Dict, List, Optional
-from nbconvert.preprocessors import ExecutePreprocessor  # type: ignore
+from typing import Any, Callable, Dict, Type, Iterator, List, Optional, Union
+from nbconvert.preprocessors import ExecutePreprocessor
 
 from code_randomizer import Randomizer
 
 
 Notebook = Any
+Activity = str
 
 
 class ExecutionError(RuntimeError):
@@ -21,51 +24,326 @@ class ExecutionError(RuntimeError):
 answer_regexp = re.compile(r"INPUT\(.*\)", re.DOTALL)
 
 
-class ExercizeState():
-    def __init__(self, exercise):
-        self.exercize = exercise
-        self.viewed = False
-        self.executed = False
-        self.n_success = 0
-        self.n_failure = 0
+class ActivityLearningRecordConsumer:
+    """
+    A consumer of events on an activity
+    """
+
+    @abstractmethod
+    def view(self) -> None:
+        """
+        The activity has been viewed by the learner
+        """
+
+    @abstractmethod
+    def execute(self, success: bool) -> None:
+        """
+        The activity has been executed by the learner
+
+        Parameters
+        ----------
+        success: bool
+            Whether the activity was executed successfully
+        """
+
+
+class LearningRecordConsumer:
+    """
+    A consumer of events on a collection of activities
+    """
+
+    @abstractmethod
+    def view(self, activity: Activity) -> None:
+        """
+        The given activity has been viewed by the learner
+        """
+
+    @abstractmethod
+    def execute(self, activity: Activity, success: bool) -> None:
+        """
+        The given activity has been executed by the learner
+        """
+
+
+class ActivityState(ActivityLearningRecordConsumer):
+    """
+    A consumer that defines the state of an activity from the stream
+    of events that was received
+    """
+    activity: Activity
+
+    def __init__(self, activity: Activity):
+        self.activity = activity
+
+    @property
+    @abstractmethod
+    def status(self) -> Optional[str]:
+        """
+        The current status of the activity
+        """
+        return None
+
+    @property
+    @abstractmethod
+    def score(self) -> int:
+        """
+        The current score for the activity
+        """
+
+    """
+    The maximum score for the activity
+    """
+    max_score: int
+
+    styles = {
+        "viewed": "info",
+        "success": "success",
+        "failure": "warning",
+        "game over: success": "success",
+        "game over: failure": "danger",
+        None: ''
+    }
+
+    @property
+    def style(self) -> Optional[str]:
+        return self.styles[self.status]
+
+    @property
+    def disabled(self) -> bool:
+        return self.status is not None and self.status.startswith("game over")
+
+    @property
+    def info(self) -> str:
+        """
+        A human readable summary of the current state
+        """
+        return f"Score: {self.score}"
+
+
+class ActivityStateCounter(ActivityState):
+    """
+    This activity state counts views, executions, successes and failures.
+
+    With the default implementation of `status` and `score`, the
+    status of the activity is a success and the score is 1 as soon as
+    the execution was successful at least once.
+
+    Examples
+    --------
+
+        >>> state = ActivityStateCounter("my activity")
+        >>> state.views
+        0
+        >>> state.executions
+        0
+        >>> state.successes
+        0
+        >>> state.failures
+        0
+        >>> state.status
+        >>> state.score
+        0
+
+        >>> state.view()
+        >>> state.status
+        'viewed'
+
+        >>> state.views
+        1
+        >>> state.failures
+        0
+        >>> state.successes
+        0
+
+        >>> state.execute(success=False)
+        >>> state.execute(success=False)
+        >>> state.status
+        'failure'
+        >>> state.score
+        0
+
+        >>> state.execute(success=True)
+        >>> state.status
+        'success'
+        >>> state.execute(success=False)
+        >>> state.status
+        'success'
+        >>> state.score
+        1
+
+        >>> state.views
+        1
+        >>> state.executions
+        4
+        >>> state.failures
+        3
+        >>> state.successes
+        1
+
+    The default implementation
+    """
+    def __init__(self, activity: Activity):
+        super().__init__(activity)
+        self.views = 0
+        self.executions = 0
+        self.successes = 0
+        self.failures = 0
 
     def view(self) -> None:
-        self.viewed = True
+        self.views += 1
 
     def execute(self, success: bool) -> None:
-        self.executed = True
+        self.executions += 1
         if success:
-            self.n_success += 1
+            self.successes += 1
         else:
-            self.n_failure += 1
+            self.failures += 1
 
+    @property
     def status(self) -> Optional[str]:
-        if self.executed:
-            if self.n_success > 0:
-                return "success"
-            else:
-                return "failure"
+        if self.successes:
+            return "success"
+        elif self.failures:
+            return "failure"
+        elif self.views:
+            return "viewed"
         else:
-            if self.viewed:
-                return "viewed"
-            else:
-                return None
+            return None
+
+    @property
+    def score(self) -> int:
+        return 1 if self.successes else 0
+
+    max_score: int = 1
 
 
-state_styles = {
-    "viewed": "info",
-    "success": "success",
-    "failure": "danger",
-    None: ''
-}
+class ActivityStateInitialFailurePenalty(ActivityStateCounter):
+    """
+    This activity state defines the score according to the number of
+    failures before the first success.
+
+    Initially, the score is zero. The max score is granted if the
+    learner succeeds within `grace_period` attempts. A penalty of
+    `penalty` is removed for every additional failure, and the status
+    set to "failure". If the learner succeeds before the accumulated
+    penalties exeed the maximal score, then the score is set
+    accordingly, and the status is "success". Otherwise, the status is
+    "done".
+
+    Examples
+    --------
+
+        >>> state = ActivityStateInitialFailurePenalty("my activity", max_score=7)
+        >>> state.score
+        0
+        >>> state.status
+        >>> state.view()
+        >>> state.status
+        'viewed'
+        >>> state.execute(success=True)
+        >>> state.score
+        7
+        >>> state.status
+        'success'
+
+        >>> state = ActivityStateInitialFailurePenalty("my activity", max_score=7)
+        >>> state.execute(success=False)
+        >>> state.score
+        0
+        >>> state.status
+        'failure'
+        >>> state.execute(success=True)
+        >>> state.score
+        7
+        >>> state.status
+        'success'
+
+        >>> state = ActivityStateInitialFailurePenalty("my activity", max_score=3, penalty=2)
+        >>> state.execute(success=False)
+        >>> state.execute(success=False)
+        >>> state.execute(success=True)
+        >>> state.score
+        1
+        >>> state.status
+        'success'
+
+        >>> state = ActivityStateInitialFailurePenalty("my activity", max_score=2, penalty=2)
+        >>> state.execute(success=False)
+        >>> state.execute(success=False)
+        >>> state.execute(success=False)
+        >>> state.score
+        0
+        >>> state.status
+        'done'
+        >>> state.execute(success=True)
+        >>> state.score
+        0
+        >>> state.status
+        'done'
+    """
+    def __init__(self,
+                 activity: Activity,
+                 max_score: int = 3,
+                 grace_period: int = 2,
+                 penalty: int = 1
+                 ):
+        super().__init__(activity)
+        self.max_score = max_score
+        self.potential_score = max_score
+        self.grade_period = grace_period
+        self.penalty = penalty
+        # Note: in this class, one would want to implement `score` by
+        # an attribute; however apparently one can't override a
+        # property with an attribute; so we use a private attribute.
+        self._score: int = 0
+        self.views: int = 0
+        self.executions: int = 0
+
+    def view(self) -> None:
+        self.views += 1
+
+    def execute(self, success: bool) -> None:
+        self.executions += 1
+        if success:
+            if self.score == 0 and self.potential_score > 0:
+                self._score = self.potential_score
+        else:
+            if self.executions >= self.grade_period:
+                self.potential_score -= self.penalty
+
+    @property
+    def status(self) -> Optional[str]:
+        if self.score:
+            return "game over: success"
+        elif self.potential_score <= 0:
+            return "game over: failure"
+        elif self.executions:
+            return "failure"
+        elif self.views:
+            return "viewed"
+        else:
+            return None
+
+    @property
+    def max_attempts(self) -> int:
+        return self.grade_period + self.max_score // self.penalty
+
+    @property
+    def score(self) -> int:
+        return self._score
+
+    @property
+    def info(self) -> str:
+        return f"Score: {self.score}/{self.max_score}; " + \
+            f"Tentatives: {self.executions}/{self.max_attempts}"
 
 
-class LocalLRS:
+class LocalLRS(LearningRecordConsumer):
     def __init__(self, file: str, learner: str):
         self.learner = learner
         self.file = file
 
-    def write_event(self, action: str, **args) -> None:
+    def write_event(self, action: str, **args: Any) -> None:
         event = {
             "student": self.learner,
             "action": action,
@@ -75,44 +353,87 @@ class LocalLRS:
         with open(self.file, 'a', encoding="utf-8") as f:
             f.write(str(json.dumps(event)) + "\n")
 
-    def view(self, exercize: str):
+    def view(self, activity: Activity) -> None:
         self.write_event(action='view',
-                         exercise=exercize)
+                         activity=activity)
 
-    def execute(self, exercize: str, success: bool):
+    def execute(self, activity: Activity, success: bool) -> None:
         self.write_event(action='execute',
-                         exercise=exercize,
+                         activity=activity,
                          success=success)
 
-
-def initialize_exercize_states(exercizes: List[str], lrs_url: str):
-    states = {
-        exercize: ExercizeState(exercize)
-        for exercize in exercizes
-    }
-    try:
-        with open(lrs_url, 'r', encoding="utf-8") as f:
-            for line in f.readlines():
-                json_record = json.loads(line)
-                state = states.get(json_record["exercise"], None)
-                if state is None:
-                    continue
-
-                if json_record["action"] == "view":
-                    state.view()
-                if json_record["action"] == "execute":
-                    state.execute(success=json_record["success"])
-    except FileNotFoundError:
-        pass
-
-    return [states[exercize]
-            for exercize in exercizes]
+    def replay(self, on: LearningRecordConsumer) -> None:
+        """
+        Replay all the stored learning records to the consumer
+        """
+        try:
+            with open(self.file, 'r', encoding="utf-8") as f:
+                for line in f.readlines():
+                    json_record = json.loads(line)
+                    if json_record["action"] == "view":
+                        on.view(activity=json_record["activity"])
+                    if json_record["action"] == "execute":
+                        on.execute(activity=json_record["activity"],
+                                   success=json_record["success"])
+        except FileNotFoundError:
+            pass
 
 
-class Exercizer(ipywidgets.AppLayout):
+class ActivitiesStates(LearningRecordConsumer):
     def __init__(self,
-                 exercizes: List[str],
-                 lrs_url: str = ".learning_record.json"):
+                 activities: List[Activity],
+                 ActivityStateType: Type
+                 ):
+        self.activities = activities
+        self.states: Dict[Activity, ActivityState] = {
+            activity: ActivityStateType(activity)
+            for activity in activities
+        }
+
+    # TODO: rethink the container API; currently this is similar
+    # but not equivalent as the dict API.
+    def __iter__(self) -> Iterator[ActivityState]:
+        for activity in self.activities:
+            yield self.states[activity]
+
+    def __getitem__(self, activity: Activity) -> ActivityState:
+        return self.states[activity]
+
+    def view(self, activity: Activity) -> None:
+        if activity in self.states:
+            self.states[activity].view()
+
+    def execute(self, activity: Activity, success: bool) -> None:
+        if activity in self.states:
+            self.states[activity].execute(success=success)
+
+    @property
+    def score(self) -> int:
+        return sum(state.score for state in self.states.values())
+
+    @property
+    def max_score(self) -> int:
+        return sum(state.max_score for state in self.states.values())
+
+    @property
+    def info(self) -> str:
+        return f"Total score: {self.score} / {self.max_score}"
+
+
+Mode = str  # 'train', 'exam', 'debug'
+
+
+class Exerciser(ipywidgets.HBox):
+
+    themes: Dict[str, List[str]]
+    ActivityStateType: Type[ActivityState]
+
+    def __init__(self,
+                 exercises: Union[List[str],
+                                  Dict[str, List[str]]],
+                 lrs_url: str = '.lrs.json',
+                 mode: Mode = 'train'
+                 ):
         # learner owner of the session
         learner = os.getenv('JUPYTERHUB_USER')
         if not learner:
@@ -121,34 +442,51 @@ class Exercizer(ipywidgets.AppLayout):
 
         self.start_time = datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')
 
-        self.exercizes = sorted(exercizes)
-
-        self.exercize_states = initialize_exercize_states(self.exercizes, lrs_url)
+        if isinstance(exercises, list):
+            self.themes = {"": exercises}
+        else:
+            self.themes = exercises
 
         self.lrs = LocalLRS(file=lrs_url,
                             learner=learner)
 
-        item_layout = ipywidgets.Layout(width='auto', height='auto')
-        items = [ipywidgets.Button(layout=item_layout,
-                                   description=self.exercizes[i].split("/")[-1])
-                 for i in range(len(self.exercizes))]
+        self.mode = mode
+        if mode == "exam":
+            self.ActivityStateType = ActivityStateInitialFailurePenalty
+        else:
+            self.ActivityStateType = ActivityStateCounter
 
-        box_layout = ipywidgets.Layout(border='',
-                            height='',
-                            width='',
-                            flex_flow='column',
-                            display='flex')
-        carousel = ipywidgets.VBox(children=items, layout=box_layout)
-        self.progress_zone = carousel
-
+        ######################################################################
         # View
+        ######################################################################
+
+        # Theme chooser
+        self.theme_chooser = ipywidgets.Dropdown(
+            options=self.themes.keys(),
+            description="Thème")
+        if list(self.themes.keys()) == ['']:
+            self.theme_chooser.layout.display = 'none'
+
+        # Progress zone
+        box_layout = ipywidgets.Layout(border='',
+                                       height='',
+                                       width='',
+                                       flex_flow='column',
+                                       display='flex')
+        self.progress_zone = ipywidgets.VBox(layout=box_layout)
+
+        # Exercise zone
         border_layout = ipywidgets.Layout(border="solid", padding="1ex")
-        self.exercize_zone = ipywidgets.Output(layout=border_layout)
+        self.exercise_zone = ipywidgets.Output(layout=border_layout)
         self.answer_zone = [ipywidgets.Textarea()]
+
+        # Controler zone
         self.run_button = ipywidgets.Button(
             description="Valider", button_style="primary", icon="check"
         )
-        self.result_label = ipywidgets.Label()
+        self.result_view = ipywidgets.Label()
+        self.score_view = ipywidgets.Label()
+        self.total_score_view = ipywidgets.Label()
         self.randomize_button = ipywidgets.Button(
             icon="dice",
             description="Variante",
@@ -176,101 +514,159 @@ class Exercizer(ipywidgets.AppLayout):
             layout={"width": "fit-content"},
         )
 
+        self.source_link = ipywidgets.Output()
+        if self.mode != 'debug':
+            self.source_link.layout.display = 'none'
+
         self.controler_zone = ipywidgets.VBox(
             [
-                ipywidgets.VBox(
+                ipywidgets.HBox(
                     [
                         self.randomize_button,
                         self.run_button,
-                        self.result_label,
+                        self.score_view,
+                        self.result_view,
                     ]
                 ),
-                ipywidgets.VBox(
-                    [self.previous_button, self.random_button, self.next_button]
+                ipywidgets.HBox(
+                    [self.previous_button,
+                     self.random_button,
+                     self.next_button,
+                     self.total_score_view,
+                    ]
                 ),
+                self.source_link,
             ]
         )
 
-        # Controler
-        self.next_button.on_click(lambda event: self.next_exercize())
-        self.previous_button.on_click(lambda event: self.previous_exercize())
-        self.random_button.on_click(lambda event: self.random_exercize())
-        self.randomize_button.on_click(lambda event: self.randomize_exercize())
-        self.run_button.on_click(lambda event: self.run_exercize())
+        ######################################################################
+        # Controller
+        ######################################################################
 
-        def make_button_callback(k):
-            def callback(button):
-                self.set_exercize(k)
+        self.next_button.on_click(lambda event: self.next_exercise())
+        self.previous_button.on_click(lambda event: self.previous_exercise())
+        self.random_button.on_click(lambda event: self.random_exercise())
+        self.randomize_button.on_click(lambda event: self.randomize_exercise())
+        self.run_button.on_click(lambda event: self.run_exercise())
+        self.theme_chooser.observe(lambda event: self.reset_exercises())
+
+        ######################################################################
+        # Initialization
+        ######################################################################
+
+        self.reset_exercises()
+
+        super().__init__([
+            ipywidgets.VBox(
+                [
+                    self.theme_chooser,
+                    self.progress_zone,
+                ]),
+            ipywidgets.VBox([
+                self.exercise_zone,
+                self.controler_zone])])
+
+    def reset_exercises(self) -> None:
+        # Model
+        self.exercises = sorted(self.themes[self.theme_chooser.value])
+        self.exercise_states = ActivitiesStates(
+            self.exercises,
+            ActivityStateType=self.ActivityStateType
+        )
+        self.lrs.replay(on=self.exercise_states)
+
+        # View
+        item_layout = ipywidgets.Layout(width='auto', height='auto')
+        items = [ipywidgets.Button(layout=item_layout,
+                                   description=exercise.split("/")[-1])
+                 for exercise in self.exercises]
+        self.progress_zone.children = items
+
+        # Controller
+        def make_button_callback(k: int) -> Callable[[ipywidgets.Button], None]:
+            def callback(button: ipywidgets.Button) -> None:
+                self.set_exercise(k)
             return callback
 
         for k in range(len(items)):
             items[k].on_click(make_button_callback(k))
 
-        # Initialize
-        self.set_exercize(0)
-        self.update_progress_zone()
+        # Application
+        self.set_exercise(0)
 
-        super().__init__(
-             left_sidebar=self.progress_zone,
-             center=self.exercize_zone,
-             right_sidebar=self.controler_zone
-        )
-
-    def update_progress_zone(self):
+    def update_progress_zone(self) -> None:
         buttons = self.progress_zone.children
-        for state, button in zip(self.exercize_states,
+        for state, button in zip(self.exercise_states,
                                  buttons):
-            button.button_style = state_styles[state.status()]
-            button.icon = "play" if state.exercize == self.exercize_name else ""
+            button.button_style = state.style
+            button.disabled = state.disabled
+            button.icon = "play" if state.activity == self.exercise_name else ""
 
-    def set_exercize(self, i: int):
-        self.exercize_number = i
-        self.exercize_name = self.exercizes[self.exercize_number]
-        self.notebook = self.randomize_notebook(jupytext.read(self.exercize_name))
-        self.display_exercize(self.notebook)
-        self.result_label.value = ""
+    def update_score(self) -> None:
+        states = self.exercise_states
+        self.total_score_view.value = states.info
+        state = self.exercise_states[self.exercise_name]
+        self.score_view.value = state.info
 
-        self.exercize_states[self.exercize_number].view()
+    def update_exercize_link(self) -> None:
+        file = self.exercise_name
+        self.source_link.clear_output(wait=True)
+        with self.source_link:
+            display(Markdown(f"Source: [{file}]({file})"))
+
+    def set_exercise(self, i: int) -> None:
+        self.exercise_number = i
+        self.exercise_name = self.exercises[self.exercise_number]
+        self.notebook = self.randomize_notebook(jupytext.read(self.exercise_name))
+        self.display_exercise(self.notebook)
+        self.result_view.value = ""
+
+        self.exercise_states[self.exercise_name].view()
         self.update_progress_zone()
-        self.lrs.view(self.exercize_name)
+        self.update_score()
+        self.update_exercize_link()
+        self.lrs.view(self.exercise_name)
 
-    def next_exercize(self):
-        self.set_exercize((self.exercize_number + 1) % len(self.exercizes))
+    def next_exercise(self) -> None:
+        self.set_exercise((self.exercise_number + 1) % len(self.exercises))
 
-    def previous_exercize(self):
-        self.set_exercize((self.exercize_number - 1) % len(self.exercizes))
+    def previous_exercise(self) -> None:
+        self.set_exercise((self.exercise_number - 1) % len(self.exercises))
 
-    def random_exercize(self):
-        self.set_exercize(random.randint(0, len(self.exercizes) - 1))
+    def random_exercise(self) -> None:
+        self.set_exercise(random.randint(0, len(self.exercises) - 1))
 
-    def randomize_exercize(self):
-        self.set_exercize(self.exercize_number)
+    def randomize_exercise(self) -> None:
+        self.set_exercise(self.exercise_number)
 
-    def run_exercize(self):
-        self.result_label.value = "🟡 Exécution en cours"
+    def run_exercise(self) -> None:
+        self.result_view.value = "🟡 Exécution en cours"
         self.run_button.disabled = True
         try:
             success = self.run_notebook(
                 self.notebook,
                 answer=[answer_zone.value for answer_zone in self.answer_zone],
-                dir=os.path.dirname(self.exercize_name),
-            )
-            self.result_label.value = (
-                "✅ Bonne réponse" if success else "❌ Mauvaise réponse"
+                dir=os.path.dirname(self.exercise_name),
             )
         except ExecutionError:
-            self.result_label.value = "❌ Erreur à l'exécution"
+            success = False
+            self.result_view.value = "❌ Erreur à l'exécution"
+        else:
+            self.result_view.value = (
+                "✅ Bonne réponse" if success else "❌ Mauvaise réponse"
+            )
         finally:
             self.run_button.disabled = False
 
-        state = self.exercize_states[self.exercize_number]
+        state = self.exercise_states[self.exercise_name]
         state.execute(success=success)
         self.update_progress_zone()
-        self.lrs.execute(exercize=self.exercize_name,success=success)
+        self.update_score()
+        self.lrs.execute(activity=self.exercise_name, success=success)
 
-    def display_exercize(self, notebook):
-        with self.exercize_zone:
-            self.exercize_zone.clear_output(wait=True)
+    def display_exercise(self, notebook: Notebook) -> None:
+        with self.exercise_zone:
+            self.exercise_zone.clear_output(wait=True)
             i_answer = 0
             for cell in notebook.cells:
                 if cell["metadata"].get("nbgrader", {}).get("solution", False):
@@ -290,10 +686,10 @@ class Exercizer(ipywidgets.AppLayout):
                     display(self.answer_zone[i_answer])
                     i_answer = i_answer + 1
                 elif cell["cell_type"] == "markdown":
-                    display(IPython.display.Markdown(cell["source"]))
+                    display(Markdown(cell["source"]))
                 else:
                     if "hide-cell" not in cell["metadata"].get("tags", []):
-                        display(IPython.display.Code(cell["source"]))
+                        display(Code(cell["source"]))
 
     def randomize_notebook(self, notebook: Notebook) -> Notebook:
         notebook = copy.deepcopy(notebook)
@@ -305,7 +701,7 @@ class Exercizer(ipywidgets.AppLayout):
             )
         return notebook
 
-    def run_notebook(self, notebook: Notebook, answer: list[str], dir: str) -> bool:
+    def run_notebook(self, notebook: Notebook, answer: List[str], dir: str) -> bool:
         notebook = copy.deepcopy(notebook)
         kernel_name = notebook["metadata"]["kernelspec"]["name"]
         i_answer = 0

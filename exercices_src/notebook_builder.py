@@ -1,4 +1,5 @@
 import os, copy, random, re, glob
+from typing import Dict, List, Optional, TypedDict
 import nbformat as nbf
 import jupytext    # type: ignore
 
@@ -52,8 +53,8 @@ CHECK_METADATA= {
        "tags": ['hide-cell']
 }
 
-def write_nb(cells, language, outfile):
-    metadata = dict(jupytext=NB_JUPYTEXT)
+def write_nb(cells: List, language: str, outfile: str) -> None:
+    metadata: Dict = dict(jupytext=NB_JUPYTEXT)
     if language == "python":
         metadata.update({"kernelspec" : PY_KERNELSPEC})
     if language == "cpp":
@@ -63,21 +64,22 @@ def write_nb(cells, language, outfile):
     jupytext.write(notebook, outfile, fmt="md:myst")
 
 
-def find_objectif(code):
+def find_objectif(code: str) -> Optional[str]:
     for (line_nb, line) in enumerate(code.splitlines()):
         if 'Objectif Pédagogique' in line or 'Objectif pédagogique' in line:
             return line
     return None
 
 
-def split_cells(code):
+def split_cells(code: str) -> List:
     begin = re.compile(r'\s*' + PL_COMMENT + ' (BEGIN) (\w+)')
 
     items = []
     objectif = find_objectif(code)
     if objectif is not None:
         items.append(nbf.v4.new_markdown_cell(source=objectif.replace('///', '###'), metadata={}))
-    item = {'source': '', 'metadata': {}}
+    Item = TypedDict('Item', {'source': str, 'metadata': Dict})
+    item: Item = {'source': '', 'metadata': {}}
 
     for (line_nb, line) in enumerate(code.splitlines()):
         match = begin.match(line)

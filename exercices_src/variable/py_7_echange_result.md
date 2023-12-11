@@ -10,7 +10,7 @@ kernelspec:
    name: python3
 ---
 
-### Objectif Pédagogique : échange de variable correct.
+### Objectif pédagogique : échange de variable correct.
 
 ```{code-cell} python
 ---

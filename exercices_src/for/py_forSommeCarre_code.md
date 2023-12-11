@@ -10,7 +10,7 @@ kernelspec:
    name: python3
 ---
 
-### Objectif Pédagigique : boucle for avec accumulateur.
+### Objectif pédagogique : boucle for avec accumulateur.
 
 ```{code-cell} python
 ---
@@ -34,7 +34,7 @@ I2: CONST = RANDOM_INT(18, 26)
 
 :::{admonition} Consigne
 
-Ecrire ici le code permettant de mettre dans la variable s
+Écrire ici le code permettant de mettre dans la variable s
 la somme des carrés des entiers compris entre I1 et I2 inclus.
 
 :::

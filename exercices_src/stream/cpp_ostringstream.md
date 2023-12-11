@@ -10,7 +10,7 @@ kernelspec:
   name: xcpp17
 ---
 
-# Objectif Pédagogique : écrire dans une chaîne de caractères avec un flux
+# Objectif pédagogique : écrire dans une chaîne de caractères avec un flux
 
 ```{code-cell}
 :tags: [hide-cell]
