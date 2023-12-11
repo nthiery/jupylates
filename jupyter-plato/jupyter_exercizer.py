@@ -28,6 +28,8 @@ format_comment = {
     "python": "###"
 }
 
+begin_end_regexp = re.compile(r"{format_comment} (BEGIN|END) SOLUTION")
+
 class ActivityLearningRecordConsumer:
     """
     A consumer of events on an activity
@@ -682,12 +684,17 @@ class Exerciser(ipywidgets.HBox):
                         self.answer_zone[i_answer].value = ""
                         self.answer_zone[i_answer].rows = 2
                     else:
-                        begin = code.split(format_comment[language] + " BEGIN SOLUTION")[0]
-                        nblines = begin.count('\n')
-                        end = code.split(format_comment[language] + " END SOLUTION")[-1]
-                        nelines = end.count('\n')
-                        self.answer_zone[i_answer].value = begin + "\n\n" + end
-                        self.answer_zone[i_answer].rows = nblines + 5 + nelines
+                        self.answer_zone[i_answer].value = ""
+                        for begin in code.split(format_comment[language] + " BEGIN SOLUTION"):
+                            end = begin.split(format_comment[language] + " END SOLUTION")
+                            if len(end) > 1:
+                                self.answer_zone[i_answer].value += (
+                                    f"\n{format_comment[language]} COMPLETEZ LA SOLUTION ICI {format_comment[language]}\n"
+                                )
+                                self.answer_zone[i_answer].value += end[1]
+                            else:
+                                self.answer_zone[i_answer].value += end[0]
+                            self.answer_zone[i_answer].rows += 2
                     display(self.answer_zone[i_answer])
                     i_answer = i_answer + 1
                 elif cell["cell_type"] == "markdown":
