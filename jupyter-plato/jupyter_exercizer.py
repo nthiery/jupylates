@@ -702,6 +702,7 @@ class Exerciser(ipywidgets.HBox):
                                 display(Code(end[1], language=lexer[language]))
                             else:
                                 display(Code(end[0], language=lexer[language]))
+                    i_answer = i_answer + 1
                 elif cell["cell_type"] == "markdown":
                     display(Markdown(cell["source"]))
                 else:
