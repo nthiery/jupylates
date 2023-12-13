@@ -336,7 +336,7 @@ class ActivityStateInitialFailurePenalty(ActivityStateCounter):
 
     @property
     def max_attempts(self) -> int:
-        return self.grade_period + self.max_score // self.penalty
+        return self.grade_period + (self.max_score - 1 ) // self.penalty
 
     @property
     def score(self) -> int:
