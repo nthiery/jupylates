@@ -9,6 +9,7 @@ dynamic = [
     "version"
 ]
 authors = [
+  { name = "Chiara Marmo", email = "Chiara.Marmo@universite-paris-saclay.fr"},
   { name = "Nicolas M. Thiéry", email = "Nicolas.Thiery@universite-paris-saclay.fr"},
 ]
 readme = "README.md"
