@@ -1,25 +1,22 @@
-### Conversion tests from cpp to jupyter
+# JuPylates
 
-This repository contains some tests to automatically convert the C++
-exercises from [info111](https://gitlab.dsi.universite-paris-saclay.fr/Info111/cpp-info111/-/tree/master/exercices_src)
-into Jupyter Notebooks.
+JuPylates is an exerciser engine for learning and evaluation...
 
-The notebookes are stored in [MyST](https://mystmd.org/) markdown format.
-They can be translated in .ipynb format using [jupytext](https://jupytext.readthedocs.io/)
-```
-jupytext <name_of_the_notebook>.md --to ipynb
-```
+## Why JuPylates
 
-The notebooks are built to be graded via [nbgrader](https://nbgrader.readthedocs.io/),
-once converted they can be validated via
-```
-nbgrader validate <name_of_the_notebook>.ipynb
-```
+- integrates in the users's environment (for Jupyter-based courses)
+- easy to deploy (at least for training purposes)
+- easy to extend
+  writing an exercise is (almost) no harder than writing a Jupyter notebook
+- harness the full power of Jupyter and the underlying open source scientific computing ecosystem
+    - rich authoring, computational (and visualization?) tools
+    - multilanguage
+- lean (1k lines of code), modular, interoperable
+- flexible learning record managment: can e.g. be used purely locally
 
-### Build an exerciser notebookes
+### Demos
 
-The markdown notebooks should be converted in ipynb (see previous section) then `exercizer.ipynb` est
-ouvert dans jupyter lab.
+A demo is accessible [here](jupylates/jupylates_demo.md).
 
 ### Build an exerciser website
 

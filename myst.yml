@@ -2,7 +2,7 @@
 # https://mystmd.org/guide/integrating-jupyter
 version: 1
 project:
-  title: jupyter-plato
+  title: jupylates
   # description:
   keywords: []
   authors: []
@@ -18,7 +18,7 @@ project:
     # disableSessionSaving:
 site:
   template: book-theme
-  title:  jupyter-plato
+  title:  jupylates
   # logo:
   nav: []
   actions:

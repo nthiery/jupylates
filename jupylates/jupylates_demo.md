@@ -38,8 +38,8 @@ slideshow:
   slide_type: ''
 ---
 import glob
-from jupyter_exercizer import Exerciser
-Exerciser(glob.glob("for/*.md"), mode="exam")
+from jupylates import Exerciser
+Exerciser(glob.glob("examples/*.md"), mode="exam")
 ```
 
 L'application, en mode debug, sur une liste d'exercices classés par thèmes:
@@ -62,8 +62,4 @@ thèmes = {
 Exerciser({thème: glob.glob(f)
            for thème, f in thèmes.items()},
           mode="debug")
-```
-
-```{code-cell} ipython3
-
 ```
