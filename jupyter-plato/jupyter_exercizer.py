@@ -5,6 +5,7 @@ from datetime import datetime
 #from IPython.core.display_functions import display
 from IPython.display import Code, Markdown, display
 import ipywidgets  # type: ignore
+import io
 import nbformat.v4
 import jupytext    # type: ignore
 from typing import Any, Callable, Dict, Type, Iterator, List, Optional, Union
@@ -428,6 +429,35 @@ class ActivitiesStates(LearningRecordConsumer):
     @property
     def info(self) -> str:
         return f"Total score: {self.score} / {self.max_score}"
+
+    def export_score(self, assignment_name: str, student: str) -> None:
+        score = self.score
+        max_score = self.max_score
+        os.makedirs("feedback", exist_ok=True)
+        with io.open(os.path.join("feedback", "scores.csv"), "w") as fd:
+            fd.write("student, assignment, notebook, total_score, max_total_score\n")
+            fd.write(f"{student}, {assignment_name}, index, {score}, {max_score}\n")
+
+        import anybadge  # type: ignore
+
+        s = f"total: {score:g}/{max_score:g}"
+
+        if max_score > 0:
+            score = score / max_score
+            if score <= 0.25:
+                color = 'red'
+            elif score <= 0.5:
+                color = 'orange'
+            elif score <= 0.75:
+                color = 'yellow'
+            else:
+                color = 'green'
+        else:
+            color = 'green'
+
+        badge = anybadge.Badge("score", s, default_color=color)
+        with io.open(os.path.join("feedback", "scores.svg"), "w") as fd:
+            fd.write(badge.badge_svg_text)
 
 
 Mode = str  # 'train', 'exam', 'debug'
