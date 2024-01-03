@@ -21,6 +21,15 @@ classifiers = [
   "Programming Language :: Python :: 3",
 ]  # classifiers list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
 
+dependencies = [
+  "jupyterlab",
+  "ipywidgets",
+  "jupytext",
+  "nbclassic",
+  "jupyterlab_myst",
+  "mystmd",
+]
+
 
 [tool.mypy]
 files = "*.py"

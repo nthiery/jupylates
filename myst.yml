@@ -12,9 +12,9 @@ project:
     lite: false
     binder: false
     server:
-      url: http://localhost:8890/
+      url: http://localhost:8888/
       token: test-secret
-    kernelName: xcpp17
+    kernelName: python3
     # disableSessionSaving:
 site:
   template: book-theme

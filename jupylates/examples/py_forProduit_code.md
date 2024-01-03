@@ -17,7 +17,7 @@ kernelspec:
 editable: false
 tags: [hide-cell]
 ---
-from jupyter_exercizer_helpers import RANDOM_INT, CONST
+from jupylates_helpers import RANDOM_INT, CONST
 ```
 
 +++
