@@ -17,7 +17,7 @@ kernelspec:
 :editable: false
 :tags: [hide-cell]
 
-from jupylates_helpers import RANDOM_CHOICE, CONST
+from jupylates.jupylates_helpers import RANDOM_CHOICE, CONST, INPUT
 ```
 
 ```{code-cell} ipython3

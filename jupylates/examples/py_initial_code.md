@@ -17,7 +17,7 @@ kernelspec:
 :editable: false
 :tags: [hide-cell]
 
-from jupylates_helpers import RANDOM_INT, CONST
+from jupylates.jupylates_helpers import RANDOM_INT, CONST, INPUT
 ```
 
 +++

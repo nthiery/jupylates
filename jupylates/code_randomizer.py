@@ -2,7 +2,7 @@ import random
 import re
 from typing import Any, Callable, Dict, List, Tuple
 
-from jupylates_helpers import RANDOM_INT, RANDOM_CHOICE
+from .jupylates_helpers import RANDOM_INT, RANDOM_CHOICE
 
 STRING_QUOTE = '"'
 VECTOR_OPEN = "{"

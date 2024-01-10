@@ -11,7 +11,7 @@ import jupytext    # type: ignore
 from typing import Any, Callable, Dict, Type, Iterator, List, Optional, Union
 from nbconvert.preprocessors import ExecutePreprocessor
 
-from code_randomizer import Randomizer
+from .code_randomizer import Randomizer
 
 
 Notebook = Any
