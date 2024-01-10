@@ -16,7 +16,7 @@ JuPylates is an exerciser engine for learning and evaluation...
 
 ### Demos
 
-A demo is accessible [here](jupylates/jupylates_demo.md).
+A demo is accessible [here](jupylates_demo.md).
 
 ### Build an exerciser website
 
