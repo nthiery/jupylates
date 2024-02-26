@@ -1,3 +1,5 @@
+image: gitlab.dsi.universite-paris-saclay.fr:5005/l1infoinitiationsciencedonnees/computerlab/image:latest
+
 pages:
   script:
     - pip install jupyterlite-core jupyterlite-pyodide-kernel litegitpuller
