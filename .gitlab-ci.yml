@@ -5,7 +5,7 @@ pages:
     - pip install jupyterlite-core jupyterlite-pyodide-kernel litegitpuller
     - pip install git+https://gitlab.dsi.universite-paris-saclay.fr/jupyter/jupylates.git
     - make lite
-    - mv _build/html public
+    - mv _build public
   artifacts:
     paths:
       - public
