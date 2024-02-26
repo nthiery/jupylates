@@ -3,7 +3,7 @@ image: gitlab.dsi.universite-paris-saclay.fr:5005/l1infoinitiationsciencedonnees
 pages:
   script:
     - pip install jupyterlite-core jupyterlite-pyodide-kernel litegitpuller
-    - pip install https://gitlab.dsi.universite-paris-saclay.fr/jupyter/jupylates.git
+    - pip install git+https://gitlab.dsi.universite-paris-saclay.fr/jupyter/jupylates.git
     - make lite
     - mv _build/html public
   artifacts:
