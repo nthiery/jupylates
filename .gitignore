@@ -1,8 +1,16 @@
 *.ipynb_checkpoints
-jupyter-plato/*/*.ipynb
+jupylates/*/*.ipynb
 __pycache__
-# website rendering
+.lrs.json
+
+# myst website rendering
 _build
+
+# jupyterlite
+_output
+.jupyterlite.doit.db
+
 # packaging
 dist
+
 

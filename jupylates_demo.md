@@ -15,7 +15,7 @@ kernelspec:
 
 - integrates in the users's environment (for Jupyter-based courses)
 - easy to deploy (at least for training purposes)
-- easy to extend  
+- easy to extend
   writing an exercise is (almost) no harder than writing a Jupyter notebook
 - harness the full power of Jupyter and the underlying open source scientific computing ecosystem
     - rich authoring, computational (and visualization?) tools
@@ -39,27 +39,5 @@ slideshow:
 ---
 import glob
 from jupylates import Exerciser
-Exerciser(glob.glob("examples/*.md"), mode="exam")
-```
-
-L'application, en mode debug, sur une liste d'exercices classés par thèmes:
-
-```{code-cell} ipython3
-thèmes = {
-    'Variables': 'variable/*.md',
-    'Arithmétique': 'arithmetic/*.md',
-    'Expressions booléennes': 'bool/*.md',
-    'Conditionnelles': 'if/*.md',
-    'Conditionnelles filées': 'elseif/*.md',
-    'Boucles for': 'for/*.md',
-    'Boucles for imbriquées': 'fornested/*.md',
-    'Boucles while': 'while/*.md',
-    'Prototypes de fonctions': 'function_prototype/*.md',
-    'Tests de fonctions': 'function_test/*.md',
-    'Flux et fichiers': 'stream/*.md',
-    'Tous les thèmes': '*/*.md',
-}
-Exerciser({thème: glob.glob(f)
-           for thème, f in thèmes.items()},
-          mode="debug")
+Exerciser(glob.glob("examples/*.md"), mode="train")
 ```

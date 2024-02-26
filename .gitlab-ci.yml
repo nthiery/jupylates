@@ -1,0 +1,11 @@
+pages:
+  script:
+    - pip install jupyterlite-core jupyterlite-pyodide-kernel litegitpuller
+    - pip install https://gitlab.dsi.universite-paris-saclay.fr/jupyter/jupylates.git
+    - make lite
+    - mv _build/html public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
