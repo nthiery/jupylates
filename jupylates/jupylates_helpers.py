@@ -10,7 +10,7 @@ def INPUT(default: Any) -> Any:
 
 
 def RANDOM_INT(min: int, max: int) -> int:
-    return randint(min, max+1)
+    return randint(min, max)
 
 
 def RANDOM_CHOICE(*args: Any) -> Any:
