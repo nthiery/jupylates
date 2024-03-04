@@ -4,20 +4,27 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
 
-### Objectif pédagogique : reste de la division entière.
+### Objectif pédagogique : reste de la division entière
+
++++ {"tags": ["hide-cell"]}
+
+:::{attention}
+
+Il est facile de «tricher» sur cet exercice en copiant-collant
+l'expression à évaluer.
+
+:::
 
 ```{code-cell} ipython3
-:editable: false
 :tags: [hide-cell]
 
-from jupylates.jupylates_helpers import RANDOM_CHOICE, CONST, INPUT
+from jupylates.jupylates_helpers import RANDOM_CHOICE, CONST
 ```
 
 ```{code-cell} ipython3
@@ -37,18 +44,24 @@ I3
 ```{code-cell} ipython3
 :tags: [hide-output, substitution]
 
-r = I3 % I1
+R = I3 % I1
+```
+
+```{code-cell} ipython3
+:tags: [hide-cell]
+
+solution = R
+del R
 ```
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de R?
 
 :::
 
 ```{code-cell} ipython3
 ---
-editable: true
 nbgrader:
   grade: false
   grade_id: init
@@ -56,16 +69,11 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-result = INPUT(
-    ### BEGIN SOLUTION
-    I3 % I1
-    ### END SOLUTION
-)
+I3 % I1
 ```
 
 ```{code-cell} ipython3
 ---
-editable: false
 nbgrader:
   grade: true
   grade_id: check
@@ -75,5 +83,5 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
-assert result == r
+assert _ == solution
 ```
