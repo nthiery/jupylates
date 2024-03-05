@@ -1,15 +1,17 @@
 from abc import abstractmethod
 import copy, getpass, json, os, random, re
 from datetime import datetime
+
 # Why can't this be imported from IPython.display?
-#from IPython.core.display_functions import display
+# from IPython.core.display_functions import display
 from IPython.display import Code, Markdown, display
 import ipywidgets  # type: ignore
 import io
 import nbformat.v4
-import jupytext    # type: ignore
+import jupytext  # type: ignore
 from typing import Any, Callable, Dict, Type, Iterator, List, Optional, Union
 from nbconvert.preprocessors import ExecutePreprocessor
+from jupyter_client import KernelClient, KernelManager  # type: ignore
 
 from .code_randomizer import Randomizer
 
@@ -23,17 +25,59 @@ class ExecutionError(RuntimeError):
 
 
 answer_regexp = re.compile(r"INPUT\(.*\)", re.DOTALL)
+eval_regexp = re.compile("{eval}`(.*?)`")
 
-format_comment = {
-    "C++17": "///",
-    "python": "###"
-}
+format_comment = {"C++17": "///", "python": "###"}
 
-lexer = {
-    "C++17": "c++",
-    "python": "python"
-}
+lexer = {"C++17": "c++", "python": "python"}
 begin_end_regexp = re.compile(r"{format_comment} (BEGIN|END) SOLUTION")
+
+
+# TODO: find a better place for this
+# Ref: https://stackoverflow.com/questions/75114841/debugger-warning-from-ipython-frozen-modules
+
+os.environ["PYDEVD_DISABLE_FILE_VALIDATION"] = "1"
+
+
+def execute_code(kernel_client: KernelClient, code: str) -> list:
+    # print(f"executing {cell['source']}")
+    kernel_client.execute(code=code)
+    outputs = []
+    while True:
+        msg = kernel_client.get_iopub_msg()
+        # print(msg)
+        if msg["msg_type"] == "status":
+            execution_state = msg["content"]["execution_state"]
+            if execution_state in {"starting", "busy"}:
+                continue
+            elif execution_state == "idle":
+                break
+            else:
+                assert False
+        if msg["msg_type"] == "execute_input":
+            continue
+        if msg["msg_type"] in ["execute_result", "error"]:
+            content = copy.copy(msg["content"])
+            content["output_type"] = msg["msg_type"]
+            outputs.append(content)
+    return outputs
+
+
+def display_outputs(outputs: list[dict]) -> None:
+    for output in outputs:
+        if "text/plain" in output["data"]:
+            print(output["data"]["text/plain"])
+
+
+def execute_code_and_return_single_output(
+    kernel_client: KernelClient, code: str
+) -> str:
+    outputs = execute_code(kernel_client, code)
+    assert len(outputs) == 1
+    (output,) = outputs
+    assert "text/plain" in output["data"]
+    return output["data"]["text/plain"]
+
 
 class ActivityLearningRecordConsumer:
     """
@@ -81,6 +125,7 @@ class ActivityState(ActivityLearningRecordConsumer):
     A consumer that defines the state of an activity from the stream
     of events that was received
     """
+
     activity: Activity
 
     def __init__(self, activity: Activity):
@@ -112,7 +157,7 @@ class ActivityState(ActivityLearningRecordConsumer):
         "failure": "warning",
         "game over: success": "success",
         "game over: failure": "danger",
-        None: ''
+        None: "",
     }
 
     @property
@@ -193,6 +238,7 @@ class ActivityStateCounter(ActivityState):
 
     The default implementation
     """
+
     def __init__(self, activity: Activity):
         super().__init__(activity)
         self.views = 0
@@ -292,12 +338,14 @@ class ActivityStateInitialFailurePenalty(ActivityStateCounter):
         >>> state.status
         'done'
     """
-    def __init__(self,
-                 activity: Activity,
-                 max_score: int = 3,
-                 grace_period: int = 2,
-                 penalty: int = 1
-                 ):
+
+    def __init__(
+        self,
+        activity: Activity,
+        max_score: int = 3,
+        grace_period: int = 2,
+        penalty: int = 1,
+    ):
         super().__init__(activity)
         self.max_score = max_score
         self.potential_score = max_score
@@ -337,7 +385,7 @@ class ActivityStateInitialFailurePenalty(ActivityStateCounter):
 
     @property
     def max_attempts(self) -> int:
-        return self.grade_period + (self.max_score - 1 ) // self.penalty
+        return self.grade_period + (self.max_score - 1) // self.penalty
 
     @property
     def score(self) -> int:
@@ -345,8 +393,10 @@ class ActivityStateInitialFailurePenalty(ActivityStateCounter):
 
     @property
     def info(self) -> str:
-        return f"Score: {self.score}/{self.max_score}; " + \
-            f"Tentatives: {self.executions}/{self.max_attempts}"
+        return (
+            f"Score: {self.score}/{self.max_score}; "
+            + f"Tentatives: {self.executions}/{self.max_attempts}"
+        )
 
 
 class LocalLRS(LearningRecordConsumer):
@@ -359,46 +409,41 @@ class LocalLRS(LearningRecordConsumer):
             "student": self.learner,
             "action": action,
             **args,
-            "time": datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')
+            "time": datetime.utcnow().strftime("%Y-%m-%d-%H%M%S%z"),
         }
-        with open(self.file, 'a', encoding="utf-8") as f:
+        with open(self.file, "a", encoding="utf-8") as f:
             f.write(str(json.dumps(event)) + "\n")
 
     def view(self, activity: Activity) -> None:
-        self.write_event(action='view',
-                         activity=activity)
+        self.write_event(action="view", activity=activity)
 
     def execute(self, activity: Activity, success: bool) -> None:
-        self.write_event(action='execute',
-                         activity=activity,
-                         success=success)
+        self.write_event(action="execute", activity=activity, success=success)
 
     def replay(self, on: LearningRecordConsumer) -> None:
         """
         Replay all the stored learning records to the consumer
         """
         try:
-            with open(self.file, 'r', encoding="utf-8") as f:
+            with open(self.file, "r", encoding="utf-8") as f:
                 for line in f.readlines():
                     json_record = json.loads(line)
                     if json_record["action"] == "view":
                         on.view(activity=json_record["activity"])
                     if json_record["action"] == "execute":
-                        on.execute(activity=json_record["activity"],
-                                   success=json_record["success"])
+                        on.execute(
+                            activity=json_record["activity"],
+                            success=json_record["success"],
+                        )
         except FileNotFoundError:
             pass
 
 
 class ActivitiesStates(LearningRecordConsumer):
-    def __init__(self,
-                 activities: List[Activity],
-                 ActivityStateType: Type
-                 ):
+    def __init__(self, activities: List[Activity], ActivityStateType: Type):
         self.activities = activities
         self.states: Dict[Activity, ActivityState] = {
-            activity: ActivityStateType(activity)
-            for activity in activities
+            activity: ActivityStateType(activity) for activity in activities
         }
 
     # TODO: rethink the container API; currently this is similar
@@ -445,15 +490,15 @@ class ActivitiesStates(LearningRecordConsumer):
         if max_score > 0:
             score = score / max_score
             if score <= 0.25:
-                color = 'red'
+                color = "red"
             elif score <= 0.5:
-                color = 'orange'
+                color = "orange"
             elif score <= 0.75:
-                color = 'yellow'
+                color = "yellow"
             else:
-                color = 'green'
+                color = "green"
         else:
-            color = 'green'
+            color = "green"
 
         badge = anybadge.Badge("score", s, default_color=color)
         with io.open(os.path.join("feedback", "scores.svg"), "w") as fd:
@@ -468,27 +513,26 @@ class Exerciser(ipywidgets.HBox):
     themes: Dict[str, List[str]]
     ActivityStateType: Type[ActivityState]
 
-    def __init__(self,
-                 exercises: Union[List[str],
-                                  Dict[str, List[str]]],
-                 lrs_url: str = '.lrs.json',
-                 mode: Mode = 'train'
-                 ):
+    def __init__(
+        self,
+        exercises: Union[List[str], Dict[str, List[str]]],
+        lrs_url: str = ".lrs.json",
+        mode: Mode = "train",
+    ):
         # learner owner of the session
-        learner = os.getenv('JUPYTERHUB_USER')
+        learner = os.getenv("JUPYTERHUB_USER")
         if not learner:
             learner = getpass.getuser()
         self.learner: str = learner
 
-        self.start_time = datetime.utcnow().strftime('%Y-%m-%d-%H%M%S%z')
+        self.start_time = datetime.utcnow().strftime("%Y-%m-%d-%H%M%S%z")
 
         if isinstance(exercises, list):
             self.themes = {"": exercises}
         else:
             self.themes = exercises
 
-        self.lrs = LocalLRS(file=lrs_url,
-                            learner=learner)
+        self.lrs = LocalLRS(file=lrs_url, learner=learner)
 
         self.mode = mode
         if mode == "exam":
@@ -502,23 +546,20 @@ class Exerciser(ipywidgets.HBox):
 
         # Theme chooser
         self.theme_chooser = ipywidgets.Dropdown(
-            options=self.themes.keys(),
-            description="Thème")
-        if list(self.themes.keys()) == ['']:
-            self.theme_chooser.layout.display = 'none'
+            options=self.themes.keys(), description="Thème"
+        )
+        if list(self.themes.keys()) == [""]:
+            self.theme_chooser.layout.display = "none"
 
         # Progress zone
-        box_layout = ipywidgets.Layout(border='',
-                                       height='',
-                                       width='',
-                                       flex_flow='column',
-                                       display='flex')
+        box_layout = ipywidgets.Layout(
+            border="", height="", width="", flex_flow="column", display="flex"
+        )
         self.progress_zone = ipywidgets.VBox(layout=box_layout)
 
         # Exercise zone
         border_layout = ipywidgets.Layout(border="solid", padding="1ex")
         self.exercise_zone = ipywidgets.Output(layout=border_layout)
-        self.answer_zone = [ipywidgets.Textarea()]
 
         # Controler zone
         self.run_button = ipywidgets.Button(
@@ -555,8 +596,8 @@ class Exerciser(ipywidgets.HBox):
         )
 
         self.source_link = ipywidgets.Output()
-        if self.mode != 'debug':
-            self.source_link.layout.display = 'none'
+        if self.mode != "debug":
+            self.source_link.layout.display = "none"
 
         self.controler_zone = ipywidgets.VBox(
             [
@@ -569,10 +610,11 @@ class Exerciser(ipywidgets.HBox):
                     ]
                 ),
                 ipywidgets.HBox(
-                    [self.previous_button,
-                     self.random_button,
-                     self.next_button,
-                     self.total_score_view,
+                    [
+                        self.previous_button,
+                        self.random_button,
+                        self.next_button,
+                        self.total_score_view,
                     ]
                 ),
                 self.source_link,
@@ -596,36 +638,39 @@ class Exerciser(ipywidgets.HBox):
 
         self.reset_exercises()
 
-        super().__init__([
-            ipywidgets.VBox(
-                [
-                    self.theme_chooser,
-                    self.progress_zone,
-                ]),
-            ipywidgets.VBox([
-                self.exercise_zone,
-                self.controler_zone])])
+        super().__init__(
+            [
+                ipywidgets.VBox(
+                    [
+                        self.theme_chooser,
+                        self.progress_zone,
+                    ]
+                ),
+                ipywidgets.VBox([self.exercise_zone, self.controler_zone]),
+            ]
+        )
 
     def reset_exercises(self) -> None:
         # Model
         self.exercises = sorted(self.themes[self.theme_chooser.value])
         self.exercise_states = ActivitiesStates(
-            self.exercises,
-            ActivityStateType=self.ActivityStateType
+            self.exercises, ActivityStateType=self.ActivityStateType
         )
         self.lrs.replay(on=self.exercise_states)
 
         # View
-        item_layout = ipywidgets.Layout(width='auto', height='auto')
-        items = [ipywidgets.Button(layout=item_layout,
-                                   description=exercise.split("/")[-1])
-                 for exercise in self.exercises]
+        item_layout = ipywidgets.Layout(width="auto", height="auto")
+        items = [
+            ipywidgets.Button(layout=item_layout, description=exercise.split("/")[-1])
+            for exercise in self.exercises
+        ]
         self.progress_zone.children = items
 
         # Controller
         def make_button_callback(k: int) -> Callable[[ipywidgets.Button], None]:
             def callback(button: ipywidgets.Button) -> None:
                 self.set_exercise(k)
+
             return callback
 
         for k in range(len(items)):
@@ -636,8 +681,7 @@ class Exerciser(ipywidgets.HBox):
 
     def update_progress_zone(self) -> None:
         buttons = self.progress_zone.children
-        for state, button in zip(self.exercise_states,
-                                 buttons):
+        for state, button in zip(self.exercise_states, buttons):
             button.button_style = state.style
             button.disabled = state.disabled
             button.icon = "play" if state.activity == self.exercise_name else ""
@@ -704,40 +748,87 @@ class Exerciser(ipywidgets.HBox):
         self.update_score()
         self.lrs.execute(activity=self.exercise_name, success=success)
 
+    preheated_kernel_manager_pool: Dict[str, KernelManager] = {}
+
+    def get_preheated_kernel_manager(self, kernel_name: str) -> KernelManager:
+        def preheated_kernel_manager(kernel_name):
+            km = KernelManager(kernel_name=kernel_name)
+            km.start_kernel()
+            return km
+
+        km = self.preheated_kernel_manager_pool.get(
+            kernel_name, preheated_kernel_manager(kernel_name)
+        )
+
+        self.preheated_kernel_manager_pool[kernel_name] = preheated_kernel_manager(
+            kernel_name
+        )
+
+        return km
+
     def display_exercise(self, notebook: Notebook) -> None:
+        kernel_name = notebook.metadata["kernelspec"]["language"]
+        self.kernel_manager = self.get_preheated_kernel_manager(kernel_name)
+        self.kernel_client = self.kernel_manager.client()
         language = notebook.metadata["kernelspec"]["language"]
+        self.answer_zone = []
         with self.exercise_zone:
             self.exercise_zone.clear_output(wait=True)
-            i_answer = 0
-            for cell in notebook.cells:
+            self.first_answer_cell: Optional[int] = None
+            for i_cell, cell in enumerate(notebook.cells):
                 if cell["metadata"].get("nbgrader", {}).get("solution", False):
-                    if i_answer > 0:
-                        self.answer_zone.append(ipywidgets.Textarea())
+                    if self.first_answer_cell is None:
+                        self.first_answer_cell = i_cell
                     code = cell["source"]
                     if re.search(answer_regexp, code):
-                        self.answer_zone[i_answer].value = ""
-                        self.answer_zone[i_answer].rows = 2
-                        display(self.answer_zone[i_answer])
+                        textarea = ipywidgets.Textarea()
+                        textarea.rows = 2
+                        display(textarea)
+                        self.answer_zone.append(textarea)
                     else:
-                        for begin in code.split(format_comment[language] + " BEGIN SOLUTION"):
-                            end = begin.split(format_comment[language] + " END SOLUTION")
-                            if len(end) > 1:
-                                self.answer_zone[i_answer].value = (
-                                    f"\n{format_comment[language]} COMPLETEZ LA SOLUTION ICI {format_comment[language]}\n"
-                                )
-                                self.answer_zone[i_answer].rows = 3
-                                display(self.answer_zone[i_answer])
-                                i_answer = i_answer + 1
-                                self.answer_zone.append(ipywidgets.Textarea())
-                                display(Code(end[1], language=lexer[language]))
-                            else:
-                                display(Code(end[0], language=lexer[language]))
-                    i_answer = i_answer + 1
+                        zones = code.split(
+                            format_comment[language] + " BEGIN SOLUTION"
+                        )
+                        if len(zones) <= 1:
+                            textarea = ipywidgets.Textarea()
+                            display(textarea)
+                            self.answer_zone.append(textarea)
+                        else:
+                            display(Code(zones[0], language=lexer[language]))
+                        for zone in zones[1:]:
+                            end = zone.split(
+                                format_comment[language] + " END SOLUTION"
+                            )
+                            assert len(end) == 2
+                            textarea = ipywidgets.Textarea()
+                            # textarea.value = f"\n{format_comment[language]} COMPLETEZ LA SOLUTION ICI {format_comment[language]}\n"
+                            textarea.rows = len(end[0].splitlines()) + 1
+                            self.answer_zone.append(textarea)
+                            display(textarea)
+                            display(Code(end[1], language=lexer[language]))
                 elif cell["cell_type"] == "markdown":
-                    display(Markdown(cell["source"]))
+                    if "hide-cell" not in cell["metadata"].get("tags", []):
+
+                        source = cell["source"]
+
+                        def eval(match):
+                            code = match[1]
+                            return execute_code_and_return_single_output(
+                                self.kernel_client, code
+                            )
+
+                        source = re.sub(eval_regexp, eval, source)
+                        display(Markdown(source))
                 else:
+                    if self.first_answer_cell is None:
+                        outputs = execute_code(
+                            self.kernel_client, cell["source"]
+                        )
+                    else:
+                        outputs = []
                     if "hide-cell" not in cell["metadata"].get("tags", []):
                         display(Code(cell["source"], language=lexer[language]))
+                        display_outputs(outputs)
 
     def randomize_notebook(self, notebook: Notebook) -> Notebook:
         notebook = copy.deepcopy(notebook)
@@ -751,7 +842,6 @@ class Exerciser(ipywidgets.HBox):
 
     def run_notebook(self, notebook: Notebook, answer: List[str], dir: str) -> bool:
         notebook = copy.deepcopy(notebook)
-        kernel_name = notebook["metadata"]["kernelspec"]["name"]
         language = notebook.metadata["kernelspec"]["language"]
         i_answer = 0
         for i, cell in enumerate(notebook.cells):
@@ -763,30 +853,42 @@ class Exerciser(ipywidgets.HBox):
                 if re.search(answer_regexp, code):
                     code = re.sub(answer_regexp, answer[i_answer], code)
                 else:
-                    solution_code = ""
-                    for begin in code.split(format_comment[language] + " BEGIN SOLUTION"):
-                        end = begin.split(format_comment[language] + " END SOLUTION")
-                        if len(end) > 1:
-                            solution_code += answer[i_answer]
+                    zones = code.split(
+                        format_comment[language] + " BEGIN SOLUTION"
+                    )
+                    if len(zones) <= 1:
+                        code = answer[i_answer]
+                    else:
+                        code = zones[0]
+                        for zone in zones[1:]:
+                            end = zone.split(format_comment[language] + " END SOLUTION")
+                            assert len(end) == 2
+                            code += answer[i_answer]
                             i_answer = i_answer + 1
-                            solution_code += end[1]
-                        else:
-                            solution_code += end[0]
-                    
-                    code = solution_code
-                notebook.cells[i] = nbformat.v4.new_code_cell(code)
-                i_answer = i_answer + 1
-        ep = ExecutePreprocessor(timeout=600, kernel_name=kernel_name, allow_errors=True)
+                            code += end[1]
 
-        owd = os.getcwd()
-        try:
-            os.chdir(dir)
-            result = ep.preprocess(notebook)
-        finally:
-            os.chdir(owd)
+                cell['source'] = code
+                i_answer = i_answer + 1
+
+            assert self.first_answer_cell is not None
+
+            notebook.cells[i]["outputs"] = (
+                execute_code(self.kernel_client, cell["source"])
+                if i >= self.first_answer_cell
+                else []
+            )
+
+        # ep = ExecutePreprocessor(timeout=600, kernel_name=kernel_name, allow_errors=True)
+
+        # owd = os.getcwd()
+        # try:
+        #     os.chdir(dir)
+        #     result = ep.preprocess(notebook)
+        # finally:
+        #     os.chdir(owd)
 
         success = True
-        for cell in result[0]["cells"]:
+        for cell in notebook["cells"]:
             # If this is a code cell and execution errored
             if cell["cell_type"] == "code" and any(
                 output["output_type"] == "error" for output in cell["outputs"]

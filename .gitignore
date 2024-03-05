@@ -1,4 +1,5 @@
-*.ipynb_checkpoints
+.ipynb_checkpoints
+.virtual_documents
 jupylates/*/*.ipynb
 __pycache__
 .lrs.json
