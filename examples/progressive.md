@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-### Objectif pédagogique : échange de variable correct.
+### Objectif pédagogique : gérer les tranches de tableaux numpy
 
 ```{code-cell} ipython3
 :tags: [hide-cell]
