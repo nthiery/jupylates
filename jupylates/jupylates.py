@@ -4,7 +4,7 @@ from datetime import datetime
 
 # Why can't this be imported from IPython.display?
 # from IPython.core.display_functions import display
-from IPython.display import Code, Markdown, display
+from IPython.display import Code, Markdown, HTML, display
 import ipywidgets  # type: ignore
 import io
 import nbformat.v4
@@ -65,6 +65,8 @@ def execute_code(kernel_client: KernelClient, code: str) -> list:
 
 def display_outputs(outputs: list[dict]) -> None:
     for output in outputs:
+        if "text/html" in output["data"]:
+            display(HTML(output["data"]["text/plain"]))
         if "text/plain" in output["data"]:
             print(output["data"]["text/plain"])
 
@@ -72,11 +74,22 @@ def display_outputs(outputs: list[dict]) -> None:
 def execute_code_and_return_single_output(
     kernel_client: KernelClient, code: str
 ) -> str:
+    """
+    Execute the code in the kernel and return its output
+
+    There should be a single output, which is returned as an html string.
+    """
     outputs = execute_code(kernel_client, code)
     assert len(outputs) == 1
     (output,) = outputs
-    assert "text/plain" in output["data"]
-    return output["data"]["text/plain"]
+    if "text/html" in output["data"]:
+        return output["data"]["text/html"]
+    if "text/plain" in output["data"]:
+        s = output["data"]["text/plain"]
+        if False and '\n' in s:       # minimal multiline support
+            s = f"```\n{s}\n```"
+        return s
+    assert False, f"Unsupported data types {output['data'].keys()}"
 
 
 class ActivityLearningRecordConsumer:
