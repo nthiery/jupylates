@@ -6,7 +6,7 @@ pages:
     - pip install jupyterlite-core jupyterlite-xeus-python litegitpuller
     - pip install git+https://gitlab.dsi.universite-paris-saclay.fr/jupyter/jupylates.git
     - make lite
-    - mv _build public
+    - mv _output public
   artifacts:
     paths:
       - public
