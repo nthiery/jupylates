@@ -1,4 +1,4 @@
-name: intro-science-donnees-jupyterlite
+name: jupylates-jupyterlite
 
 channels:
 - https://repo.mamba.pm/emscripten-forge
