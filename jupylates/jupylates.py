@@ -63,11 +63,13 @@ def execute_code(kernel_client: KernelClient, code: str) -> list:
     return outputs
 
 
-def display_outputs(outputs: list[dict]) -> None:
+def display_outputs(outputs: List[dict]) -> None:
     for output in outputs:
-        if "text/html" in output["data"]:
+        if "data" not in output:
+            display(output)
+        elif "text/html" in output["data"]:
             display(HTML(output["data"]["text/plain"]))
-        if "text/plain" in output["data"]:
+        elif "text/plain" in output["data"]:
             print(output["data"]["text/plain"])
 
 
@@ -86,7 +88,7 @@ def execute_code_and_return_single_output(
         return output["data"]["text/html"]
     if "text/plain" in output["data"]:
         s = output["data"]["text/plain"]
-        if False and '\n' in s:       # minimal multiline support
+        if False and "\n" in s:  # minimal multiline support
             s = f"```\n{s}\n```"
         return s
     assert False, f"Unsupported data types {output['data'].keys()}"
@@ -572,7 +574,8 @@ class Exerciser(ipywidgets.HBox):
 
         # Exercise zone
         border_layout = ipywidgets.Layout(border="solid", padding="1ex")
-        self.exercise_zone = ipywidgets.Output(layout=border_layout)
+        self.exercise_zone = ipywidgets.Output()
+        self.exercise_zone_final_output = ipywidgets.Output()
 
         # Controler zone
         self.run_button = ipywidgets.Button(
@@ -659,7 +662,18 @@ class Exerciser(ipywidgets.HBox):
                         self.progress_zone,
                     ]
                 ),
-                ipywidgets.VBox([self.exercise_zone, self.controler_zone]),
+                ipywidgets.VBox(
+                    [
+                        ipywidgets.VBox(
+                            [
+                                self.exercise_zone,
+                                self.exercise_zone_final_output,
+                            ],
+                            layout=border_layout,
+                        ),
+                        self.controler_zone,
+                    ]
+                ),
             ]
         )
 
@@ -787,8 +801,10 @@ class Exerciser(ipywidgets.HBox):
         self.answer_zone = []
         with self.exercise_zone:
             self.exercise_zone.clear_output(wait=True)
+            self.exercise_zone_final_output.clear_output()
             self.first_answer_cell: Optional[int] = None
             for i_cell, cell in enumerate(notebook.cells):
+                cell_tags = cell["metadata"].get("tags", [])
                 if cell["metadata"].get("nbgrader", {}).get("solution", False):
                     if self.first_answer_cell is None:
                         self.first_answer_cell = i_cell
@@ -799,9 +815,7 @@ class Exerciser(ipywidgets.HBox):
                         display(textarea)
                         self.answer_zone.append(textarea)
                     else:
-                        zones = code.split(
-                            format_comment[language] + " BEGIN SOLUTION"
-                        )
+                        zones = code.split(format_comment[language] + " BEGIN SOLUTION")
                         if len(zones) <= 1:
                             textarea = ipywidgets.Textarea()
                             display(textarea)
@@ -809,9 +823,7 @@ class Exerciser(ipywidgets.HBox):
                         else:
                             display(Code(zones[0], language=lexer[language]))
                         for zone in zones[1:]:
-                            end = zone.split(
-                                format_comment[language] + " END SOLUTION"
-                            )
+                            end = zone.split(format_comment[language] + " END SOLUTION")
                             assert len(end) == 2
                             textarea = ipywidgets.Textarea()
                             # textarea.value = f"\n{format_comment[language]} COMPLETEZ LA SOLUTION ICI {format_comment[language]}\n"
@@ -820,8 +832,7 @@ class Exerciser(ipywidgets.HBox):
                             display(textarea)
                             display(Code(end[1], language=lexer[language]))
                 elif cell["cell_type"] == "markdown":
-                    if "hide-cell" not in cell["metadata"].get("tags", []):
-
+                    if "hide-cell" not in cell_tags:
                         source = cell["source"]
 
                         def eval(match):
@@ -834,12 +845,10 @@ class Exerciser(ipywidgets.HBox):
                         display(Markdown(source))
                 else:
                     if self.first_answer_cell is None:
-                        outputs = execute_code(
-                            self.kernel_client, cell["source"]
-                        )
+                        outputs = execute_code(self.kernel_client, cell["source"])
                     else:
                         outputs = []
-                    if "hide-cell" not in cell["metadata"].get("tags", []):
+                    if "hide-cell" not in cell_tags:
                         display(Code(cell["source"], language=lexer[language]))
                         display_outputs(outputs)
 
@@ -856,9 +865,22 @@ class Exerciser(ipywidgets.HBox):
     def run_notebook(self, notebook: Notebook, answer: List[str], dir: str) -> bool:
         notebook = copy.deepcopy(notebook)
         language = notebook.metadata["kernelspec"]["language"]
+
         i_answer = 0
-        for i, cell in enumerate(notebook.cells):
-            # If Autograded code cell
+        success = True
+        # Currentl limitation: the output of the first answer cell and
+        # subsequent cells are currently all put together in the same
+        # output widget after the exercize zone, instead of appearing
+        # each just after the cell that produced it. So only notebooks
+        # without visible cells after the first answer cell are
+        # properly supported.
+        self.exercise_zone_final_output.clear_output()
+        assert self.first_answer_cell is not None
+        for i in range(self.first_answer_cell, len(notebook.cells)):
+            cell = notebook.cells[i]
+            cell_tags = cell["metadata"].get("tags", [])
+
+            # Prepare answer cells
             if cell["cell_type"] == "code" and cell["metadata"].get("nbgrader", {}).get(
                 "solution", False
             ):
@@ -866,9 +888,7 @@ class Exerciser(ipywidgets.HBox):
                 if re.search(answer_regexp, code):
                     code = re.sub(answer_regexp, answer[i_answer], code)
                 else:
-                    zones = code.split(
-                        format_comment[language] + " BEGIN SOLUTION"
-                    )
+                    zones = code.split(format_comment[language] + " BEGIN SOLUTION")
                     if len(zones) <= 1:
                         code = answer[i_answer]
                     else:
@@ -880,38 +900,25 @@ class Exerciser(ipywidgets.HBox):
                             i_answer = i_answer + 1
                             code += end[1]
 
-                cell['source'] = code
+                cell["source"] = code
                 i_answer = i_answer + 1
 
-            assert self.first_answer_cell is not None
+            # Handle code cells
+            if cell["cell_type"] == "code":
+                outputs = execute_code(self.kernel_client, cell["source"])
+                if "hide-cell" not in cell_tags and "hide-output" not in cell_tags:
+                    with self.exercise_zone_final_output:
+                        display_outputs(outputs)
 
-            notebook.cells[i]["outputs"] = (
-                execute_code(self.kernel_client, cell["source"])
-                if i >= self.first_answer_cell
-                else []
-            )
+                # If execution errored
+                if any(output["output_type"] == "error" for output in outputs):
+                    if cell["metadata"].get("nbgrader", {}).get("grade", False):
+                        # If Autograded tests cell
+                        success = False
+                    # elif cell["metadata"].get("nbgrader", {}).get("solution", False):
+                    # TODO: handle autograded answer cell failure
+                    else:
+                        # TODO: handle
+                        raise ExecutionError("Execution failed")
 
-        # ep = ExecutePreprocessor(timeout=600, kernel_name=kernel_name, allow_errors=True)
-
-        # owd = os.getcwd()
-        # try:
-        #     os.chdir(dir)
-        #     result = ep.preprocess(notebook)
-        # finally:
-        #     os.chdir(owd)
-
-        success = True
-        for cell in notebook["cells"]:
-            # If this is a code cell and execution errored
-            if cell["cell_type"] == "code" and any(
-                output["output_type"] == "error" for output in cell["outputs"]
-            ):
-                if cell["metadata"].get("nbgrader", {}).get("grade", False):
-                    # If Autograded tests cell
-                    success = False
-                # elif cell["metadata"].get("nbgrader", {}).get("solution", False):
-                # TODO: handle autograded answer cell failure
-                else:
-                    # TODO: handle
-                    raise ExecutionError("Execution failed")
         return success
