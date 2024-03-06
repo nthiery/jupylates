@@ -10,6 +10,7 @@ _build
 # jupyterlite
 _output
 .jupyterlite.doit.db
+jupylates_demo.ipynb
 
 # packaging
 dist

@@ -16,4 +16,4 @@ JuPylates is an exerciser engine for learning and evaluation...
 
 ### Demos
 
-A demo is accessible [here](jupylates_demo.md).
+A demo is accessible [here](https://jupyter.gitlab.dsi.universite-paris-saclay.fr/jupylates/lab/index.html?path=jupylates_demo.ipynb).
