@@ -1,28 +1,26 @@
 ---
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: myst
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
 kernelspec:
-   display_name: Python 3 (ipykernel)
-   language: python
-   name: python3
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
 ### Objectif pédagogique : différence entre accumulateur et simple affectation
 
-```{code-cell} python
----
-editable: false
-tags: [hide-cell]
----
+```{code-cell} ipython3
+:tags: [hide-cell]
+
 from jupylates.jupylates_helpers import RANDOM_INT, CONST, INPUT
 
 I1: CONST = RANDOM_INT(5, 17);
 ```
 
-```{code-cell} python
+```{code-cell} ipython3
 x = 0
 y = 0
 while ( x < I1 ):
@@ -32,13 +30,12 @@ while ( x < I1 ):
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de `x` et `y`?
+Quelles sont les valeurs attendues de `x` et `y`?
 
 :::
 
-```{code-cell}
+```{code-cell} ipython3
 ---
-editable: true
 nbgrader:
   grade: false
   grade_id: init
@@ -53,9 +50,8 @@ resultx = INPUT(
 )
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 ---
-editable: true
 nbgrader:
   grade: false
   grade_id: init
@@ -70,9 +66,8 @@ resulty = INPUT(
 )
 ```
 
-```{code-cell}
+```{code-cell} ipython3
 ---
-editable: false
 nbgrader:
   grade: true
   grade_id: check

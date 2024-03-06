@@ -21,33 +21,19 @@ l'expression à évaluer.
 
 :::
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-cell]
 
 from jupylates.jupylates_helpers import RANDOM_CHOICE, CONST
-```
-
-```{code-cell} ipython3
-:tags: [hide-cell, variable]
-
 I1: CONST = RANDOM_CHOICE(3, 5, 7)
-I1
-```
-
-```{code-cell} ipython3
-:tags: [hide-cell, variable]
-
 I3: CONST = RANDOM_CHOICE(1, 2, 4, 8, 11, 13, 16, 17, 19, 22)
-I3
 ```
 
-```{code-cell} ipython3
-:tags: [hide-output, substitution]
-
+```{code-cell}
 R = I3 % I1
 ```
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-cell]
 
 solution = R
@@ -56,11 +42,11 @@ del R
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de R?
+Quelle est la valeur attendue de `R`?
 
 :::
 
-```{code-cell} ipython3
+```{code-cell}
 ---
 nbgrader:
   grade: false
@@ -68,11 +54,12 @@ nbgrader:
   locked: false
   schema_version: 3
   solution: true
+tags: [hide-output]
 ---
 I3 % I1
 ```
 
-```{code-cell} ipython3
+```{code-cell}
 ---
 nbgrader:
   grade: true

@@ -4,7 +4,6 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.16.0
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -29,7 +28,7 @@ kernelspec:
 
 +++
 
-L'application, en mode examen, sur une liste d'exercices (ici tous les exercices dans le dossier `for`):
+L'application, en mode entraînement, sur une liste d'exercices (ici tous les exercices dans le dossier `examples`):
 
 ```{code-cell} ipython3
 ---
