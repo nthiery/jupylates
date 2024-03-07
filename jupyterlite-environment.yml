@@ -6,6 +6,7 @@ channels:
 - conda-forge
 
 dependencies:
+- xeus-python
 - ipywidgets
 
 ##############################################################################

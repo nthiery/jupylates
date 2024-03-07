@@ -3,7 +3,7 @@ image: gitlab.dsi.universite-paris-saclay.fr:5005/l1infoinitiationsciencedonnees
 pages:
   script:
     - pip install --upgrade jupyterlab-git
-    - pip install jupyterlite-core jupyterlite-xeus-python litegitpuller
+    - pip install jupyterlite-core jupyterlite-xeus litegitpuller
     - pip install git+https://gitlab.dsi.universite-paris-saclay.fr/jupyter/jupylates.git
     - make lite
     - mv _output public
