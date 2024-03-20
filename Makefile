@@ -2,7 +2,7 @@ BUILDDIR=_output
 CONTENTDIR=_contents
 
 clean:
-	rm -rf $(BUILDDIR) $(CONTENTDIR) doit.db
+	rm -rf $(BUILDDIR) $(CONTENTDIR)
 
 contents:
 	mkdir -p $(CONTENTDIR)
