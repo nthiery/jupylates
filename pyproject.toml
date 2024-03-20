@@ -30,6 +30,14 @@ dependencies = [
   "mystmd",
 ]
 
+[project.optional-dependencies]
+# feature dependency groups
+
+doc = [
+  "jupyterlite-core >=0.2.0,<0.3.0",
+  "jupyterlite-xeus>=0.1.2,<0.2",
+  "xeus-python",
+]
 
 [tool.mypy]
 files = "*.py"

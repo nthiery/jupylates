@@ -10,22 +10,13 @@ dependencies:
 - ipywidgets
 
 ##############################################################################
-# Authoring and teaching tools
-- jupyterlab-myst>=2.1.0
+#- ipywidgets
+#- jupytext
+#- mystmd
 
-- matplotlib
-- pandas
-- seaborn
-- ipydatagrid
-- tabulate
-- pillow
-- mscorefonts
-- tqdm
-- jupytext
-
-- pip
-- pip:
-    - "litegitpuller"
-    - "git+https://gitlab.dsi.universite-paris-saclay.fr/jupyter/jupylates.git"
+#- pip
+#- pip:
+#    - "litegitpuller"
+#    - "git+https://gitlab.dsi.universite-paris-saclay.fr/jupyter/jupylates.git"
 
 

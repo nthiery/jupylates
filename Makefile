@@ -13,5 +13,5 @@ contents:
 	mv jupylates_demo.ipynb $(CONTENTDIR)
 
 lite:	contents
-	jupyter lite build --XeusPythonEnv.environment_file=jupyterlite-environment.yml --contents=$(CONTENTDIR) --output-dir=$(BUILDDIR)
+	jupyter lite build --XeusAddon.environment_file jupyterlite-environment.yml --contents $(CONTENTDIR) --output-dir $(BUILDDIR)
 
