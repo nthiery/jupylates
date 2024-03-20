@@ -4,41 +4,29 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.15.2
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
 
-### Objectif pédagogique : savoit déclarer une variable.
+### Objectif pédagogique : déclarer une variable
 
-```{code-cell}
-:editable: false
+```{code-cell} ipython3
 :tags: [hide-cell]
 
-from jupylates.jupylates_helpers import RANDOM_INT, CONST, INPUT
+from random import randint
+I1 = randint(1,10)
 ```
-
-+++
-
-```{code-cell}
-:tags: [hide-cell, variable]
-
-I1: CONST = RANDOM_INT(1,10);
-```
-
-+++
 
 :::{admonition} Consigne
 
-Déclarez une variable entière r et affectez lui la valeur I1.
+Déclarez une variable entière `R` et affectez lui la valeur {eval}`I1`.
 
 :::
 
-```{code-cell}
+```{code-cell} ipython3
 ---
-editable: true
 nbgrader:
   grade: false
   grade_id: init
@@ -46,16 +34,11 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-### BEGIN SOLUTION
-r = I1
-### END SOLUTION
+R = I1
 ```
 
-+++
-
-```{code-cell}
+```{code-cell} ipython3
 ---
-editable: false
 nbgrader:
   grade: true
   grade_id: check
@@ -65,5 +48,5 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
-assert r == I1
+assert R == I1
 ```

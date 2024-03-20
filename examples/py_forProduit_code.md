@@ -1,48 +1,40 @@
 ---
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .md
-      format_name: myst
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
 kernelspec:
-   display_name: Python 3 (ipykernel)
-   language: python
-   name: python3
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
 ---
 
-### Objectif pédagogique : boucle for avec accumulateur.
+### Objectif pédagogique : boucle for avec accumulateur
 
-```{code-cell} python
----
-editable: false
-tags: [hide-cell]
----
+```{code-cell}
+:tags: [hide-cell]
+
 from jupylates.jupylates_helpers import RANDOM_INT, CONST, INPUT
-```
-
-+++
-
-```{code-cell} c++
----
-tags: [hide-cell, variable]
----
 I1: CONST = RANDOM_INT(1, 6)
 I2: CONST = I1 + RANDOM_INT(10,12)
 ```
 
-+++
-
 :::{admonition} Consigne
 
-Écrire le code permettant de mettre dans la variable p
+Écrire le code permettant de mettre dans la variable `p`
 le produit des entiers compris entre I1 et I2 inclus.
 
 :::
 
-```{code-cell} python
+```{code-cell}
 ---
-editable: true
-nbgrader: {grade: false, grade_id: init, schema_version: 3,locked: false, solution: true}
+nbgrader:
+  grade: false
+  grade_id: init
+  locked: false
+  schema_version: 3
+  solution: true
 ---
 ### BEGIN SOLUTION
 p = 1;
@@ -51,13 +43,16 @@ for i in range(I1, I2+1):
 ### END SOLUTION
 ```
 
-+++
-
-```{code-cell} python
+```{code-cell}
 ---
-editable: false
+nbgrader:
+  grade: true
+  grade_id: check
+  locked: true
+  points: 1
+  schema_version: 3
+  solution: false
 tags: [hide-cell]
-nbgrader: {grade: true, points: 1, grade_id: check, schema_version: 3, locked: true, solution: false}
 ---
 result = 1;
 for i in range(I1, I2+1):
