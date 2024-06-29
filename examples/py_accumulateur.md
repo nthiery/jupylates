@@ -15,10 +15,18 @@ kernelspec:
 ```{code-cell} ipython3
 :tags: [hide-cell]
 
-from jupylates.jupylates_helpers import RANDOM_INT, CONST, INPUT
+from jupylates.jupylates_helpers import SUBSTITUTE
+import random
 
-I1: CONST = RANDOM_INT(5, 17);
+SUBSTITUTE(I1=random.randint(5, 17))
 ```
+
+:::{admonition} Consigne
+
+Quelles sont les valeurs attendues de `x` et `y` après exécution du
+code suivant?
+
+:::
 
 ```{code-cell} ipython3
 x = 0
@@ -27,12 +35,6 @@ while ( x < I1 ):
     x = x + 1
     y = 1
 ```
-
-:::{admonition} Consigne
-
-Quelles sont les valeurs attendues de `x` et `y`?
-
-:::
 
 ```{code-cell} ipython3
 ---

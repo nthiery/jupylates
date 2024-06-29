@@ -20,6 +20,12 @@ I1: CONST = RANDOM_INT(0, 7)
 I2: CONST = RANDOM_INT(8, 15)
 ```
 
+:::{admonition} Consigne
+
+Quelle est la valeur attendue de `r` après exécution du code suivant?
+
+:::
+
 ```{code-cell} ipython3
 X = I1
 Y = I2
@@ -30,12 +36,6 @@ Y = Z
 r = Y
 ```
 
-:::{admonition} Consigne
-
-Quelle est la valeur attendue de r?
-
-:::
-
 ```{code-cell} ipython3
 ---
 nbgrader:
@@ -45,11 +45,15 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-result = INPUT(
-    ### BEGIN SOLUTION
-    Y
-    ### END SOLUTION
-)
+### BEGIN SOLUTION
+I1
+### END SOLUTION
+```
+
+```{code-cell} ipython3
+:tags: [hide-cell]
+
+SOLUTION = _
 ```
 
 ```{code-cell} ipython3
@@ -63,5 +67,5 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
-assert result == r
+assert SOLUTION == r
 ```

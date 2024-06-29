@@ -1,3 +1,4 @@
+import json
 from typing import Any
 from random import randint, choice
 
@@ -24,3 +25,8 @@ def RANDOM_CHOICE(*args: Any) -> Any:
         'alice'
     """
     return choice(args)
+
+
+def SUBSTITUTE(**args: Any) -> str:
+    return json.dumps(
+        {key: str(value) for key, value in args.items()})

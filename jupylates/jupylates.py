@@ -94,6 +94,20 @@ def execute_code_and_return_single_output(
     assert False, f"Unsupported data types {output['data'].keys()}"
 
 
+def substitute(source: str, substitutions: Dict[str, str]) -> str:
+    """
+    Subtitute `substitutions` in the `source`
+
+    For each pair (key, value) in the substitution dictionary, replace
+    all occurences of the key appearing as a full word in the source
+    by the corresponding value.
+    """
+    if not substitutions:
+        return source
+    pattern = re.compile(r"\b(" + "|".join(substitutions.keys()) + r")\b")
+    return pattern.sub(lambda i: substitutions[i.group()], source)
+
+
 class ActivityLearningRecordConsumer:
     """
     A consumer of events on an activity
@@ -799,16 +813,21 @@ class Exerciser(ipywidgets.HBox):
         self.kernel_client = self.kernel_manager.client()
         language = notebook.metadata["kernelspec"]["language"]
         self.answer_zone = []
+        self.substitutions: Dict[str, str] = {}
         with self.exercise_zone:
             self.exercise_zone.clear_output(wait=True)
             self.exercise_zone_final_output.clear_output()
             self.first_answer_cell: Optional[int] = None
             for i_cell, cell in enumerate(notebook.cells):
                 cell_tags = cell["metadata"].get("tags", [])
+
+                source = substitute(cell["source"], self.substitutions)
+
                 if cell["metadata"].get("nbgrader", {}).get("solution", False):
+                    # Handle solution cell
                     if self.first_answer_cell is None:
                         self.first_answer_cell = i_cell
-                    code = cell["source"]
+                    code = source
                     if re.search(answer_regexp, code):
                         textarea = ipywidgets.Textarea()
                         textarea.rows = 2
@@ -831,25 +850,30 @@ class Exerciser(ipywidgets.HBox):
                             self.answer_zone.append(textarea)
                             display(textarea)
                             display(Code(end[1], language=lexer[language]))
-                elif cell["cell_type"] == "markdown":
-                    if "hide-cell" not in cell_tags:
-                        source = cell["source"]
+                elif cell["cell_type"] == "markdown" and "hide-cell" not in cell_tags:
+                    # Display non hidden markdown cell
 
-                        def eval(match):
-                            code = match[1]
-                            return execute_code_and_return_single_output(
-                                self.kernel_client, code
-                            )
+                    def eval(match):
+                        code = match[1]
+                        return execute_code_and_return_single_output(
+                            self.kernel_client, code
+                        )
 
-                        source = re.sub(eval_regexp, eval, source)
-                        display(Markdown(source))
+                    source = re.sub(eval_regexp, eval, source)
+                    display(Markdown(source))
                 else:
+                    # Handle code cell
                     if self.first_answer_cell is None:
-                        outputs = execute_code(self.kernel_client, cell["source"])
+                        outputs = execute_code(self.kernel_client, source)
                     else:
                         outputs = []
+                    if "substitutions" in cell_tags:
+                        assert len(outputs) == 1
+                        output = outputs[0]['data']['text/plain']
+                        self.substitutions.update(json.loads(output[1:-1]))
+                        outputs = []
                     if "hide-cell" not in cell_tags:
-                        display(Code(cell["source"], language=lexer[language]))
+                        display(Code(source, language=lexer[language]))
                         display_outputs(outputs)
 
     def randomize_notebook(self, notebook: Notebook) -> Notebook:
@@ -879,6 +903,7 @@ class Exerciser(ipywidgets.HBox):
         for i in range(self.first_answer_cell, len(notebook.cells)):
             cell = notebook.cells[i]
             cell_tags = cell["metadata"].get("tags", [])
+            cell['source'] = substitute(cell['source'], self.substitutions)
 
             # Prepare answer cells
             if cell["cell_type"] == "code" and cell["metadata"].get("nbgrader", {}).get(
