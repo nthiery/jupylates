@@ -718,7 +718,8 @@ class Exerciser(ipywidgets.HBox):
             items[k].on_click(make_button_callback(k))
 
         # Application
-        self.set_exercise(0)
+        if self.exercises:
+            self.set_exercise(0)
 
     def update_progress_zone(self) -> None:
         buttons = self.progress_zone.children
