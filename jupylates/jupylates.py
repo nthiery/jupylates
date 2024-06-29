@@ -869,7 +869,7 @@ class Exerciser(ipywidgets.HBox):
                         outputs = []
                     if "substitutions" in cell_tags:
                         assert len(outputs) == 1
-                        output = outputs[0]['data']['text/plain']
+                        output = outputs[0]["data"]["text/plain"]
                         self.substitutions.update(json.loads(output[1:-1]))
                         outputs = []
                     if "hide-cell" not in cell_tags:
@@ -903,7 +903,7 @@ class Exerciser(ipywidgets.HBox):
         for i in range(self.first_answer_cell, len(notebook.cells)):
             cell = notebook.cells[i]
             cell_tags = cell["metadata"].get("tags", [])
-            cell['source'] = substitute(cell['source'], self.substitutions)
+            cell["source"] = substitute(cell["source"], self.substitutions)
 
             # Prepare answer cells
             if cell["cell_type"] == "code" and cell["metadata"].get("nbgrader", {}).get(

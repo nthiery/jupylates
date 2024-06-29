@@ -28,5 +28,4 @@ def RANDOM_CHOICE(*args: Any) -> Any:
 
 
 def SUBSTITUTE(**args: Any) -> str:
-    return json.dumps(
-        {key: str(value) for key, value in args.items()})
+    return json.dumps({key: str(value) for key, value in args.items()})
