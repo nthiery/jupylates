@@ -33,8 +33,7 @@ dependencies = [
   "pytz",
   "math",
   "numpy",
-  "datetime", 
-  
+  "datetime",   
 ]
 
 [project.optional-dependencies]
