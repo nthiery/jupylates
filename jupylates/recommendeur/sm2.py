@@ -30,6 +30,7 @@ def efficiency(ef,Quality):
 def rec_SM2(activities):
 
     ############# LECTURE LRS ################
+    
     #supprime les warnings
     ignore_warnings = warnings.filterwarnings('ignore')
     

@@ -610,27 +610,6 @@ class Exerciser(ipywidgets.HBox):
             button_style="primary",
             layout={"width": "fit-content"},
         )
-        #self.rec_sm2_button = ipywidgets.Button(
-        #    icon="fa-thumbs-o-up",
-        #    description="Rec SM2",
-        #    tooltip="Sort un exercice recommandé pour vous d'après SM2",
-        #    button_style="primary",
-        #    layout={"width": "fit-content"},
-        #)
-        #self.rec_ml_button = ipywidgets.Button(
-        #    icon="heart",
-        #    description="Rec Maison",
-        #    tooltip="Sort un exercice recommandé pour vous",
-        #    button_style="primary",
-        #    layout={"width": "fit-content"},
-        #)
-        #self.rec_fsrs_button = ipywidgets.Button(
-        #    icon="mortar-board",
-        #    description="Rec FSRS",
-        #    tooltip="Sort un exercice recommandé pour vous d'après FSRS",
-        #    button_style="primary",
-        #    layout={"width": "fit-content"},
-        #)
         self.next_button = ipywidgets.Button(
             icon="caret-right",
             description="Exercice suivant",
@@ -677,9 +656,6 @@ class Exerciser(ipywidgets.HBox):
                     [
                         self.rec_chooser,
                         self.recommendeur_button,
-                        #self.rec_sm2_button,
-                        #self.rec_ml_button,
-                        #self.rec_fsrs_button,
                     ]
                 ),
                 self.source_link,
@@ -695,9 +671,6 @@ class Exerciser(ipywidgets.HBox):
         self.random_button.on_click(lambda event: self.random_exercise())
         self.randomize_button.on_click(lambda event: self.randomize_exercise())
         self.recommendeur_button.on_click(lambda event: self.recommendeur_exercise())
-        #self.rec_sm2_button.on_click(lambda event: self.rec_sm2_exercise())
-        #self.rec_ml_button.on_click(lambda event: self.rec_ml_exercise())
-        #self.rec_fsrs_button.on_click(lambda event: self.rec_fsrs_exercise())
         self.run_button.on_click(lambda event: self.run_exercise())
         self.theme_chooser.observe(lambda event: self.reset_exercises())
         ######################################################################
@@ -808,16 +781,7 @@ class Exerciser(ipywidgets.HBox):
             self.set_exercise(list(self.exercises).index( maison(list(self.exercises))))
         if self.rec_chooser.value == "Maison-time":
             self.set_exercise(list(self.exercises).index( maison_time(list(self.exercises))))
-            
-    def rec_sm2_exercise(self) -> None:
-        self.set_exercise(list(self.exercises).index( rec_SM2(list(self.exercises))))
-
-    def rec_ml_exercise(self) -> None:
-        self.set_exercise(list(self.exercises).index( maison(list(self.exercises))))
-        
-    def rec_fsrs_exercise(self) -> None:
-        self.set_exercise(list(self.exercises).index( rec_fsrs(list(self.exercises))))
-        
+                   
     def randomize_exercise(self) -> None:
         self.set_exercise(self.exercise_number)
 

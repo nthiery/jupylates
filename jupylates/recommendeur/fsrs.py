@@ -148,6 +148,7 @@ def rec_fsrs(activities):
     liste_activities_done = [x for x in lrs_activities if x in activities]
     
     ########################### CONVERSION TEMPS/DATES ####################
+    
     #conversion du temps en format Year-month-days-Hours:minutes:secondes
     lrs['time'] = pd.to_datetime(lrs['time'], format='%Y-%m-%d-%H%M%S')
     lrs["date"] = lrs['time'].dt.date
@@ -199,9 +200,10 @@ def rec_fsrs(activities):
     ########################### Dataframe Sortie + recommendeur ###########################
     
     output2 = output.loc[output['next date'] <= date.today()]
+    
     ####debug###
     #print(output)
-    print(output[['previous full', 'next full']])
+    #print(output[['previous full', 'next full']])
     ####debug###
         
     if output2.size != 0: 

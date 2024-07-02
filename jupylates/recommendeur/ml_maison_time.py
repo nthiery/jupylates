@@ -16,9 +16,6 @@
 # ---
 
 # %%
-# PINGU 
-# %%
-
 
 import pandas as pd
 import numpy as np
@@ -132,22 +129,14 @@ def maison_time(liste_exo):
     histo = pd.read_csv("/home/mambauser/jupylates/jupylates/recommendeur/histo.csv")
     histo = histo.iloc[: , 1:]
     user_data.to_csv("/home/mambauser/jupylates/jupylates/recommendeur/histo.csv")
-    
-    # we delete the previous results
-    
-    
+       
     new = user_data.iloc[ histo['activity'].size: ]
-    #print(new)
+
     for ex in new['activity'].unique():
         histo = histo.drop(index = histo.loc[histo.activity == ex].index)  
     
-    
     # create dataframe of new input
     df_user = pd.concat([histo,new])
-    #print(df_user)
-    
-    # joblib.dump(df_user, 'df_user2.pkl')
-    # df_user= joblib.load('df_user2.pkl')
     
     # Sort by activity 
     df_user = df_user.sort_values(by='activity')
@@ -182,9 +171,7 @@ def maison_time(liste_exo):
                 next_exercise = liste_activities[last_exercise]
 
     quality = Quality_function(prob_of_success, avg_prob_success, next_exercise)
-    #print(f"Quality of the student: {quality}")
     if quality == "Good":
-        print("GOOOOOOOOOOOOOOOOOOpinguOOOOOOOOD")
         # Recommend the next exercise (most correlated exercise) of those he/she has not attempted
         if next_exercise == liste_activities[last_exercise-1]:
             next_exercise = None
