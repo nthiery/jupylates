@@ -1,5 +1,9 @@
 image: gitlab.dsi.universite-paris-saclay.fr:5005/l1infoinitiationsciencedonnees/computerlab/image:latest
 
+build:
+  script:
+    - pip install -e .
+
 pages:
   script:
     - pip install --upgrade jupyterlab-git
