@@ -1,6 +1,6 @@
 from abc import abstractmethod
 import copy, getpass, json, os, random, re
-from datetime import datetime
+from datetime import datetime ,date
 
 # Why can't this be imported from IPython.display?
 # from IPython.core.display_functions import display
@@ -15,6 +15,11 @@ from jupyter_client import KernelClient, KernelManager  # type: ignore
 
 from .code_randomizer import Randomizer
 
+# recommender fsrs / SM2 and 2 Machine learning
+from .recommendeur.sm2 import rec_SM2 
+from .recommendeur.ml_maison import maison
+from .recommendeur.ml_maison_time import maison_time
+from .recommendeur.fsrs import rec_fsrs
 
 Notebook = Any
 Activity = str
@@ -565,6 +570,12 @@ class Exerciser(ipywidgets.HBox):
         )
         if list(self.themes.keys()) == [""]:
             self.theme_chooser.layout.display = "none"
+        
+        # recommendeur
+        self.rec_chooser = ipywidgets.Dropdown(
+            options=['FSRS','SM2','Maison','Maison-time'], description="Recommendeurs :" ,
+            style={'description_width': 'initial'} , layout={'width': 'max-content'}
+        )
 
         # Progress zone
         box_layout = ipywidgets.Layout(
@@ -580,6 +591,7 @@ class Exerciser(ipywidgets.HBox):
         # Controler zone
         self.run_button = ipywidgets.Button(
             description="Valider", button_style="primary", icon="check"
+            
         )
         self.result_view = ipywidgets.Label()
         self.score_view = ipywidgets.Label()
@@ -588,6 +600,13 @@ class Exerciser(ipywidgets.HBox):
             icon="dice",
             description="Variante",
             tooltip="Tire aléatoirement une autre variante du même exercice",
+            button_style="primary",
+            layout={"width": "fit-content"},
+        )
+        self.recommendeur_button = ipywidgets.Button(
+            icon="fa-thumbs-o-up",
+            description="Recommender",
+            tooltip="Sort un exercice recommandé pour vous",
             button_style="primary",
             layout={"width": "fit-content"},
         )
@@ -633,6 +652,12 @@ class Exerciser(ipywidgets.HBox):
                         self.total_score_view,
                     ]
                 ),
+                ipywidgets.HBox(
+                    [
+                        self.rec_chooser,
+                        self.recommendeur_button,
+                    ]
+                ),
                 self.source_link,
             ]
         )
@@ -645,9 +670,9 @@ class Exerciser(ipywidgets.HBox):
         self.previous_button.on_click(lambda event: self.previous_exercise())
         self.random_button.on_click(lambda event: self.random_exercise())
         self.randomize_button.on_click(lambda event: self.randomize_exercise())
+        self.recommendeur_button.on_click(lambda event: self.recommendeur_exercise())
         self.run_button.on_click(lambda event: self.run_exercise())
         self.theme_chooser.observe(lambda event: self.reset_exercises())
-
         ######################################################################
         # Initialization
         ######################################################################
@@ -747,6 +772,16 @@ class Exerciser(ipywidgets.HBox):
     def random_exercise(self) -> None:
         self.set_exercise(random.randint(0, len(self.exercises) - 1))
 
+    def recommendeur_exercise(self) -> None:
+        if self.rec_chooser.value == "SM2":
+            self.set_exercise(list(self.exercises).index( rec_SM2(list(self.exercises))))
+        if self.rec_chooser.value == "FSRS":
+            self.set_exercise(list(self.exercises).index( rec_fsrs(list(self.exercises))))
+        if self.rec_chooser.value == "Maison":
+            self.set_exercise(list(self.exercises).index( maison(list(self.exercises))))
+        if self.rec_chooser.value == "Maison-time":
+            self.set_exercise(list(self.exercises).index( maison_time(list(self.exercises))))
+                   
     def randomize_exercise(self) -> None:
         self.set_exercise(self.exercise_number)
 
