@@ -30,7 +30,6 @@ dependencies = [
   "mystmd",
   "pandas",
   "joblib",
-  "warnings",
   "pytz",
   "math",
   "numpy",
