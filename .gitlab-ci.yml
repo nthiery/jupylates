@@ -1,5 +1,10 @@
 image: gitlab.dsi.universite-paris-saclay.fr:5005/l1infoinitiationsciencedonnees/computerlab/image:latest
 
+build:
+  script:
+    - pip install -e .
+    - python -c "import jupylates"
+
 pages:
   script:
     - pip install --upgrade jupyterlab-git
@@ -10,5 +15,5 @@ pages:
   artifacts:
     paths:
       - public
-  only:
-    - master
+  rules:
+    - if: $CI_PROJECT_PATH == "jupyter/jupylates" && $CI_COMMIT_BRANCH == "master"
