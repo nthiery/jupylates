@@ -809,7 +809,7 @@ class Exerciser(ipywidgets.HBox):
         return km
 
     def display_exercise(self, notebook: Notebook) -> None:
-        kernel_name = notebook.metadata["kernelspec"]["language"]
+        kernel_name = notebook.metadata["kernelspec"]["name"]
         self.kernel_manager = self.get_preheated_kernel_manager(kernel_name)
         self.kernel_client = self.kernel_manager.client()
         language = notebook.metadata["kernelspec"]["language"]
