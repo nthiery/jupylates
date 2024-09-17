@@ -664,7 +664,7 @@ class Exerciser(ipywidgets.HBox):
         self.random_button.on_click(lambda event: self.random_exercise())
         self.randomize_button.on_click(lambda event: self.randomize_exercise())
         self.run_button.on_click(lambda event: self.run_exercise())
-        self.theme_chooser.observe(lambda event: self.reset_exercises())
+        self.theme_chooser.observe(lambda event: self.reset_exercises(), names="value")
 
         ######################################################################
         # Initialization
