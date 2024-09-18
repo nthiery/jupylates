@@ -39,7 +39,9 @@ begin_end_regexp = re.compile(r"{format_comment} (BEGIN|END) SOLUTION")
 os.environ["PYDEVD_DISABLE_FILE_VALIDATION"] = "1"
 
 
-def execute_code(kernel_client: KernelClient, code: str) -> List[Dict[str, Dict[str, str]]]:
+def execute_code(
+    kernel_client: KernelClient, code: str
+) -> List[Dict[str, Dict[str, str]]]:
     # print(f"executing {cell['source']}")
     kernel_client.execute(code=code)
     outputs = []
