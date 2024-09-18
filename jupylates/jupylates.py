@@ -853,6 +853,7 @@ class Exerciser(ipywidgets.HBox):
                         zones = code.split(format_comment[language] + " BEGIN SOLUTION")
                         if len(zones) <= 1:
                             textarea = ipywidgets.Textarea()
+                            textarea.rows = len(code.splitlines()) + 1
                             display(textarea)
                             self.answer_zone.append(textarea)
                         else:
