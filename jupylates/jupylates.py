@@ -39,7 +39,9 @@ begin_end_regexp = re.compile(r"{format_comment} (BEGIN|END) SOLUTION")
 os.environ["PYDEVD_DISABLE_FILE_VALIDATION"] = "1"
 
 
-def execute_code(kernel_client: KernelClient, code: str) -> list:
+def execute_code(
+    kernel_client: KernelClient, code: str
+) -> List[Dict[str, Dict[str, str]]]:
     # print(f"executing {cell['source']}")
     kernel_client.execute(code=code)
     outputs = []
@@ -517,12 +519,12 @@ class ActivitiesStates(LearningRecordConsumer):
         s = f"total: {score:g}/{max_score:g}"
 
         if max_score > 0:
-            score = score / max_score
-            if score <= 0.25:
+            normalized_score = score / max_score
+            if normalized_score <= 0.25:
                 color = "red"
-            elif score <= 0.5:
+            elif normalized_score <= 0.5:
                 color = "orange"
-            elif score <= 0.75:
+            elif normalized_score <= 0.75:
                 color = "yellow"
             else:
                 color = "green"
@@ -541,6 +543,8 @@ class Exerciser(ipywidgets.HBox):
 
     themes: Dict[str, List[str]]
     ActivityStateType: Type[ActivityState]
+
+    kernel_manager: Optional[KernelManager] = None
 
     def __init__(
         self,
@@ -792,28 +796,39 @@ class Exerciser(ipywidgets.HBox):
 
     preheated_kernel_manager_pool: Dict[str, KernelManager] = {}
 
-    def get_preheated_kernel_manager(self, kernel_name: str) -> KernelManager:
-        def preheated_kernel_manager(kernel_name):
+    def reset_kernel_client(self, kernel_name: str) -> None:
+        """
+        (Re)set the kernel client in self.kernel_client
+        """
+
+        def preheated_kernel_manager(kernel_name: str) -> KernelManager:
             km = KernelManager(kernel_name=kernel_name)
             km.start_kernel()
             return km
 
-        km = self.preheated_kernel_manager_pool.get(
-            kernel_name, preheated_kernel_manager(kernel_name)
-        )
+        # Stop preview kernel client if alive
+        if self.kernel_manager is not None and self.kernel_manager.is_alive():
+            self.kernel_manager.shutdown_kernel()
 
+        # Use a preheated kernel manager if available or create one
+        if kernel_name in self.preheated_kernel_manager_pool:
+            self.kernel_manager = self.preheated_kernel_manager_pool[kernel_name]
+        else:
+            self.kernel_manager = preheated_kernel_manager(kernel_name)
+
+        # Preheat a kernel manager for next time
         self.preheated_kernel_manager_pool[kernel_name] = preheated_kernel_manager(
             kernel_name
         )
 
-        return km
+        self.kernel_client = self.kernel_manager.client()
 
     def display_exercise(self, notebook: Notebook) -> None:
-        kernel_name = notebook.metadata["kernelspec"]["language"]
-        self.kernel_manager = self.get_preheated_kernel_manager(kernel_name)
-        self.kernel_client = self.kernel_manager.client()
+        kernel_name = notebook.metadata["kernelspec"]["name"]
+        self.reset_kernel_client(kernel_name)
+
         language = notebook.metadata["kernelspec"]["language"]
-        self.answer_zone = []
+        self.answer_zone: List[ipywidgets.Textarea] = []
         self.substitutions: Dict[str, str] = {}
         with self.exercise_zone:
             self.exercise_zone.clear_output(wait=True)
@@ -838,6 +853,7 @@ class Exerciser(ipywidgets.HBox):
                         zones = code.split(format_comment[language] + " BEGIN SOLUTION")
                         if len(zones) <= 1:
                             textarea = ipywidgets.Textarea()
+                            textarea.rows = len(code.splitlines()) + 1
                             display(textarea)
                             self.answer_zone.append(textarea)
                         else:
