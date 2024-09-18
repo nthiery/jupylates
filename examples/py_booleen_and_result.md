@@ -13,34 +13,36 @@ kernelspec:
 ### Objectif pédagogique : opérateur `and`
 
 ```{code-cell} ipython3
-:editable: false
-:tags: [hide-cell]
+:tags: [hide-cell, substitutions]
 
-from jupylates.jupylates_helpers import RANDOM_INT, CONST, INPUT
-```
+from jupylates.jupylates_helpers import SUBSTITUTE
+import random
 
-```{code-cell} ipython3
-:tags: [hide-cell, variable]
+I1 = random.randint(3, 9)
 
-I1: CONST = RANDOM_INT(3, 9)
-I1
-```
-
-```{code-cell} ipython3
-:tags: [hide-output, substitution]
-
-x = I1
-if x >= 0 and x <= 2 :
-    r = True
-else:
-    r = False
+SUBSTITUTE(
+    # Substitute the variable I1 by its value in the following cells
+    I1=I1,
+    # Substitute the variables A, B, C respectively by some permutation of a, b, c
+    **dict(zip("ABC", random.sample("abc", 3))),
+    # Same for X, Y, Z
+    **dict(zip("XYZ", random.sample("xyz", 3))),
+)
 ```
 
 :::{admonition} Consigne
 
-Quelle est la valeur attendue de r?
+Quelle est la valeur attendue de `A` après exécution du code suivant?
 
 :::
+
+```{code-cell} ipython3
+X = I1
+if X >= 0 and X <= 2 :
+    A = True
+else:
+    A = False
+```
 
 ```{code-cell} ipython3
 ---
@@ -52,11 +54,15 @@ nbgrader:
   schema_version: 3
   solution: true
 ---
-result = INPUT(
-    ### BEGIN SOLUTION
-    r
-    ### END SOLUTION
-)
+### BEGIN SOLUTION
+R
+### END SOLUTION
+```
+
+```{code-cell} ipython3
+:tags: [hide-cell]
+
+result = _
 ```
 
 ```{code-cell} ipython3
@@ -71,5 +77,5 @@ nbgrader:
   solution: false
 tags: [hide-cell]
 ---
-assert result == r
+assert result == R
 ```
