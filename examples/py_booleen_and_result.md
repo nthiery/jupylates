@@ -8,9 +8,8 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
+learning_objective: 'opérateur `and`'
 ---
-
-### Objectif pédagogique : opérateur `and`
 
 ```{code-cell} ipython3
 :tags: [hide-cell, substitutions]
@@ -45,37 +44,20 @@ else:
 ```
 
 ```{code-cell} ipython3
----
-editable: true
-nbgrader:
-  grade: false
-  grade_id: init
-  locked: false
-  schema_version: 3
-  solution: true
----
-### BEGIN SOLUTION
-R
-### END SOLUTION
-```
-
-```{code-cell} ipython3
 :tags: [hide-cell]
 
-result = _
+SOLUTION = A
+del A
 ```
 
 ```{code-cell} ipython3
----
-editable: false
-nbgrader:
-  grade: true
-  grade_id: check
-  locked: true
-  points: 1
-  schema_version: 3
-  solution: false
-tags: [hide-cell]
----
-assert result == R
+:tags: [solution, hide-output]
+
+SOLUTION
+```
+
+```{code-cell} ipython3
+:tags: [test, hide-cell]
+
+assert _ == SOLUTION
 ```

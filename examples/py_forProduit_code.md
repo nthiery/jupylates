@@ -8,9 +8,8 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
+learning_objective: 'boucle for avec accumulateur'
 ---
-
-### Objectif pédagogique : boucle for avec accumulateur
 
 ```{code-cell}
 :tags: [hide-cell, substitutions]
@@ -32,32 +31,16 @@ des entiers compris entre I1 et I2 inclus.
 :::
 
 ```{code-cell}
----
-nbgrader:
-  grade: false
-  grade_id: init
-  locked: false
-  schema_version: 3
-  solution: true
----
-### BEGIN SOLUTION
+:tags: [solution]
+
 p = 1;
 for i in range(I1, I2+1):
     p = p * i
-### END SOLUTION
 ```
 
 ```{code-cell}
----
-nbgrader:
-  grade: true
-  grade_id: check
-  locked: true
-  points: 1
-  schema_version: 3
-  solution: false
-tags: [hide-cell]
----
+:tags: [test, hide-cell]
+
 result = 1;
 for i in range(I1, I2+1):
     result = result * i
