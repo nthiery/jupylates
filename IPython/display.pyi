@@ -6,5 +6,8 @@ def display(obj: Any) -> None:
 def Markdown(content: str) -> Any:
     pass
 
-def Code(content: str) -> Any:
+def Code(content: str, language: str = "") -> Any:
+    pass
+
+def HTML(content: str) -> Any:
     pass

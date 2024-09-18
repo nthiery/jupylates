@@ -39,7 +39,7 @@ begin_end_regexp = re.compile(r"{format_comment} (BEGIN|END) SOLUTION")
 os.environ["PYDEVD_DISABLE_FILE_VALIDATION"] = "1"
 
 
-def execute_code(kernel_client: KernelClient, code: str) -> list:
+def execute_code(kernel_client: KernelClient, code: str) -> List[Dict[str, Dict[str, str]]]:
     # print(f"executing {cell['source']}")
     kernel_client.execute(code=code)
     outputs = []
@@ -517,12 +517,12 @@ class ActivitiesStates(LearningRecordConsumer):
         s = f"total: {score:g}/{max_score:g}"
 
         if max_score > 0:
-            score = score / max_score
-            if score <= 0.25:
+            normalized_score = score / max_score
+            if normalized_score <= 0.25:
                 color = "red"
-            elif score <= 0.5:
+            elif normalized_score <= 0.5:
                 color = "orange"
-            elif score <= 0.75:
+            elif normalized_score <= 0.75:
                 color = "yellow"
             else:
                 color = "green"
@@ -541,6 +541,8 @@ class Exerciser(ipywidgets.HBox):
 
     themes: Dict[str, List[str]]
     ActivityStateType: Type[ActivityState]
+
+    kernel_manager: Optional[KernelManager]
 
     def __init__(
         self,
@@ -793,7 +795,7 @@ class Exerciser(ipywidgets.HBox):
     preheated_kernel_manager_pool: Dict[str, KernelManager] = {}
 
     def get_preheated_kernel_manager(self, kernel_name: str) -> KernelManager:
-        def preheated_kernel_manager(kernel_name):
+        def preheated_kernel_manager(kernel_name: str) -> KernelManager:
             km = KernelManager(kernel_name=kernel_name)
             km.start_kernel()
             return km
@@ -813,7 +815,7 @@ class Exerciser(ipywidgets.HBox):
         self.kernel_manager = self.get_preheated_kernel_manager(kernel_name)
         self.kernel_client = self.kernel_manager.client()
         language = notebook.metadata["kernelspec"]["language"]
-        self.answer_zone = []
+        self.answer_zone: List[ipywidgets.Textarea] = []
         self.substitutions: Dict[str, str] = {}
         with self.exercise_zone:
             self.exercise_zone.clear_output(wait=True)
