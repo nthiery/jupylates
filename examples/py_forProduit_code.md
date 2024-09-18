@@ -13,17 +13,21 @@ kernelspec:
 ### Objectif pédagogique : boucle for avec accumulateur
 
 ```{code-cell}
-:tags: [hide-cell]
+:tags: [hide-cell, substitutions]
 
-from jupylates.jupylates_helpers import RANDOM_INT, CONST, INPUT
-I1: CONST = RANDOM_INT(1, 6)
-I2: CONST = I1 + RANDOM_INT(10,12)
+import random
+from jupylates.jupylates_helpers import SUBSTITUTE
+
+I1 = random.randint(1, 6)
+I2 = random.randint(10, 12)
+
+SUBSTITUTE(I1=I1, I2=I2)
 ```
 
 :::{admonition} Consigne
 
-Écrire le code permettant de mettre dans la variable `p`
-le produit des entiers compris entre I1 et I2 inclus.
+Écrivez le code permettant de mettre dans la variable `p` le produit
+des entiers compris entre I1 et I2 inclus.
 
 :::
 

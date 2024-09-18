@@ -11,10 +11,10 @@ VECTOR_CLOSE = "}"
 
 def_regexp = {
     "C++": r"CONST\s+(\w+)\s+=\s+(.*?);?\s*$",
-    "python": r"(\w+):\s+CONST\s+=\s+(.*?);?\s*$"
+    "python": r"(\w+):\s+CONST\s+=\s+(.*?);?\s*$",
 }
-for language in ['C++11', 'C++14', 'C++17']:
-    def_regexp[language] = def_regexp['C++']
+for language in ["C++11", "C++14", "C++17"]:
+    def_regexp[language] = def_regexp["C++"]
 
 
 def to_language(value: Any) -> str:
@@ -87,7 +87,7 @@ int main () {
 
 
 class Randomizer:
-    def __init__(self, language: str = 'C++') -> None:
+    def __init__(self, language: str = "C++") -> None:
         consts = {}
         consts["R"], consts["S"], consts["T"] = random.sample("rst", 3)
         consts["X"], consts["Y"], consts["Z"] = random.sample("xyz", 3)
