@@ -8,12 +8,11 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
+learning_objective: 'différence entre accumulateur et simple affectation'
 ---
 
-### Objectif pédagogique : différence entre accumulateur et simple affectation
-
 ```{code-cell} ipython3
-:tags: [hide-cell]
+:tags: [hide-cell, substitutions]
 
 from jupylates.jupylates_helpers import SUBSTITUTE
 import random
@@ -37,48 +36,28 @@ while ( x < I1 ):
 ```
 
 ```{code-cell} ipython3
----
-nbgrader:
-  grade: false
-  grade_id: init
-  locked: false
-  schema_version: 3
-  solution: true
----
-resultx = INPUT(
-    ### BEGIN SOLUTION
-    I1
-    ### END SOLUTION
-)
+:tags: [hide-cell]
+
+SOLUTION_x = x
+SOLUTION_y = y
+del x, y
 ```
 
 ```{code-cell} ipython3
----
-nbgrader:
-  grade: false
-  grade_id: init
-  locked: false
-  schema_version: 3
-  solution: true
----
-resulty = INPUT(
-    ### BEGIN SOLUTION
-    1
-    ### END SOLUTION
-)
+:tags: [solution, hide-output]
+
+I1
 ```
 
 ```{code-cell} ipython3
----
-nbgrader:
-  grade: true
-  grade_id: check
-  locked: true
-  points: 1
-  schema_version: 3
-  solution: false
-tags: [hide-cell]
----
-assert resultx == x
-assert resulty == y
+:tags: [solution, hide-output]
+
+1
+```
+
+```{code-cell} ipython3
+:tags: [test, hide-cell]
+
+assert __ == SOLUTION_x
+assert _ == SOLUTION_y
 ```

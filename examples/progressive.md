@@ -8,9 +8,8 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
+learning_objective: 'gérer les tranches de tableaux numpy'
 ---
-
-### Objectif pédagogique : gérer les tranches de tableaux numpy
 
 ```{code-cell} ipython3
 :tags: [hide-cell]
@@ -34,15 +33,7 @@ Extraire la {eval}`I` ème ligne du tableau T.
 :::
 
 ```{code-cell} ipython3
----
-editable: true
-nbgrader:
-  grade: false
-  grade_id: init
-  locked: false
-  schema_version: 3
-  solution: true
----
+:tags: [solution]
 
 ```
 
@@ -50,22 +41,12 @@ nbgrader:
 :tags: [hide-cell]
 
 answer = _
-solution = T[I-1,:]
-answer
+SOLUTION = T[I-1,:]
 ```
 
 ```{code-cell} ipython3
----
-editable: false
-nbgrader:
-  grade: true
-  grade_id: check
-  locked: true
-  points: 1
-  schema_version: 3
-  solution: false
-tags: [hide-cell]
----
-assert answer.shape == solution.shape
-assert np.all(answer == solution)
+:tags: [test, hide-cell]
+
+assert answer.shape == SOLUTION.shape
+assert np.all(answer == SOLUTION)
 ```

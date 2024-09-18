@@ -8,9 +8,8 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
+learning_objective: 'reste de la division entière'
 ---
-
-### Objectif pédagogique : reste de la division entière
 
 +++ {"tags": ["hide-cell"]}
 
@@ -36,7 +35,7 @@ R = I3 % I1
 ```{code-cell}
 :tags: [hide-cell]
 
-solution = R
+SOLUTION = R
 del R
 ```
 
@@ -47,28 +46,13 @@ Quelle est la valeur attendue de `R`?
 :::
 
 ```{code-cell}
----
-nbgrader:
-  grade: false
-  grade_id: init
-  locked: false
-  schema_version: 3
-  solution: true
-tags: [hide-output]
----
+:tags: [solution, hide_output]
+
 I3 % I1
 ```
 
 ```{code-cell}
----
-nbgrader:
-  grade: true
-  grade_id: check
-  locked: true
-  points: 1
-  schema_version: 3
-  solution: false
-tags: [hide-cell]
----
-assert _ == solution
+:tags: [test, hide-cell]
+
+assert _ == SOLUTION
 ```

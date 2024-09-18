@@ -8,16 +8,19 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
+learning_objective: 'échange de variables'
 ---
 
-### Objectif pédagogique : échange de variables
-
 ```{code-cell} ipython3
-:tags: [hide-cell]
+:tags: [hide-cell, substitutions]
 
-from jupylates.jupylates_helpers import RANDOM_INT, CONST, INPUT
-I1: CONST = RANDOM_INT(0, 7)
-I2: CONST = RANDOM_INT(8, 15)
+import random
+from jupylates.jupylates_helpers import SUBSTITUTE
+
+SUBSTITUTE(
+	I1 = random.randint((1, 7),
+	I2 = random.randint(8, 15)
+)
 ```
 
 :::{admonition} Consigne
@@ -37,35 +40,20 @@ r = Y
 ```
 
 ```{code-cell} ipython3
----
-nbgrader:
-  grade: false
-  grade_id: init
-  locked: false
-  schema_version: 3
-  solution: true
----
-### BEGIN SOLUTION
-I1
-### END SOLUTION
-```
-
-```{code-cell} ipython3
 :tags: [hide-cell]
 
-SOLUTION = _
+SOLUTION = I1
+del r, X, Y, Z
 ```
 
 ```{code-cell} ipython3
----
-nbgrader:
-  grade: true
-  grade_id: check
-  locked: true
-  points: 1
-  schema_version: 3
-  solution: false
-tags: [hide-cell]
----
-assert SOLUTION == r
+:tags: [solution]
+
+I1
+```
+
+```{code-cell} ipython3
+:tags: [test, hide-cell]
+
+assert _ == SOLUTION
 ```
