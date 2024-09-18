@@ -839,7 +839,7 @@ class Exerciser(ipywidgets.HBox):
 
                 source = substitute(cell["source"], self.substitutions)
 
-                if cell["metadata"].get("nbgrader", {}).get("solution", False):
+                if "solution" in cell_tags:
                     # Handle solution cell
                     if self.first_answer_cell is None:
                         self.first_answer_cell = i_cell
@@ -868,9 +868,9 @@ class Exerciser(ipywidgets.HBox):
                             display(textarea)
                             display(Code(end[1], language=lexer[language]))
                 elif cell["cell_type"] == "markdown" and "hide-cell" not in cell_tags:
-                    # Display non hidden markdown cell
+                    # Display visible markdown cell
 
-                    def eval(match):
+                    def eval(match: re.Match[str]) -> str:
                         code = match[1]
                         return execute_code_and_return_single_output(
                             self.kernel_client, code
@@ -889,11 +889,18 @@ class Exerciser(ipywidgets.HBox):
                         output = outputs[0]["data"]["text/plain"]
                         self.substitutions.update(json.loads(output[1:-1]))
                         outputs = []
-                    if "hide-cell" not in cell_tags:
+                    if "hide-cell" not in cell_tags and "hide-input" not in cell_tags:
                         display(Code(source, language=lexer[language]))
+                    if "hide-cell" not in cell_tags and "hide-output" not in cell_tags:
                         display_outputs(outputs)
 
     def randomize_notebook(self, notebook: Notebook) -> Notebook:
+        """
+        Prepare the notebook
+
+        - Randomization
+        - Convert nbgrader metadata to tags
+        """
         notebook = copy.deepcopy(notebook)
         language = notebook.metadata["kernelspec"]["language"]
         randomizer = Randomizer(language=language)
@@ -901,6 +908,22 @@ class Exerciser(ipywidgets.HBox):
             cell["source"] = randomizer.randomize(
                 text=cell["source"], is_code=(cell["cell_type"] == "code")
             )
+            cell_tags = cell["metadata"].get("tags", [])
+            # Compatibility with nbgrader
+            if cell["cell_type"] == "code":
+                if cell["metadata"].get("nbgrader", {}).get("solution", False):
+                    cell_tags.append("solution")
+                elif cell["metadata"].get("nbgrader", {}).get("grade", False):
+                    cell_tags.append("test")
+
+            # Sanity checks
+            # Should raise proper errors
+            assert not ("test" in cell_tags and "solution" in cell_tags)
+            assert not ("hide-cell" in cell_tags and "solution" in cell_tags)
+
+            if cell_tags:
+                cell["metadata"]["tags"] = cell_tags
+
         return notebook
 
     def run_notebook(self, notebook: Notebook, answer: List[str], dir: str) -> bool:
@@ -923,9 +946,7 @@ class Exerciser(ipywidgets.HBox):
             cell["source"] = substitute(cell["source"], self.substitutions)
 
             # Prepare answer cells
-            if cell["cell_type"] == "code" and cell["metadata"].get("nbgrader", {}).get(
-                "solution", False
-            ):
+            if cell["cell_type"] == "code" and "solution" in cell_tags:
                 code = cell["source"]
                 if re.search(answer_regexp, code):
                     code = re.sub(answer_regexp, answer[i_answer], code)
@@ -954,13 +975,11 @@ class Exerciser(ipywidgets.HBox):
 
                 # If execution errored
                 if any(output["output_type"] == "error" for output in outputs):
-                    if cell["metadata"].get("nbgrader", {}).get("grade", False):
+                    if "test" in cell_tags:
                         # If Autograded tests cell
                         success = False
-                    # elif cell["metadata"].get("nbgrader", {}).get("solution", False):
-                    # TODO: handle autograded answer cell failure
                     else:
-                        # TODO: handle
+                        # TODO: handle failures in other cell types
                         raise ExecutionError("Execution failed")
 
         return success
