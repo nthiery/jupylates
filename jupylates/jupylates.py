@@ -542,7 +542,7 @@ class Exerciser(ipywidgets.HBox):
     themes: Dict[str, List[str]]
     ActivityStateType: Type[ActivityState]
 
-    kernel_manager: Optional[KernelManager]
+    kernel_manager: Optional[KernelManager] = None
 
     def __init__(
         self,
@@ -794,26 +794,37 @@ class Exerciser(ipywidgets.HBox):
 
     preheated_kernel_manager_pool: Dict[str, KernelManager] = {}
 
-    def get_preheated_kernel_manager(self, kernel_name: str) -> KernelManager:
+    def reset_kernel_client(self, kernel_name: str) -> None:
+        """
+        (Re)set the kernel client in self.kernel_client
+        """
+
         def preheated_kernel_manager(kernel_name: str) -> KernelManager:
             km = KernelManager(kernel_name=kernel_name)
             km.start_kernel()
             return km
 
-        km = self.preheated_kernel_manager_pool.get(
-            kernel_name, preheated_kernel_manager(kernel_name)
-        )
+        # Stop preview kernel client if alive
+        if self.kernel_manager is not None and self.kernel_manager.is_alive():
+            self.kernel_manager.shutdown_kernel()
 
+        # Use a preheated kernel manager if available or create one
+        if kernel_name in self.preheated_kernel_manager_pool:
+            self.kernel_manager = self.preheated_kernel_manager_pool[kernel_name]
+        else:
+            self.kernel_manager = preheated_kernel_manager(kernel_name)
+
+        # Preheat a kernel manager for next time
         self.preheated_kernel_manager_pool[kernel_name] = preheated_kernel_manager(
             kernel_name
         )
 
-        return km
+        self.kernel_client = self.kernel_manager.client()
 
     def display_exercise(self, notebook: Notebook) -> None:
         kernel_name = notebook.metadata["kernelspec"]["name"]
-        self.kernel_manager = self.get_preheated_kernel_manager(kernel_name)
-        self.kernel_client = self.kernel_manager.client()
+        self.reset_kernel_client(kernel_name)
+
         language = notebook.metadata["kernelspec"]["language"]
         self.answer_zone: List[ipywidgets.Textarea] = []
         self.substitutions: Dict[str, str] = {}
