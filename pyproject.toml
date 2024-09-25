@@ -28,6 +28,9 @@ dependencies = [
   "nbclassic",
   "jupyterlab_myst",
   "mystmd",
+  "pandas",
+  "joblib",
+  "pytz"
 ]
 
 [project.optional-dependencies]
