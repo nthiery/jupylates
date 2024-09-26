@@ -885,8 +885,8 @@ class Exerciser(ipywidgets.HBox):
 
                 source = substitute(cell["source"], self.substitutions)
 
-                if "solution" in cell_tags:
-                    # Handle solution cell
+                if "answer" in cell_tags:
+                    # Handle answer cell
                     if self.first_answer_cell is None:
                         self.first_answer_cell = i_cell
                     code = source
@@ -958,17 +958,28 @@ class Exerciser(ipywidgets.HBox):
             # Compatibility with nbgrader
             if cell["cell_type"] == "code":
                 if cell["metadata"].get("nbgrader", {}).get("solution", False):
-                    cell_tags.append("solution")
+                    cell_tags.append("answer")
                 elif cell["metadata"].get("nbgrader", {}).get("grade", False):
                     cell_tags.append("test")
 
             # Sanity checks
             # Should raise proper errors
-            assert not ("test" in cell_tags and "solution" in cell_tags)
-            assert not ("hide-cell" in cell_tags and "solution" in cell_tags)
+            assert not ("test" in cell_tags and "answer" in cell_tags)
+            assert not ("hide-cell" in cell_tags and "answer" in cell_tags)
 
             if cell_tags:
                 cell["metadata"]["tags"] = cell_tags
+
+        # temporary backward compatibility
+        all_tags = { tag
+                     for cell in notebook.cells
+                     for tag in cell["metadata"].get("tags", [])
+                    }
+        if "answer" not in all_tags:
+            assert "solution" in all_tags
+            for cell in notebook.cells:
+                if "solution" in cell["metadata"].get("tags", []):
+                    cell["metadata"]["tags"].append("answer")
 
         return notebook
 
@@ -992,7 +1003,7 @@ class Exerciser(ipywidgets.HBox):
             cell["source"] = substitute(cell["source"], self.substitutions)
 
             # Prepare answer cells
-            if cell["cell_type"] == "code" and "solution" in cell_tags:
+            if cell["cell_type"] == "code" and "answer" in cell_tags:
                 code = cell["source"]
                 if re.search(answer_regexp, code):
                     code = re.sub(answer_regexp, answer[i_answer], code)
