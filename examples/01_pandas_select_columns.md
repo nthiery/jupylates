@@ -8,7 +8,6 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-learning_objective: "how to extract a subset of columns from a Panda DataFrame"
 ---
 
 ```{code-cell} ipython3
@@ -29,7 +28,7 @@ T = pd.DataFrame(
     index=[f"L{str(line)}" for line in range(NROWS)])
 ```
 
-+++
++++ {"tags": []}
 
 :::{admonition} Instructions
 

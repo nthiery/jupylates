@@ -46,7 +46,7 @@ Quelle est la valeur attendue de `R`?
 :::
 
 ```{code-cell}
-:tags: [solution, hide_output]
+:tags: [answer, hide_output]
 
 I3 % I1
 ```

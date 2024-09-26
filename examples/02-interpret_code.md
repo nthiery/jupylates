@@ -41,13 +41,13 @@ r = Y
 ```{code-cell} ipython3
 :tags: [hide-cell]
 
-# Protects against writing the solution in terms of these variables
+# Protects against writing the answer in terms of these variables
 SOLUTION = r
 del r, X, Y, Z
 ```
 
 ```{code-cell} ipython3
-:tags: [solution, hide-output]
+:tags: [answer, hide-output]
 
 I1
 ```

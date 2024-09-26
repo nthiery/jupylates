@@ -47,7 +47,7 @@ string SOLUTION = cout.str();
 ```
 
 ```{code-cell}
-:tags: [solution]
+:tags: [answer]
 
 string _ = INPUT(
     /// BEGIN SOLUTION

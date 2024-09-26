@@ -44,13 +44,13 @@ del x, y
 ```
 
 ```{code-cell} ipython3
-:tags: [solution, hide-output]
+:tags: [answer, hide-output]
 
 I1
 ```
 
 ```{code-cell} ipython3
-:tags: [solution, hide-output]
+:tags: [answer, hide-output]
 
 1
 ```

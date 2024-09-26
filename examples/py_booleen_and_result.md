@@ -51,7 +51,7 @@ del A
 ```
 
 ```{code-cell} ipython3
-:tags: [solution, hide-output]
+:tags: [answer, hide-output]
 
 SOLUTION
 ```

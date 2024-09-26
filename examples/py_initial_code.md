@@ -25,7 +25,7 @@ Déclarez une variable entière `R` et affectez lui la valeur {eval}`I1`.
 :::
 
 ```{code-cell} ipython3
-:tags: [solution]
+:tags: [answer]
 
 R = I1
 ```
