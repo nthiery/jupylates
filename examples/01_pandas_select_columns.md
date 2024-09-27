@@ -10,6 +10,30 @@ kernelspec:
   name: python3
 ---
 
++++ {"tags": ["learning objective"]}
+
+:::{hint} About this demo
+:class: dropdown
+
+This exercice illustrates:
+- the use of MyST for rich text, including admonitions and embedded values
+- the use of arbitrary features of the underlying language and
+  libraries to generate random values (here a Pandas DataFrame) and
+  test them.
+- specifying learning objectives as a narrative
+- the rich display of values
+- one approach to structure the solution and answer cells enabling
+  testing and displaying the solution
+
+:::
+
+:::{admonition} Learning objective
+
+Extract multiple columns from a Pandas DataFrame.
+
+:::
+
+
 ```{code-cell} ipython3
 :tags: [hide-cell]
 
@@ -28,11 +52,11 @@ T = pd.DataFrame(
     index=[f"L{str(line)}" for line in range(NROWS)])
 ```
 
-+++ {"tags": []}
++++
 
 :::{admonition} Instructions
 
-Let `T` be the following Pandas DataFrame with {eval}`NROWS` rows and {eval}`NCOLUMNS` columns:
+Consider `T` be the following Pandas DataFrame:
 
 {eval}`T`
 
@@ -41,21 +65,22 @@ Extract the columns {eval}`columnnames` from `T`, in the given order.
 :::
 
 ```{code-cell} ipython3
-:tags: [hide-cell]
+:tags: [hide-cell, solution]
 
-SOLUTION = T[columnnames]
+T[columnnames]
 ```
 
 ```{code-cell} ipython3
-:tags: [solution]
+:tags: [answer]
 
-SOLUTION
+_
 ```
 
 ```{code-cell} ipython3
 :tags: [hide-cell, test]
 
 answer = _
-assert type(answer) == type(SOLUTION)
-pd.testing.assert_frame_equal(answer, SOLUTION)
+solution = __
+assert type(answer) == type(solution)
+pd.testing.assert_frame_equal(answer, solution)
 ```

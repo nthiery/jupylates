@@ -885,8 +885,23 @@ class Exerciser(ipywidgets.HBox):
 
                 source = substitute(cell["source"], self.substitutions)
 
+                if "solution" in cell_tags and self.mode != "exam":
+                    # Display solution cell
+                    assert cell["cell_type"] == "code"
+                    display(
+                        Markdown(
+                            f""":::{{admonition}} Solution
+:class: dropdown
+```{lexer[language]}
+{source}
+```
+"""
+                        )
+                    )
+
                 if "answer" in cell_tags:
                     # Handle answer cell
+                    assert cell["cell_type"] == "code"
                     if self.first_answer_cell is None:
                         self.first_answer_cell = i_cell
                     code = source
@@ -913,8 +928,12 @@ class Exerciser(ipywidgets.HBox):
                             self.answer_zone.append(textarea)
                             display(textarea)
                             display(Code(end[1], language=lexer[language]))
-                elif cell["cell_type"] == "markdown" and "hide-cell" not in cell_tags:
-                    # Display visible markdown cell
+                if (
+                    cell["cell_type"] == "markdown"
+                    and "hide-cell" not in cell_tags
+                    and (self.mode == "debug" or "learning objectives" not in cell_tags)
+                ):
+                    # Display markdown cell
 
                     def eval(match: re.Match[str]) -> str:
                         code = match[1]
@@ -924,7 +943,8 @@ class Exerciser(ipywidgets.HBox):
 
                     source = re.sub(eval_regexp, eval, source)
                     display(Markdown(source))
-                else:
+
+                if cell["cell_type"] == "code" and "answer" not in cell_tags:
                     # Handle code cell
                     if self.first_answer_cell is None:
                         outputs = execute_code(self.kernel_client, source)
