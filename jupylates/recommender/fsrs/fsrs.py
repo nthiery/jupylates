@@ -1,6 +1,6 @@
 from .models import *
 import math
-from datetime import timezone , date
+from datetime import timezone, date
 import pandas as pd
 import warnings
 import numpy as np
@@ -19,7 +19,7 @@ class FSRS:
 
     def repeat(self, card: Card, now: datetime) -> dict[int, SchedulingInfo]:
 
-        #if (now.tzinfo is None) or (now.tzinfo != timezone.utc):
+        # if (now.tzinfo is None) or (now.tzinfo != timezone.utc):
         #    raise ValueError("datetime must be timezone-aware and set to UTC")
 
         card = copy.deepcopy(card)
@@ -135,27 +135,27 @@ class FSRS:
 
 
 def rec_fsrs(activities):
-    #supprime les warnings
-    ignore_warnings = warnings.filterwarnings('ignore')
-    
-    #importation du json de l'élève
-    lrs = pd.read_json('.lrs.json',lines= True) 
-    
-    #liste des exercices faient par l'élève
+    # supprime les warnings
+    ignore_warnings = warnings.filterwarnings("ignore")
+
+    # importation du json de l'élève
+    lrs = pd.read_json(".lrs.json", lines=True)
+
+    # liste des exercices faient par l'élève
     lrs_activities = lrs.activity.unique()
-    
-    #liste des exercices faient par l'élève qui sont dans le thème
+
+    # liste des exercices faient par l'élève qui sont dans le thème
     liste_activities_done = [x for x in lrs_activities if x in activities]
-    
+
     ########################### CONVERSION TEMPS/DATES ####################
-    
-    #conversion du temps en format Year-month-days-Hours:minutes:secondes
-    lrs['time'] = pd.to_datetime(lrs['time'], format='%Y-%m-%d-%H%M%S')
-    lrs["date"] = lrs['time'].dt.date
-    
+
+    # conversion du temps en format Year-month-days-Hours:minutes:secondes
+    lrs["time"] = pd.to_datetime(lrs["time"], format="%Y-%m-%d-%H%M%S")
+    lrs["date"] = lrs["time"].dt.date
+
     # futur dataframe de sortie
     output = pd.DataFrame(index=liste_activities_done)
-    
+
     # pour utiliser les class FSRS
     f = FSRS()
 
@@ -167,47 +167,55 @@ def rec_fsrs(activities):
         dates = data.loc[data.action == "execute"]["date"].unique()
         for specific_date in dates:
             last_time = max(data.loc[data.action == "execute"]["time"])
-            events_jour = data[data['date'] == specific_date]
-                        
-            events_succ = events_jour.loc[(events_jour.action == "view") | (events_jour.success == 1)]
-            events_succ['time_diff'] = events_succ['time'].diff().fillna(pd.Timedelta(seconds=0))
-            events_succ['time_diff'] = events_succ['time_diff'].dt.total_seconds()
+            events_jour = data[data["date"] == specific_date]
+
+            events_succ = events_jour.loc[
+                (events_jour.action == "view") | (events_jour.success == 1)
+            ]
+            events_succ["time_diff"] = (
+                events_succ["time"].diff().fillna(pd.Timedelta(seconds=0))
+            )
+            events_succ["time_diff"] = events_succ["time_diff"].dt.total_seconds()
             events_succ = events_succ.loc[events_succ.success == 1]
-  
-    ########################### Quality Again/Hard/Good/Easy ###########################
-            
-            events_execute = events_jour.loc[events_jour.action == 'execute']
+
+            ########################### Quality Again/Hard/Good/Easy ###########################
+
+            events_execute = events_jour.loc[events_jour.action == "execute"]
 
             j = 0
-            for i in range(events_execute['action'].size):
+            for i in range(events_execute["action"].size):
                 scheduling_cards = f.repeat(card, events_execute.iloc[i].time)
-                if events_execute.iloc[i].success == 0 :
+                if events_execute.iloc[i].success == 0:
                     card = scheduling_cards[Rating.Again].card
-                else :
-                    if events_succ.iloc[j]['time_diff'] > 120:     # exercice difficile si réussit en + de 120 secondes
+                else:
+                    if (
+                        events_succ.iloc[j]["time_diff"] > 120
+                    ):  # exercice difficile si réussit en + de 120 secondes
                         card = scheduling_cards[Rating.Hard].card
-                    elif events_succ.iloc[j]['time_diff'] > 30:    # exercice Good si réussit en ]30,120] secondes
+                    elif (
+                        events_succ.iloc[j]["time_diff"] > 30
+                    ):  # exercice Good si réussit en ]30,120] secondes
                         card = scheduling_cards[Rating.Good].card
-                    else :                                         # exercice Easy si réussit en - de 30 secondes
+                    else:  # exercice Easy si réussit en - de 30 secondes
                         card = scheduling_cards[Rating.Hard].card
                     j += 1
-                
-            output.loc[ex,"previous full"] = last_time
-            output.loc[ex,"previous date"] = last_time.date()
-            output.loc[ex,"next full"] = card.due
-            output.loc[ex,"next date"] = card.due.date()
-            
+
+            output.loc[ex, "previous full"] = last_time
+            output.loc[ex, "previous date"] = last_time.date()
+            output.loc[ex, "next full"] = card.due
+            output.loc[ex, "next date"] = card.due.date()
+
     ########################### Dataframe Sortie + recommendeur ###########################
-    
-    output2 = output.loc[output['next date'] <= date.today()]
-    
+
+    output2 = output.loc[output["next date"] <= date.today()]
+
     ####debug###
-    #print(output)
-    #print(output[['previous full', 'next full']])
+    # print(output)
+    # print(output[['previous full', 'next full']])
     ####debug###
-        
-    if output2.size != 0: 
-        rec =  output2.sort_values(by=['next full'],ascending=True).index.to_list()[0] 
+
+    if output2.size != 0:
+        rec = output2.sort_values(by=["next full"], ascending=True).index.to_list()[0]
     else:
-        rec =  output.sort_values(by=['next full'],ascending=True).index.to_list()[0] 
+        rec = output.sort_values(by=["next full"], ascending=True).index.to_list()[0]
     return rec

@@ -1,6 +1,6 @@
 from abc import abstractmethod
 import copy, getpass, json, os, random, re
-from datetime import datetime ,date
+from datetime import datetime, date
 
 # Why can't this be imported from IPython.display?
 # from IPython.core.display_functions import display
@@ -16,7 +16,7 @@ from jupyter_client import KernelClient, KernelManager  # type: ignore
 from .code_randomizer import Randomizer
 
 # recommender fsrs / SM2 and 2 Machine learning
-from .recommender.sm2 import rec_SM2 
+from .recommender.sm2 import rec_SM2
 from .recommender.machine.ml_maison import maison
 from .recommender.machine.ml_maison_time import maison_time
 from .recommender.fsrs.fsrs import rec_fsrs
@@ -556,7 +556,6 @@ class Exerciser(ipywidgets.HBox):
         exercises: Union[List[str], Dict[str, List[str]]],
         lrs_url: str = ".lrs.json",
         mode: Mode = "train",
-        
     ):
         # learner owner of the session
         learner = os.getenv("JUPYTERHUB_USER")
@@ -589,20 +588,22 @@ class Exerciser(ipywidgets.HBox):
         )
         if list(self.themes.keys()) == [""]:
             self.theme_chooser.layout.display = "none"
-        
+
         # Recommender chooser
-        options_rec = ['FSRS','SM2','Maison','Maison-time']
+        options_rec = ["FSRS", "SM2", "Maison", "Maison-time"]
         for exercice in list(self.themes.values())[0]:
-            if not os.path.exists(os.getcwd()+'/models/'+exercice[:-2]+'pkl'):
-                #print(f"{exercice[:-2]+'pkl'} model not found")  #DEBUG
-                options_rec = ['FSRS','SM2']
-        actual_theme = exercice.split('/')[0]
-        #print(actual_theme) # DEBUG
-        
+            if not os.path.exists(os.getcwd() + "/models/" + exercice[:-2] + "pkl"):
+                # print(f"{exercice[:-2]+'pkl'} model not found")  #DEBUG
+                options_rec = ["FSRS", "SM2"]
+        actual_theme = exercice.split("/")[0]
+        # print(actual_theme) # DEBUG
+
         self.rec_chooser = ipywidgets.Dropdown(
-            options=options_rec, description="Recommendeurs :" ,
-            style={'description_width': 'initial'} , layout={'width': 'max-content'}
-        )       
+            options=options_rec,
+            description="Recommendeurs :",
+            style={"description_width": "initial"},
+            layout={"width": "max-content"},
+        )
 
         # Progress zone
         box_layout = ipywidgets.Layout(
@@ -618,7 +619,6 @@ class Exerciser(ipywidgets.HBox):
         # Controler zone
         self.run_button = ipywidgets.Button(
             description="Valider", button_style="primary", icon="check"
-            
         )
         self.result_view = ipywidgets.Label()
         self.score_view = ipywidgets.Label()
@@ -697,7 +697,9 @@ class Exerciser(ipywidgets.HBox):
         self.previous_button.on_click(lambda event: self.previous_exercise())
         self.random_button.on_click(lambda event: self.random_exercise())
         self.randomize_button.on_click(lambda event: self.randomize_exercise())
-        self.recommendeur_button.on_click(lambda event: self.recommendeur_exercise(actual_theme))
+        self.recommendeur_button.on_click(
+            lambda event: self.recommendeur_exercise(actual_theme)
+        )
         self.run_button.on_click(lambda event: self.run_exercise())
         self.theme_chooser.observe(lambda event: self.reset_exercises(), names="value")
 
@@ -801,17 +803,24 @@ class Exerciser(ipywidgets.HBox):
     def random_exercise(self) -> None:
         self.set_exercise(random.randint(0, len(self.exercises) - 1))
 
-    def recommendeur_exercise(self,actual_theme) -> None:
+    def recommendeur_exercise(self, actual_theme) -> None:
         if self.rec_chooser.value == "SM2":
-            self.set_exercise(list(self.exercises).index( rec_SM2(list(self.exercises))))
+            self.set_exercise(list(self.exercises).index(rec_SM2(list(self.exercises))))
         if self.rec_chooser.value == "FSRS":
-            self.set_exercise(list(self.exercises).index( rec_fsrs(list(self.exercises))))
+            self.set_exercise(
+                list(self.exercises).index(rec_fsrs(list(self.exercises)))
+            )
         if self.rec_chooser.value == "Maison":
-            self.set_exercise(list(self.exercises).index( maison(list(self.exercises),actual_theme)))
+            self.set_exercise(
+                list(self.exercises).index(maison(list(self.exercises), actual_theme))
+            )
         if self.rec_chooser.value == "Maison-time":
-            self.set_exercise(list(self.exercises).index( maison_time(list(self.exercises),actual_theme)))
+            self.set_exercise(
+                list(self.exercises).index(
+                    maison_time(list(self.exercises), actual_theme)
+                )
+            )
 
-                   
     def randomize_exercise(self) -> None:
         self.set_exercise(self.exercise_number)
 
@@ -991,10 +1000,9 @@ class Exerciser(ipywidgets.HBox):
                 cell["metadata"]["tags"] = cell_tags
 
         # temporary backward compatibility
-        all_tags = { tag
-                     for cell in notebook.cells
-                     for tag in cell["metadata"].get("tags", [])
-                    }
+        all_tags = {
+            tag for cell in notebook.cells for tag in cell["metadata"].get("tags", [])
+        }
         if "answer" not in all_tags:
             assert "solution" in all_tags
             for cell in notebook.cells:

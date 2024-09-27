@@ -29,5 +29,6 @@ def RANDOM_CHOICE(*args: Any) -> Any:
 
 def SUBSTITUTE(**args: Any) -> str:
     import __main__
+
     __main__.__dict__.update(args)
     return json.dumps({key: str(value) for key, value in args.items()})
