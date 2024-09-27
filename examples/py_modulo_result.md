@@ -21,11 +21,15 @@ l'expression à évaluer.
 :::
 
 ```{code-cell}
-:tags: [hide-cell]
+:tags: [hide-cell, substitutions]
 
-from jupylates.jupylates_helpers import RANDOM_CHOICE, CONST
-I1: CONST = RANDOM_CHOICE(3, 5, 7)
-I3: CONST = RANDOM_CHOICE(1, 2, 4, 8, 11, 13, 16, 17, 19, 22)
+import random
+from jupylates.jupylates_helpers import SUBSTITUTE
+
+SUBSTITUTE(
+    I1=random.choice([3, 5, 7]),
+    I3=random.choice([1, 2, 4, 8, 11, 13, 16, 17, 19, 22]),
+)
 ```
 
 ```{code-cell}
