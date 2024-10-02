@@ -81,4 +81,21 @@ T INPUT(T t) {
     return t;
 }
 
+template<class T>
+void INPUT_EXPR(std::string description, T& answer, T& solution, T answer_value, T solution_value) {
+    answer = answer_value;
+    solution = solution_value;
+}
+
+template<class T>
+void INPUT_EXPR(std::string description, T& answer, T& solution, T solution_value) {
+    answer = solution_value;
+    solution = solution_value;
+}
+
+#define INPUT_TEXT INPUT_EXPR<std::string>
+#define INPUT_INT INPUT_EXPR<int>
+#define INPUT_FLOAT INPUT_EXPR<float>
+#define INPUT_BOOL INPUT_EXPR<bool>
+
 #endif

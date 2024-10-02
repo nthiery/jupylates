@@ -30,13 +30,37 @@ class ExecutionError(RuntimeError):
 
 
 answer_regexp = re.compile(r"INPUT\(.*\)", re.DOTALL)
+answer_solution_regexp = re.compile(r"INPUT_(?P<type>\w+)\(\"(?P<description>.*?)\",\s+(?P<args>(\w+,\s+)*)(?P<solution>[^,$]*)\)", re.DOTALL)
 eval_regexp = re.compile("{eval}`(.*?)`")
 
+
+def test_answer_solution_regexp() -> None:
+    from jupylates.jupylates import answer_solution_regexp
+    match = re.search(answer_solution_regexp, 'answer, solution = INPUT_TEXT("x", foo()) lorem ipsum')
+    assert match is not None
+    assert match.group('type') == "TEXT"
+    assert match.group('description') == "x"
+    assert match.group('args') == ""
+    assert match.group('solution') == "foo()"
+
+    match = re.search(answer_solution_regexp, 'lorem INPUT_EXPR("xxx", answer, solution, foo()) ipsum')
+    assert match is not None
+    assert match.group('type') == "EXPR"
+    assert match.group('description') == "xxx"
+    assert match.group('args') == "answer, solution, "
+    assert match.group('solution') == "foo()"
+
+def write_literal_python(literal: Any):
+    if isinstance(literal, bool):
+        return str(literal)
+    else:
+        return json.dumps(literal)
+
+write_literal = {"C++17": json.dumps, "python": write_literal_python}
 format_comment = {"C++17": "///", "python": "###"}
 
 lexer = {"C++17": "c++", "python": "python"}
 begin_end_regexp = re.compile(r"{format_comment} (BEGIN|END) SOLUTION")
-
 
 # TODO: find a better place for this
 # Ref: https://stackoverflow.com/questions/75114841/debugger-warning-from-ipython-frozen-modules
@@ -830,7 +854,7 @@ class Exerciser(ipywidgets.HBox):
         try:
             success = self.run_notebook(
                 self.notebook,
-                answer=[answer_zone.value for answer_zone in self.answer_zone],
+                answers=[answer_zone.value for answer_zone in self.answer_zone],
                 dir=os.path.dirname(self.exercise_name),
             )
         except ExecutionError:
@@ -894,7 +918,8 @@ class Exerciser(ipywidgets.HBox):
 
                 source = substitute(cell["source"], self.substitutions)
 
-                if "solution" in cell_tags and self.mode != "exam":
+                if "solution" in cell_tags and self.mode == "debug": # != "exam":
+                    # TODO: handle INPUT_XXX
                     # Display solution cell
                     assert cell["cell_type"] == "code"
                     display(
@@ -914,11 +939,27 @@ class Exerciser(ipywidgets.HBox):
                     if self.first_answer_cell is None:
                         self.first_answer_cell = i_cell
                     code = source
-                    if re.search(answer_regexp, code):
+                    if answer_regexp.search(code):
                         textarea = ipywidgets.Textarea()
                         textarea.rows = 2
                         display(textarea)
                         self.answer_zone.append(textarea)
+                    elif answer_solution_regexp.search(code):
+                        for match in answer_solution_regexp.finditer(code):
+                            type = match.group('type')
+                            description = match.group('description')
+                            if type in ["TEXT", "EXPR"]:
+                                inputarea = ipywidgets.Text(description=description)
+                            elif type == "INT":
+                                inputarea = ipywidgets.IntText(description=description)
+                            elif type == "FLOAT":
+                                inputarea = ipywidgets.FloatText(description=description)
+                            elif type == "BOOL":
+                                inputarea = ipywidgets.RadioButtons(options=[("Vrai", True), ("Faux", False)])
+                            else:
+                                raise ValueError(f"Unknown function INPUT_{type}")
+                            display(inputarea)
+                            self.answer_zone.append(inputarea)
                     else:
                         zones = code.split(format_comment[language] + " BEGIN SOLUTION")
                         if len(zones) <= 1:
@@ -993,7 +1034,7 @@ class Exerciser(ipywidgets.HBox):
 
             # Sanity checks
             # Should raise proper errors
-            assert not ("test" in cell_tags and "answer" in cell_tags)
+            #assert not ("test" in cell_tags and "answer" in cell_tags)
             assert not ("hide-cell" in cell_tags and "answer" in cell_tags)
 
             if cell_tags:
@@ -1011,11 +1052,12 @@ class Exerciser(ipywidgets.HBox):
 
         return notebook
 
-    def run_notebook(self, notebook: Notebook, answer: List[str], dir: str) -> bool:
+    def run_notebook(self, notebook: Notebook, answers: List[str], dir: str) -> bool:
         notebook = copy.deepcopy(notebook)
         language = notebook.metadata["kernelspec"]["language"]
 
-        i_answer = 0
+        get_next_answer = answers.__iter__().__next__
+
         success = True
         # Currentl limitation: the output of the first answer cell and
         # subsequent cells are currently all put together in the same
@@ -1034,22 +1076,33 @@ class Exerciser(ipywidgets.HBox):
             if cell["cell_type"] == "code" and "answer" in cell_tags:
                 code = cell["source"]
                 if re.search(answer_regexp, code):
-                    code = re.sub(answer_regexp, answer[i_answer], code)
+                    code = re.sub(answer_regexp, get_next_answer(), code)
+                elif re.search(answer_solution_regexp, code):
+                    def replacement(match: re.Match[str]) -> str:
+                        type = match.group('type')
+                        description = match.group('description')
+                        args = match.group('args')
+                        solution = match.group('solution')
+                        answer = get_next_answer()
+                        if type != "EXPR":
+                            answer = write_literal[language](answer)
+                        return f'INPUT_{type}("{description}", {args}{answer}, {solution})'
+
+                    code = re.sub(answer_solution_regexp, replacement, code)
                 else:
                     zones = code.split(format_comment[language] + " BEGIN SOLUTION")
                     if len(zones) <= 1:
-                        code = answer[i_answer]
+                        code = get_next_answer()
                     else:
                         code = zones[0]
                         for zone in zones[1:]:
                             end = zone.split(format_comment[language] + " END SOLUTION")
                             assert len(end) == 2
-                            code += answer[i_answer]
-                            i_answer = i_answer + 1
+                            code += get_next_answer()
                             code += end[1]
 
+                print(code)
                 cell["source"] = code
-                i_answer = i_answer + 1
 
             # Handle code cells
             if cell["cell_type"] == "code":
