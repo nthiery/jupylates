@@ -10,28 +10,41 @@ kernelspec:
   name: xcpp17
 ---
 
++++ {"tags": ["learning objectives"]}
+
+:::{hint} About this demo
+:class: dropdown
+
+This exercise illustrates:
+- an exercise in C++
+- guessing the output of code
+- requesting a text answer
+- random substitutions
+:::
+
+:::{admonition} Learning objective
+Understand the step by step execution of a for loop.
+:::
+
 ```{code-cell}
 :tags: [hide-cell]
 
 #include <sstream>
 #include "jupylates_helpers.hpp"
-using namespace std;
 
 CONST I1 = RANDOM_INT(0, 6);
 CONST I2 = I1 + RANDOM_INT(1, 4);
 
-ostringstream cout;
+std::ostringstream cout;
 ```
 
 :::{admonition} Instructions
-
 What's the output of the following code?
-
 :::
 
 :::{tip}
 :class: dropdown
-Spell your answer in the form `"83152"`.
+Spell your answer in the form `83152`.
 :::
 
 ```{code-cell}
@@ -41,23 +54,10 @@ for (int I = I1; I <= I2 ; I = I + 1 ) {
 ```
 
 ```{code-cell}
-:tags: [hide-cell]
+:tags: [answer, solution, test, hide-output]
 
-string SOLUTION = cout.str();
-```
+std::string answer, solution;
+INPUT_TEXT("", solution, answer, cout.str());
 
-```{code-cell}
-:tags: [answer]
-
-string _ = INPUT(
-    /// BEGIN SOLUTION
-    SOLUTION
-	/// END SOLUTION
-);
-```
-
-```{code-cell}
-:tags: [test, hide-cell]
-
-CHECK( _ == SOLUTION );
+assertEqual(answer, solution);
 ```

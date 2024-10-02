@@ -8,23 +8,13 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-learning_objective: 'reste de la division entière'
 ---
-
-+++ {"tags": ["hide-cell"]}
-
-:::{attention}
-
-Il est facile de «tricher» sur cet exercice en copiant-collant
-l'expression à évaluer.
-
-:::
 
 ```{code-cell}
 :tags: [hide-cell, substitutions]
 
 import random
-from jupylates.jupylates_helpers import SUBSTITUTE
+from jupylates.jupylates_helpers import SUBSTITUTE, INPUT_INT, assertEqual
 
 SUBSTITUTE(
     I1=random.choice([3, 5, 7]),
@@ -32,31 +22,20 @@ SUBSTITUTE(
 )
 ```
 
-```{code-cell}
-R = I3 % I1
-```
-
-```{code-cell}
-:tags: [hide-cell]
-
-SOLUTION = R
-del R
-```
-
 :::{admonition} Consigne
-
-Quelle est la valeur attendue de `R`?
-
+Quelle est la valeur de l'expression suivante?
 :::
 
 ```{code-cell}
-:tags: [answer, hide_output]
+:tags: [hide-output]
 
 I3 % I1
 ```
 
 ```{code-cell}
-:tags: [test, hide-cell]
+:tags: [answer, solution, test, hide-output]
 
-assert _ == SOLUTION
+solution, answer = INPUT_INT("", _)
+
+assertEqual(answer, solution)
 ```

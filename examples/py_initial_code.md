@@ -8,10 +8,9 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-learning_objective: 'déclarer une variable'
 ---
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-cell]
 
 from random import randint
@@ -19,18 +18,16 @@ I1 = randint(1,10)
 ```
 
 :::{admonition} Consigne
-
 Déclarez une variable entière `R` et affectez lui la valeur {eval}`I1`.
-
 :::
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [answer]
 
 R = I1
 ```
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [test, hide-cell]
 
 assert R == I1

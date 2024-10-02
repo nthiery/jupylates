@@ -10,11 +10,11 @@ kernelspec:
   name: python3
 ---
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-cell, substitutions]
 
 import random
-from jupylates.jupylates_helpers import SUBSTITUTE
+from jupylates.jupylates_helpers import SUBSTITUTE, INPUT_INT, assertEqual
 
 SUBSTITUTE(
 	I1 = random.randint(1, 7),
@@ -23,12 +23,10 @@ SUBSTITUTE(
 ```
 
 :::{admonition} Instructions
-
 What's the value of `r` after executing the following code?
-
 :::
 
-```{code-cell} ipython3
+```{code-cell}
 X = I1
 Y = I2
 
@@ -38,22 +36,10 @@ Y = Z
 r = Y
 ```
 
-```{code-cell} ipython3
-:tags: [hide-cell]
+```{code-cell}
+:tags: [answer, solution, test, hide-output]
 
-# Protects against writing the answer in terms of these variables
-SOLUTION = r
-del r, X, Y, Z
-```
+solution, answer = INPUT_INT("r", r)
 
-```{code-cell} ipython3
-:tags: [answer, hide-output]
-
-I1
-```
-
-```{code-cell} ipython3
-:tags: [test, hide-cell]
-
-assert _ == SOLUTION
+assertEqual(answer, solution)
 ```

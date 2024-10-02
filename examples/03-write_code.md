@@ -8,8 +8,20 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-learning_objective: 'write for loops with accumulator'
 ---
+
++++ {"tags": ["learning objectives"]}
+
+:::{hint} About this demo
+:class: dropdown
+
+This exercise illustrates:
+- requesting a code answer
+:::
+
+:::{admonition} Learning objective
+Apply for loops with accumulator
+:::
 
 ```{code-cell}
 :tags: [hide-cell, substitutions]
@@ -24,10 +36,8 @@ SUBSTITUTE(I1=I1, I2=I2)
 ```
 
 :::{admonition} Instructions
-
 Write code to compute the product of the integers from I1 to I2, and
 store the result in a variable `p`.
-
 :::
 
 ```{code-cell}

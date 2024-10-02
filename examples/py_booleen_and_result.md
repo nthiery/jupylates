@@ -8,13 +8,12 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-learning_objective: 'opérateur `and`'
 ---
 
-```{code-cell} ipython3
+```{code-cell}
 :tags: [hide-cell, substitutions]
 
-from jupylates.jupylates_helpers import SUBSTITUTE
+from jupylates.jupylates_helpers import SUBSTITUTE, INPUT_BOOL, assertEqual
 import random
 
 I1 = random.randint(3, 9)
@@ -30,12 +29,10 @@ SUBSTITUTE(
 ```
 
 :::{admonition} Consigne
-
 Quelle est la valeur attendue de `A` après exécution du code suivant?
-
 :::
 
-```{code-cell} ipython3
+```{code-cell}
 X = I1
 if X >= 0 and X <= 2 :
     A = True
@@ -43,21 +40,10 @@ else:
     A = False
 ```
 
-```{code-cell} ipython3
-:tags: [hide-cell]
+```{code-cell}
+:tags: [answer, solution, test, hide-output]
 
-SOLUTION = A
-del A
-```
+solution, answer = INPUT_BOOL("A", A)
 
-```{code-cell} ipython3
-:tags: [answer, hide-output]
-
-SOLUTION
-```
-
-```{code-cell} ipython3
-:tags: [test, hide-cell]
-
-assert _ == SOLUTION
+assertEqual(answer, solution)
 ```
