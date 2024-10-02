@@ -96,12 +96,14 @@ def execute_code(
 
 def display_outputs(outputs: List[dict]) -> None:
     for output in outputs:
-        if "data" not in output:
-            display(output)
+        if output["output_type"] == "error":
+            display(output["ename"])
         elif "text/html" in output["data"]:
             display(HTML(output["data"]["text/plain"]))
         elif "text/plain" in output["data"]:
             print(output["data"]["text/plain"])
+        else:
+            display(output)
 
 
 def execute_code_and_return_single_output(
