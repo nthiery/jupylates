@@ -1,7 +1,6 @@
 ########### import for recommended exercice
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from math import ceil
 from datetime import timedelta, date
 import warnings
