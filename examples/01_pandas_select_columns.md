@@ -10,7 +10,7 @@ kernelspec:
   name: python3
 ---
 
-+++ {"tags": ["learning objective"]}
++++ {"tags": ["learning objectives"]}
 
 :::{hint} About this demo
 :class: dropdown
