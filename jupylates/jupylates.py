@@ -909,7 +909,7 @@ class Exerciser(ipywidgets.HBox):
         self.reset_kernel_client(kernel_name)
 
         language = notebook.metadata["kernelspec"]["language"]
-        self.answer_zone: List[ipywidgets.Textarea] = []
+        self.answer_zone: List[ipywidgets.Widget] = []
         self.substitutions: Dict[str, str] = {}
         with self.exercise_zone:
             self.exercise_zone.clear_output(wait=True)
@@ -1115,7 +1115,8 @@ class Exerciser(ipywidgets.HBox):
                             code += get_next_answer()
                             code += end[1]
 
-                print(code)
+                if self.mode == "debug":
+                    print(code)
                 cell["source"] = code
 
             # Handle code cells
