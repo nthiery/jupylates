@@ -1,3 +1,17 @@
+---
+jupytext:
+  cell_metadata_filter: all,-autoscroll,-collapsed,-scrolled,-trusted,-ExecuteTime,-jp-MarkdownHeadingCollapsed,-editable,-deletable
+  notebook_metadata_filter: kernelspec,jupytext,exports,math,rise,semantic,-jupytext.text_representation.jupytext_version
+  text_representation:
+    extension: .md
+    format_name: myst
+    format_version: 0.13
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
 # JuPylates
 
 JuPylates is an exerciser engine for training (and evaluation)
@@ -32,11 +46,11 @@ emulated, ...
 pip install git+https://github.com/nthiery/jupylates.git   # ⚠️ subject to change ⚠️
 ```
 
-## Usage
+## Getting started
 
-This runs Jupylates on all exercises in the `examples` directory:
+This runs Jupylates on all the exercises in the `examples` directory:
 
-```
+```{code-cell}
 from glob import glob
 from jupylates import Exerciser
 Exerciser(glob("examples/*.md"), mode="debug")  # choose from debug, train, exam
@@ -44,8 +58,8 @@ Exerciser(glob("examples/*.md"), mode="debug")  # choose from debug, train, exam
 
 ## Documentation
 
-None at this stage, sorry. Look at the examples and at the
-[notebook](talks/2024-09-25-PyData.md) of the PyData Paris-2024's talk.
+Sorry, there is no formal documentation yet. Please read the *About* comments in the examples;
+they will guide you through the main features of Jupylates.
 
 <!--
 ### Demos
