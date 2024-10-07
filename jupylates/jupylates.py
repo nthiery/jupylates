@@ -941,17 +941,28 @@ class Exerciser(ipywidgets.HBox):
                     if self.first_answer_cell is None:
                         self.first_answer_cell = i_cell
                     code = source
-                    if answer_regexp.search(code):
+                    if "solution" not in cell_tags:
+                        # The answer zone serves as initial value for the answer
+                        assert "BEGIN SOLUTION" not in code
+                        assert "INPUT" not in code
+                        inputarea = ipywidgets.Textarea(value=code)
+                        display(inputarea)
+                        self.answer_zone.append(inputarea)
+                    elif answer_regexp.search(code):
+                        # Input and solution marked up with a single INPUT(...); for backward compatibility
                         textarea = ipywidgets.Textarea()
                         textarea.rows = 2
                         display(textarea)
                         self.answer_zone.append(textarea)
                     elif answer_solution_regexp.search(code):
+                        # Input(s) and solution(s) marked up with INPUT_???(...)
                         for match in answer_solution_regexp.finditer(code):
                             type = match.group('type')
                             description = match.group('description')
-                            if type in ["TEXT", "EXPR"]:
-                                inputarea = ipywidgets.Text(description=description)
+                            if type == "TEXT":
+                                inputarea = ipywidgets.Text(description=description, placeholder="Toto")
+                            elif type =="EXPR":
+                                inputarea = ipywidgets.Text(description=description, placeholder="1+1")
                             elif type == "INT":
                                 inputarea = ipywidgets.IntText(description=description)
                             elif type == "FLOAT":
@@ -963,6 +974,7 @@ class Exerciser(ipywidgets.HBox):
                             display(inputarea)
                             self.answer_zone.append(inputarea)
                     else:
+                        # Input(s) and solution(s) marked up with BEGIN/END SOLUTION (or implicit)
                         zones = code.split(format_comment[language] + " BEGIN SOLUTION")
                         if len(zones) <= 1:
                             textarea = ipywidgets.Textarea()
