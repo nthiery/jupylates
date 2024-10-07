@@ -1030,7 +1030,7 @@ class Exerciser(ipywidgets.HBox):
             # Compatibility with nbgrader
             if cell["cell_type"] == "code":
                 if cell["metadata"].get("nbgrader", {}).get("solution", False):
-                    cell_tags.append("answer")
+                    cell_tags.extend(["answer", "solution"])
                 elif cell["metadata"].get("nbgrader", {}).get("grade", False):
                     cell_tags.append("test")
 
