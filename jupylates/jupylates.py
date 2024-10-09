@@ -995,7 +995,7 @@ class Exerciser(ipywidgets.HBox):
                 if (
                     cell["cell_type"] == "markdown"
                     and "hide-cell" not in cell_tags
-                    and (self.mode == "debug" or "learning objectives" not in cell_tags)
+                    and (self.mode == "debug" or ("learning objectives" not in cell_tags and "instructors" not in cell_tags))
                 ):
                     # Display markdown cell
 
