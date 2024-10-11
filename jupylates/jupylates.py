@@ -569,6 +569,12 @@ class ActivitiesStates(LearningRecordConsumer):
 
 Mode = str  # 'train', 'exam', 'debug'
 
+# Stores preheated kernels by kernel name
+# Exception: the value for the value `shutting down`, if not None
+# holds a kernel manager that is currently shutting down in parallel
+preheated_kernel_manager_pool: Dict[str, KernelManager] = {
+    'shutting down' : None
+}
 
 class Exerciser(ipywidgets.HBox):
 
@@ -875,8 +881,6 @@ class Exerciser(ipywidgets.HBox):
         self.update_score()
         self.lrs.execute(activity=self.exercise_name, success=success)
 
-    preheated_kernel_manager_pool: Dict[str, KernelManager] = {}
-
     def reset_kernel_client(self, kernel_name: str) -> None:
         """
         (Re)set the kernel client in self.kernel_client
@@ -887,18 +891,24 @@ class Exerciser(ipywidgets.HBox):
             km.start_kernel()
             return km
 
-        # Stop preview kernel client if alive
+        # Finish shutting down previous kernel
+        if preheated_kernel_manager_pool['shutting down'] is not None:
+            preheated_kernel_manager_pool['shutting down'].finish_shutdown()
+            preheated_kernel_manager_pool['shutting down'] = None
+
+        # Request shutdown of current kernel client if alive
         if self.kernel_manager is not None and self.kernel_manager.is_alive():
-            self.kernel_manager.shutdown_kernel()
+            self.kernel_manager.request_shutdown()
+            preheated_kernel_manager_pool['shutting down'] = self.kernel_manager
 
         # Use a preheated kernel manager if available or create one
-        if kernel_name in self.preheated_kernel_manager_pool:
-            self.kernel_manager = self.preheated_kernel_manager_pool[kernel_name]
+        if kernel_name in preheated_kernel_manager_pool:
+            self.kernel_manager = preheated_kernel_manager_pool[kernel_name]
         else:
             self.kernel_manager = preheated_kernel_manager(kernel_name)
 
         # Preheat a kernel manager for next time
-        self.preheated_kernel_manager_pool[kernel_name] = preheated_kernel_manager(
+        preheated_kernel_manager_pool[kernel_name] = preheated_kernel_manager(
             kernel_name
         )
 
