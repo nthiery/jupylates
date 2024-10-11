@@ -50,7 +50,7 @@ T = pd.DataFrame(
 ```
 
 :::{admonition} Instructions
-Consider `T` be the following Pandas DataFrame:
+Let `T` be the following Pandas DataFrame:
 
 {eval}`T`
 
