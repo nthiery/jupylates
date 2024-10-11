@@ -946,6 +946,7 @@ class Exerciser(ipywidgets.HBox):
                         assert "BEGIN SOLUTION" not in code
                         assert "INPUT" not in code
                         inputarea = ipywidgets.Textarea(value=code)
+                        inputarea.layout.width = "100%"
                         display(inputarea)
                         self.answer_zone.append(inputarea)
                     elif answer_regexp.search(code):
@@ -979,6 +980,7 @@ class Exerciser(ipywidgets.HBox):
                         if len(zones) <= 1:
                             textarea = ipywidgets.Textarea()
                             textarea.rows = len(code.splitlines()) + 1
+                            textarea.layout.width = "100%"
                             display(textarea)
                             self.answer_zone.append(textarea)
                         else:
@@ -989,6 +991,7 @@ class Exerciser(ipywidgets.HBox):
                             textarea = ipywidgets.Textarea()
                             # textarea.value = f"\n{format_comment[language]} COMPLETEZ LA SOLUTION ICI {format_comment[language]}\n"
                             textarea.rows = len(end[0].splitlines()) + 1
+                            textarea.layout.width = "100%"
                             self.answer_zone.append(textarea)
                             display(textarea)
                             display(Code(end[1], language=lexer[language]))
