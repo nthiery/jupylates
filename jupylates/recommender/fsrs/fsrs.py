@@ -134,12 +134,12 @@ class FSRS:
         )
 
 
-def rec_fsrs(activities):
+def rec_fsrs(activities: list[str], lrs_url: str = ".lrs.json") -> int:
     # supprime les warnings
     ignore_warnings = warnings.filterwarnings("ignore")
 
     # importation du json de l'élève
-    lrs = pd.read_json(".lrs.json", lines=True)
+    lrs = pd.read_json(lrs_url, lines=True)
 
     # liste des exercices faient par l'élève
     lrs_activities = lrs.activity.unique()

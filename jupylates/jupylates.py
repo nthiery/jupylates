@@ -17,8 +17,6 @@ from .code_randomizer import Randomizer
 
 # recommender fsrs / SM2 and 2 Machine learning
 from .recommender.sm2 import rec_SM2
-from .recommender.machine.ml_maison import maison
-from .recommender.machine.ml_maison_time import maison_time
 from .recommender.fsrs.fsrs import rec_fsrs
 
 Notebook = Any
@@ -602,6 +600,7 @@ class Exerciser(ipywidgets.HBox):
         else:
             self.themes = exercises
 
+        self.lrs_url = lrs_url
         self.lrs = LocalLRS(file=lrs_url, learner=learner)
 
         self.mode = mode
@@ -622,20 +621,32 @@ class Exerciser(ipywidgets.HBox):
             self.theme_chooser.layout.display = "none"
 
         # Recommender chooser
-        options_rec = ["FSRS", "SM2", "Maison", "Maison-time"]
-        for exercice in list(self.themes.values())[0]:
-            if not os.path.exists(os.getcwd() + "/models/" + exercice[:-2] + "pkl"):
-                # print(f"{exercice[:-2]+'pkl'} model not found")  #DEBUG
-                options_rec = ["FSRS", "SM2"]
-        actual_theme = exercice.split("/")[0]
+        recommenders = {
+            "FSRS": rec_fsrs,
+            "SM2": rec_SM2
+        }
+        if all(os.path.exists(os.getcwd() + "/models/" + exercice[:-2] + "pkl")
+               for exercice in list(self.themes.values())[0]):
+            from .recommender.machine.ml_maison import maison
+            from .recommender.machine.ml_maison_time import maison_time
+            recommenders.update({
+                "Maison": maison,
+                "Maison-time": maison_time
+            })
+        else:
+            # print(f"{exercice[:-2]+'pkl'} model not found")  #DEBUG
+            pass
+
         # print(actual_theme) # DEBUG
 
-        self.rec_chooser = ipywidgets.Dropdown(
-            options=options_rec,
+        self.recommender_chooser = ipywidgets.Dropdown(
+            options=recommenders,
             description="Recommendeurs :",
             style={"description_width": "initial"},
             layout={"width": "max-content"},
         )
+        self.set_recommender()
+
 
         # Progress zone
         box_layout = ipywidgets.Layout(
@@ -662,7 +673,7 @@ class Exerciser(ipywidgets.HBox):
             button_style="primary",
             layout={"width": "fit-content"},
         )
-        self.recommendeur_button = ipywidgets.Button(
+        self.recommender_button = ipywidgets.Button(
             icon="fa-thumbs-o-up",
             description="Recommender",
             tooltip="Sort un exercice recommandé pour vous",
@@ -713,8 +724,8 @@ class Exerciser(ipywidgets.HBox):
                 ),
                 ipywidgets.HBox(
                     [
-                        self.rec_chooser,
-                        self.recommendeur_button,
+                        self.recommender_chooser,
+                        self.recommender_button,
                     ]
                 ),
                 self.source_link,
@@ -729,11 +740,12 @@ class Exerciser(ipywidgets.HBox):
         self.previous_button.on_click(lambda event: self.previous_exercise())
         self.random_button.on_click(lambda event: self.random_exercise())
         self.randomize_button.on_click(lambda event: self.randomize_exercise())
-        self.recommendeur_button.on_click(
-            lambda event: self.recommendeur_exercise(actual_theme)
+        self.recommender_button.on_click(
+            lambda event: self.recommend_exercise()
         )
         self.run_button.on_click(lambda event: self.run_exercise())
         self.theme_chooser.observe(lambda event: self.reset_exercises(), names="value")
+        self.recommender_chooser.observe(lambda event: self.set_recommender(), names="value")
 
         ######################################################################
         # Initialization
@@ -835,23 +847,13 @@ class Exerciser(ipywidgets.HBox):
     def random_exercise(self) -> None:
         self.set_exercise(random.randint(0, len(self.exercises) - 1))
 
-    def recommendeur_exercise(self, actual_theme) -> None:
-        if self.rec_chooser.value == "SM2":
-            self.set_exercise(list(self.exercises).index(rec_SM2(list(self.exercises))))
-        if self.rec_chooser.value == "FSRS":
-            self.set_exercise(
-                list(self.exercises).index(rec_fsrs(list(self.exercises)))
-            )
-        if self.rec_chooser.value == "Maison":
-            self.set_exercise(
-                list(self.exercises).index(maison(list(self.exercises), actual_theme))
-            )
-        if self.rec_chooser.value == "Maison-time":
-            self.set_exercise(
-                list(self.exercises).index(
-                    maison_time(list(self.exercises), actual_theme)
-                )
-            )
+    def set_recommender(self) -> None:
+        self.recommender = self.recommender_chooser.value
+
+    def recommend_exercise(self) -> None:
+        exercises = list(self.exercises)
+        recommendation =self.recommender(exercises, lrs_url=self.lrs_url)
+        self.set_exercise(exercises.index(recommendation))
 
     def randomize_exercise(self) -> None:
         self.set_exercise(self.exercise_number)

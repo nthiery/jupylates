@@ -27,7 +27,7 @@ def efficiency(ef, Quality):
     return ef
 
 
-def rec_SM2(activities):
+def rec_SM2(activities, lrs_url=".lrs.json"):
 
     ############# LECTURE LRS ################
 
@@ -35,7 +35,7 @@ def rec_SM2(activities):
     ignore_warnings = warnings.filterwarnings("ignore")
 
     # importation du json de l'élève
-    lrs = pd.read_json(".lrs.json", lines=True)
+    lrs = pd.read_json(lrs_url, lines=True)
     # liste des exercices faient par l'élève
     lrs_activities = list(
         lrs.loc[lrs.action == "execute"]["activity"].drop_duplicates()

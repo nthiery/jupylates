@@ -68,14 +68,15 @@ def predict_success_student(df, actual_theme, liste_activities):
 # %%
 
 
-def maison(liste_activities, actual_theme):
+def maison(liste_activities: list[str], lrs_url: str = ".lrs.json") -> int:
+    actual_theme = liste_activities[0].split("/")[0]
     # path
     target_directory = os.getcwd() + "/models/" + actual_theme
 
     ignore_warnings = warnings.filterwarnings("ignore")
     avg_prob_success = joblib.load(target_directory + "/avg_prob_success.pkl")
 
-    lrs = pd.read_json(".lrs.json", lines=True)
+    lrs = pd.read_json(lrs_url, lines=True)
     lrs["time"] = pd.to_datetime(lrs["time"], format="%Y-%m-%d-%H%M%S")
 
     # keep last tries of each exercices
