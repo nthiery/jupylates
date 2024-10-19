@@ -21,8 +21,8 @@ I1 = randint(1,10)
 Déclarez une variable entière `R` et affectez lui la valeur {eval}`I1`.
 :::
 
-```{code-cell}
-:tags: [answer]
+```{code-cell} ipython3
+:tags: [answer, solution]
 
 R = I1
 ```
