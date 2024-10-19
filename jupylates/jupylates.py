@@ -48,13 +48,16 @@ def test_answer_solution_regexp() -> None:
     assert match.group('args') == "answer, solution, "
     assert match.group('solution') == "foo()"
 
-def write_literal_python(literal: Any):
+def write_literal_python(literal: Any) -> str:
     if isinstance(literal, bool):
         return str(literal)
     else:
         return json.dumps(literal)
 
-write_literal = {"C++17": json.dumps, "python": write_literal_python}
+write_literal : Dict[Any, Callable[[Any], str]] = {
+    "C++17": json.dumps,
+    "python": write_literal_python
+}
 format_comment = {"C++17": "///", "python": "###"}
 
 lexer = {"C++17": "c++", "python": "python"}
@@ -570,7 +573,7 @@ Mode = str  # 'train', 'exam', 'debug'
 # Stores preheated kernels by kernel name
 # Exception: the value for the value `shutting down`, if not None
 # holds a kernel manager that is currently shutting down in parallel
-preheated_kernel_manager_pool: Dict[str, KernelManager] = {
+preheated_kernel_manager_pool: Dict[str, Optional[KernelManager]] = {
     'shutting down' : None
 }
 
@@ -908,6 +911,8 @@ class Exerciser(ipywidgets.HBox):
             self.kernel_manager = preheated_kernel_manager_pool[kernel_name]
         else:
             self.kernel_manager = preheated_kernel_manager(kernel_name)
+
+        assert self.kernel_manager is not None
 
         # Preheat a kernel manager for next time
         preheated_kernel_manager_pool[kernel_name] = preheated_kernel_manager(

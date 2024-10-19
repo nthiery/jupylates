@@ -10,6 +10,12 @@ class KernelManager:
     def shutdown_kernel(self) -> None:
         pass
 
+    def request_shutdown(self) -> None:
+        pass
+
+    def finish_shutdown(self) -> None:
+        pass
+
     def client(self) -> KernelClient:
         pass
 

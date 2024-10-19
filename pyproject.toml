@@ -52,3 +52,4 @@ disallow_incomplete_defs = "True"
 check_untyped_defs = "True"
 no_implicit_optional = "True"
 scripts_are_modules = "True"
+enable_incomplete_feature = ["NewGenericSyntax"]
