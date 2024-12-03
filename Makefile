@@ -6,7 +6,7 @@ clean:
 
 contents:
 	mkdir -p $(CONTENTDIR)
-	cp -r examples $(CONTENTDIR)
+	cp -rL examples $(CONTENTDIR)
 	sed -i 's/"python3"/"xeus-python"/' jupylates_demo.md
 	sed -i 's/"Python 3 .ipykernel."/"Python (XPython)"/' jupylates_demo.md
 	jupytext jupylates_demo.md --to ipynb
@@ -14,4 +14,3 @@ contents:
 
 lite:	contents
 	jupyter lite build --XeusAddon.environment_file jupyterlite-environment.yml --contents $(CONTENTDIR) --output-dir $(BUILDDIR)
-
