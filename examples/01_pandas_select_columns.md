@@ -8,9 +8,14 @@ kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
+learning:
+  objectives:
+    apply: extract a series from a dataframe
+  prerequisites:
+    understand: dataframe
 ---
 
-+++ {"tags": ["learning objectives"]}
++++ {"tags": ["instructors"]}
 
 :::{hint} About this demo
 :class: dropdown
@@ -60,8 +65,9 @@ Extract the columns {eval}`columnnames` from `T`, in the given order.
 ```{code-cell}
 :tags: [answer, solution, test]
 
-solution, answer = INPUT_EXPR("", T[columnames])
+from jupylates.jupylates_helpers import INPUT_EXPR
+solution, answer = INPUT_EXPR("", T[COLUMN])
 
 assert type(answer) == type(solution)
-pd.testing.assert_frame_equal(answer, solution)
+pd.testing.assert_series_equal(answer, solution)
 ```
