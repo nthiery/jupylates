@@ -36,8 +36,8 @@ def SUBSTITUTE(**args: Any) -> str:
 
 T = TypeVar("T", int, float, str, Any)
 
-
-def INPUT_EXPR[T](label: str, solution: T, answer: Optional[T]=None) -> Tuple[T,T]:
+# TODO: move to INPUT_EXPR[T] when Python >= 3.12 is a prerequisite
+def INPUT_EXPR(label: str, solution: T, answer: Optional[T]=None) -> Tuple[T,T]:
     if answer is None:
         answer = solution
     return solution, answer
