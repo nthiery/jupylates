@@ -490,10 +490,18 @@ class LocalLRS(LearningRecordConsumer):
         try:
             with open(self.file, "r", encoding="utf-8") as f:
                 for line in f.readlines():
-                    json_record = json.loads(line)
+                    try:
+                        json_record = json.loads(line)
+                    except json.JSONDecodeError:
+                        # Ignore corrupted line
+                        continue
+                    if "action" not in json_record or "activity" not in json_record:
+                        continue
                     if json_record["action"] == "view":
                         on.view(activity=json_record["activity"])
                     if json_record["action"] == "execute":
+                        if not "success" in json_record:
+                            continue
                         on.execute(
                             activity=json_record["activity"],
                             success=json_record["success"],
