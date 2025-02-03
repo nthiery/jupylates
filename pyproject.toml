@@ -42,6 +42,9 @@ doc = [
   "xeus-python",
 ]
 
+[tool.flit.external-data]
+directory = "install_files"
+
 [tool.mypy]
 files = "jupylates/*.py"
 warn_return_any = "True"
