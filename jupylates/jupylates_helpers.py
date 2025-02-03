@@ -27,11 +27,11 @@ def RANDOM_CHOICE(*args: Any) -> Any:
     return choice(args)
 
 
-def SUBSTITUTE(**args: Any) -> str:
+def SUBSTITUTE(**args: Any) -> None:
     import __main__
 
     __main__.__dict__.update(args)
-    return json.dumps({key: str(value) for key, value in args.items()})
+    print(json.dumps({key: str(value) for key, value in args.items()}))
 
 
 T = TypeVar("T", int, float, str, Any)

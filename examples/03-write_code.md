@@ -16,7 +16,7 @@ kernelspec:
 :class: dropdown
 
 This exercise illustrates:
-- requesting a code answer
+- requesting a code answer in Python
 :::
 
 :::{admonition} Learning objective

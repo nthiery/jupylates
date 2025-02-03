@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <vector>
 #include <functional>
+#include <sstream>
 
 /** Infrastructure minimale de test **/
 #ifndef ASSERT
@@ -100,5 +101,23 @@ void INPUT_EXPR(std::string description, T& answer, T& solution, T solution_valu
 #define INPUT_INT INPUT_EXPR<int>
 #define INPUT_FLOAT INPUT_EXPR<float>
 #define INPUT_BOOL INPUT_EXPR<bool>
+
+template<class T>
+std::string to_literal(T i) {
+    std::ostringstream s;
+    s << i;
+    return s.str();
+}
+// Will need to be overriden for vectors, ...
+
+
+void SUBSTITUTE(std::string name, std::string value) {
+    std::cout << "{\"" << name << "\": \"" << value << "\"}" << std::endl;
+}
+
+template<class T>
+void SUBSTITUTE_LITERAL(std::string name, T value) {
+    SUBSTITUTE(name, to_literal(value));
+}
 
 #endif

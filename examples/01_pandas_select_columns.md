@@ -25,8 +25,9 @@ This exercise illustrates:
 - the use of arbitrary features of the underlying language and
   libraries to generate random values (here a Pandas DataFrame) and
   test them.
-- specifying learning objectives as a narrative
+- specifying learning objectives as notebook metadata and/or as narrative
 - the rich display of values
+- requesting an expression as answer
 - one approach to structure the solution and answer enabling testing
   and displaying the solution
 
