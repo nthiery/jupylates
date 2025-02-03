@@ -93,6 +93,7 @@ class Randomizer:
         consts["X"], consts["Y"], consts["Z"] = random.sample("xyz", 3)
         consts["I"], consts["J"], consts["K"], consts["N"] = random.sample("ijkn", 4)
         consts["PLUSOUMOINS"] = str(random.choice(["+", "-"]))
+        consts["VALOUREF"] = str(random.choice(["", "&"]))
         consts["NAME"] = str(
             random.choice(
                 ["Alexandre", "Yasmine", "Albert", "Alice", "Antoine", "Anna"]
