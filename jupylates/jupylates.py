@@ -88,7 +88,7 @@ def execute_code(
                 assert False
         if msg["msg_type"] == "execute_input":
             continue
-        if msg["msg_type"] in ["execute_result", "error"]:
+        if msg["msg_type"] in ["stream", "execute_result", "error"]:
             content = copy.copy(msg["content"])
             content["output_type"] = msg["msg_type"]
             outputs.append(content)
@@ -99,6 +99,8 @@ def display_outputs(outputs: List[dict]) -> None:
     for output in outputs:
         if output["output_type"] == "error":
             display(output["ename"])
+        elif output["output_type"] == "stream":
+            print(output["text"], end='')
         elif "text/html" in output["data"]:
             display(HTML(output["data"]["text/plain"]))
         elif "text/plain" in output["data"]:
@@ -1043,10 +1045,15 @@ class Exerciser(ipywidgets.HBox):
                     else:
                         outputs = []
                     if "substitutions" in cell_tags:
-                        assert len(outputs) == 1
-                        output = outputs[0]["data"]["text/plain"]
-                        self.substitutions.update(json.loads(output[1:-1]))
-                        outputs = []
+                        decoder = json.JSONDecoder()
+                        for output in outputs:
+                            if output.get('name') != 'stdout':
+                                continue
+                            text = output['text']
+                            while text:
+                                d, pos = decoder.raw_decode(text)
+                                text = text[pos:].strip()
+                                self.substitutions.update(d)
                     if "hide-cell" not in cell_tags and "hide-input" not in cell_tags:
                         display(Code(source, language=lexer[language]))
                     if "hide-cell" not in cell_tags and "hide-output" not in cell_tags:

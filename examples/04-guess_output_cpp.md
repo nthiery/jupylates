@@ -30,7 +30,7 @@ Understand the step by step execution of a for loop.
 :tags: [hide-cell]
 
 #include <sstream>
-#include "jupylates_helpers.hpp"
+#include <jupylates_helpers.hpp>
 
 CONST I1 = RANDOM_INT(0, 6);
 CONST I2 = I1 + RANDOM_INT(1, 4);
@@ -59,5 +59,5 @@ for (int I = I1; I <= I2 ; I = I + 1 ) {
 std::string answer, solution;
 INPUT_TEXT("", solution, answer, cout.str());
 
-assertEqual(answer, solution);
+CHECK(answer == solution);
 ```
