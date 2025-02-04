@@ -61,18 +61,10 @@ def RANDOM_VECTOR(n: int, generator: Callable, *args: Any) -> List:
     return [generator(*args) for i in range(n)]
 
 
-def RANDOM_VALOUREF() -> str:
-    r"""
-    pas sur que ce soit la meilleur des methodes....
-    """
-    return str(random.choice(["REF", "VAL"]))
-
-
 locals = {
     "RANDOM_INT": RANDOM_INT,
     "RANDOM_CHOICE": RANDOM_CHOICE,
     "RANDOM_VECTOR": RANDOM_VECTOR,
-    "RANDOM_VALOUREF": RANDOM_VALOUREF,
 }
 
 test_code = """CONST N = RANDOM_INT(3,3);
@@ -93,7 +85,6 @@ class Randomizer:
         consts["X"], consts["Y"], consts["Z"] = random.sample("xyz", 3)
         consts["I"], consts["J"], consts["K"], consts["N"] = random.sample("ijkn", 4)
         consts["PLUSOUMOINS"] = str(random.choice(["+", "-"]))
-        consts["VALOUREF"] = str(random.choice(["", "&"]))
         consts["NAME"] = str(
             random.choice(
                 ["Alexandre", "Yasmine", "Albert", "Alice", "Antoine", "Anna"]
