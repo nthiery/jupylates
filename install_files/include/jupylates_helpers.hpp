@@ -20,9 +20,6 @@
 // TODO: randomize ???
 #define PLUSOUMOINS +
 
-// TODO: randomize ???
-#define VALOUREF &
-
 #define CONST const auto
 
 // TODO: randomize ???
