@@ -36,9 +36,17 @@ prior notice. Nevertheless, it's used in production in a few classes
 at Université Paris-Saclay, and early adoption and feedback is most
 welcome.
 
-The execution model should still be refined, the current
-implementation does not yet support widgets, MyST's eval support is
-emulated, ...
+
+Future evolutions:
+- support interactive widgets
+- support interactive MyST features such as `eval` (it is currently
+  emulated).
+- Improve the execution model to reduce the current need for
+  duplication for certain types of exercices.
+- Play back previous student attempts by recording the random seed and
+  student's input.
+- Support more programming languages
+- Support multistep exercises
 
 ## Installation
 
