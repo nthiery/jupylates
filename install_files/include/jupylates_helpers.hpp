@@ -102,19 +102,35 @@ void INPUT_EXPR(std::string description, T& answer, T& solution, T solution_valu
 #define INPUT_FLOAT INPUT_EXPR<float>
 #define INPUT_BOOL INPUT_EXPR<bool>
 
+
+/** Convert the value to a C++ literal
+ * Currently supported types: int, float, and other types where printing (e.g. with cout) produces a valid C++ literal.
+ * Will need to be overriden for strings, vectors, ...
+ */
 template<class T>
-std::string to_literal(T i) {
+std::string to_literal(T t) {
     std::ostringstream s;
-    s << i;
+    s << t;
     return s.str();
 }
-// Will need to be overriden for vectors, ...
 
 
-void SUBSTITUTE(std::string name, std::string value) {
-    std::cout << "{\"" << name << "\": \"" << value << "\"}" << std::endl;
+/** In Jupylates: substitute all occurences of the string in `source` by the string in `target`
+ *  In plain C++: just print the substitution
+ * @param source:
+ * @param target:
+ */
+void SUBSTITUTE(std::string source, std::string target) {
+    std::cout << "{\"" << source << "\": \"" << target << "\"}" << std::endl;
 }
 
+/** In Jupylates: substitute all occurences of the variable X by its value, expressed as a C++ literal
+ *  In plain C++: just print the substitution
+ *  Warning: only a limited number of types are supported
+ */
+#define SUBSTITUTE_VARIABLE(X) SUBSTITUTE(#X, to_literal(X));
+
+// Deprecated. Superseded by SUBSTITUTE_VARIABLE
 template<class T>
 void SUBSTITUTE_LITERAL(std::string name, T value) {
     SUBSTITUTE(name, to_literal(value));

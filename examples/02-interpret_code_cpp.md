@@ -26,11 +26,8 @@ This exercise illustrates:
 
 #include <jupylates_helpers.hpp>
 
-int I1 = RANDOM_INT(1, 7);
-int I2 = RANDOM_INT(8, 15);
-
-SUBSTITUTE_LITERAL("I1", I1);
-SUBSTITUTE_LITERAL("I2", I2);
+int I1 = RANDOM_INT(1,  7); SUBSTITUTE_VARIABLE(I1);
+int I2 = RANDOM_INT(8, 15); SUBSTITUTE_VARIABLE(I2);
 ```
 
 :::{admonition} Instructions
